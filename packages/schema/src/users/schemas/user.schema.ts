@@ -5,12 +5,12 @@ import { z } from 'zod';
  * Represents the full user entity as it exists in the database.
  */
 export const UserSchema = z.object({
-  id: z.number().int().positive(),
-  name: z.string().min(2, { message: "Name must be at least 2 characters long" }),
-  age: z.number().int().positive({ message: "Age must be a positive number" }),
-  email: z.string().email({ message: "Invalid email address" }).optional(),
-  createdAt: z.date().optional(),
-  updatedAt: z.date().optional(),
+  id: z.number().int().positive().describe("The unique identifier of the user"),
+  name: z.string().min(2, { message: "Name must be at least 2 characters long" }).describe("The full name of the user (e.g. John Doe)"),
+  age: z.number().int().positive({ message: "Age must be a positive number" }).describe("The age of the user in years"),
+  email: z.string().email({ message: "Invalid email address" }).optional().describe("The email address of the user"),
+  createdAt: z.date().optional().describe("The date and time when the user was created"),
+  updatedAt: z.date().optional().describe("The date and time when the user was last updated"),
 });
 
 export type User = z.infer<typeof UserSchema>;
