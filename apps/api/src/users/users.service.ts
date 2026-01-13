@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserRequest, UpdateUserRequest, User } from '@repo/schema';
+import { CreateUserDto, UpdateUserDto, User } from '@repo/schema';
 
 @Injectable()
 export class UsersService {
   private readonly users: User[] = [];
-  create(createUserDto: CreateUserRequest) {
+  create(createUserDto: CreateUserDto) {
     const user: User = {
       ...createUserDto,
       id: 1,
@@ -22,7 +22,7 @@ export class UsersService {
     return `This action returns a #${id} user`;
   }
 
-  update(id: number, updateUserDto: UpdateUserRequest) {
+  update(id: number, updateUserDto: UpdateUserDto) {
     return `This action updates a #${id} user`;
   }
 
