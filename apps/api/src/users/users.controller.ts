@@ -1,8 +1,9 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserSchema } from '@repo/schema';
-import type { CreateUserDto, UpdateUserDto } from '@repo/schema';
 import { ZodValidationPipe } from 'src/zod-validation.pipe';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('users')
 export class UsersController {

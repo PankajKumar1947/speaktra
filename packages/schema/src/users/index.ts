@@ -1,3 +1,3 @@
 export * from './schemas/user.schema';
-export * from './dtos/create-user.dto';
-export * from './dtos/update-user.dto';
+export * from './schemas/create-user.schema';
+export * from './schemas/update-user.schema';

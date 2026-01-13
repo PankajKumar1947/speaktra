@@ -12,4 +12,4 @@ export const CreateUserSchema = UserSchema.pick({
   email: true,
 });
 
-export type CreateUserDto = z.infer<typeof CreateUserSchema>;
+export type CreateUser = z.infer<typeof CreateUserSchema>;

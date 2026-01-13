@@ -4708,6 +4708,13 @@ neo-async@^2.6.2:
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.2.tgz#b4aafb93e3aeb2d8174ca53cf163ab7d7308305f"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
 
+nestjs-zod@^5.1.1:
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/nestjs-zod/-/nestjs-zod-5.1.1.tgz#12a712e77895614e1aefea5f6dc509a3513e8ef9"
+  integrity sha512-pXa9Jrdip7iedKvGxJTvvCFVRCoIcNENPCsHjpCefPH3PcFejRgkZkUcr3TYITRyxnUk7Zy5OsLpirZGLYBfBQ==
+  dependencies:
+    deepmerge "^4.3.1"
+
 next@16.1.0:
   version "16.1.0"
   resolved "https://registry.yarnpkg.com/next/-/next-16.1.0.tgz#af5941f1c313655ace98b60f26db8de5a2692c42"
