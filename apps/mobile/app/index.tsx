@@ -1,24 +1,9 @@
-import { Text, View } from "react-native";
-import { User } from "@repo/schema";
+import { Redirect } from "expo-router";
 
+/**
+ * App Entry Point
+ * Redirects to splash screen on launch
+ */
 export default function Index() {
-  const user: User = {
-    id: 1,
-    name: "John Doe",
-    age: 2,
-    email: "john.doe@example.com",
-  };
-  return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text>
-        {user.name} {user.email}
-      </Text>
-    </View>
-  );
+  return <Redirect href="/splash" />;
 }
