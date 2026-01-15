@@ -1,0 +1,162 @@
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
+import { useRouter } from "expo-router";
+import { LinearGradient } from "expo-linear-gradient";
+import { Button } from "../../components";
+import Theme from "../../constants/theme";
+import type { Domain } from "@repo/schema";
+
+const DOMAINS: { value: Domain; label: string; description: string }[] = [
+  { value: "Corporate", label: "Corporate", description: "Business & Office" },
+  { value: "Healthcare", label: "Healthcare", description: "Medical & Care" },
+  { value: "IT", label: "IT", description: "Technology & Software" },
+  { value: "Legal", label: "Legal", description: "Law & Justice" },
+  {
+    value: "Hospitality",
+    label: "Hospitality",
+    description: "Hotels & Service",
+  },
+];
+
+/**
+ * Domain Selection Screen
+ * Choose professional sector for personalized learning
+ */
+export default function DomainSelectionScreen() {
+  const router = useRouter();
+  const [selectedDomain, setSelectedDomain] = useState<Domain | null>(null);
+
+  const handleContinue = () => {
+    if (selectedDomain) {
+      router.push("/(auth)/level-selection");
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      {/* Header */}
+      <LinearGradient
+        colors={Theme.colors.gradientPrimary}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.header}
+      >
+        <Text style={styles.headerTitle}>Choose Your Domain</Text>
+        <Text style={styles.headerSubtitle}>
+          We'll personalize your learning experience
+        </Text>
+      </LinearGradient>
+
+      {/* Domain Cards */}
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        {DOMAINS.map((domain) => (
+          <TouchableOpacity
+            key={domain.value}
+            style={[
+              styles.card,
+              selectedDomain === domain.value && styles.cardSelected,
+            ]}
+            onPress={() => setSelectedDomain(domain.value)}
+          >
+            <Text
+              style={[
+                styles.cardTitle,
+                selectedDomain === domain.value && styles.cardTitleSelected,
+              ]}
+            >
+              {domain.label}
+            </Text>
+            <Text
+              style={[
+                styles.cardDescription,
+                selectedDomain === domain.value &&
+                  styles.cardDescriptionSelected,
+              ]}
+            >
+              {domain.description}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+
+      {/* Continue Button */}
+      <View style={styles.footer}>
+        <Button
+          title="Continue"
+          onPress={handleContinue}
+          disabled={!selectedDomain}
+        />
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: Theme.colors.background,
+  },
+  header: {
+    paddingTop: Theme.spacing["5xl"],
+    paddingBottom: Theme.spacing["2xl"],
+    paddingHorizontal: Theme.spacing.base,
+  },
+  headerTitle: {
+    fontSize: Theme.typography.fontSize["2xl"],
+    fontWeight: Theme.typography.fontWeight.bold,
+    color: Theme.colors.textInverse,
+    marginBottom: Theme.spacing.xs,
+  },
+  headerSubtitle: {
+    fontSize: Theme.typography.fontSize.base,
+    color: Theme.colors.textInverse,
+    opacity: 0.9,
+  },
+  scrollContent: {
+    paddingHorizontal: Theme.spacing.base,
+    paddingVertical: Theme.spacing.xl,
+    gap: Theme.spacing.md,
+  },
+  card: {
+    padding: Theme.spacing.xl,
+    backgroundColor: Theme.colors.background,
+    borderRadius: Theme.borderRadius.xl,
+    borderWidth: 2,
+    borderColor: Theme.colors.border,
+    ...Theme.shadows.md,
+  },
+  cardSelected: {
+    borderColor: Theme.colors.primary,
+    backgroundColor: Theme.colors.primaryLight,
+  },
+  cardTitle: {
+    fontSize: Theme.typography.fontSize.lg,
+    fontWeight: Theme.typography.fontWeight.bold,
+    color: Theme.colors.textPrimary,
+    marginBottom: Theme.spacing.xs,
+  },
+  cardTitleSelected: {
+    color: Theme.colors.textInverse,
+  },
+  cardDescription: {
+    fontSize: Theme.typography.fontSize.sm,
+    color: Theme.colors.textSecondary,
+  },
+  cardDescriptionSelected: {
+    color: Theme.colors.textInverse,
+    opacity: 0.9,
+  },
+  footer: {
+    paddingHorizontal: Theme.spacing.base,
+    paddingBottom: Theme.spacing.xl,
+  },
+});

@@ -38,7 +38,7 @@ export default function SplashScreen() {
 
     // Auto-transition after 2 seconds
     const timer = setTimeout(() => {
-      router.replace("/auth");
+      router.replace("/(auth)/login");
     }, 2000);
 
     return () => clearTimeout(timer);
