@@ -1,4 +1,5 @@
-import type { Domain, Level, Goal, TimeCommitment } from "./profile.enum";
+import type { Domain, Level } from "../common";
+import type { ProfileGoal, TimeCommitment } from "./profile.enum";
 
 /**
  * User Profile Type for Speaktra
@@ -9,7 +10,7 @@ export interface UserProfile {
   email?: string;
   domain: Domain;
   level: Level;
-  goals: Goal[];
+  goals: ProfileGoal[];
   dailyCommitment: TimeCommitment;
   createdAt: Date;
   onboardingCompleted: boolean;

@@ -1,10 +1,6 @@
 import { z } from "zod";
-import {
-  DomainEnum,
-  LevelEnum,
-  GoalEnum,
-  TimeCommitmentEnum,
-} from "./profile.enum";
+import { DomainEnum, LevelEnum } from "../common";
+import { ProfileGoalEnum, TimeCommitmentEnum } from "./profile.enum";
 
 /**
  * User Profile Schema for Speaktra
@@ -15,7 +11,7 @@ export const UserProfileSchema = z.object({
   email: z.string().email().optional(),
   domain: DomainEnum,
   level: LevelEnum,
-  goals: z.array(GoalEnum),
+  goals: z.array(ProfileGoalEnum),
   dailyCommitment: TimeCommitmentEnum,
   createdAt: z.date(),
   onboardingCompleted: z.boolean().default(false),

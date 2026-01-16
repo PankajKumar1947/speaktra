@@ -1,8 +1,6 @@
 import { z } from "zod";
+import { DifficultyEnum } from "../common";
 
-/**
- * Difficulty level enum for speaking scenarios
- */
-export const SpeakingDifficultyEnum = z.enum(["Easy", "Medium", "Hard"]);
-
-export type SpeakingDifficulty = z.infer<typeof SpeakingDifficultyEnum>;
+// Re-export DifficultyEnum for backward compatibility
+export { DifficultyEnum as SpeakingDifficultyEnum };
+export type SpeakingDifficulty = z.infer<typeof DifficultyEnum>;

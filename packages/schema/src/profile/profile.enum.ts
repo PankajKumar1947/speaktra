@@ -1,25 +1,7 @@
 import { z } from "zod";
 
-/**
- * Domain enum for professional sectors
- */
-export const DomainEnum = z.enum([
-  "Corporate",
-  "Healthcare",
-  "IT",
-  "Legal",
-  "Hospitality",
-]);
-
-/**
- * Proficiency level enum
- */
-export const LevelEnum = z.enum(["Beginner", "Intermediate", "Advanced"]);
-
-/**
- * Learning goal enum
- */
-export const GoalEnum = z.enum([
+// Learning goal enum (profile-specific)
+export const ProfileGoalEnum = z.enum([
   "Fluency",
   "Pronunciation",
   "Vocabulary",
@@ -27,12 +9,10 @@ export const GoalEnum = z.enum([
   "Grammar",
 ]);
 
-/**
- * Time commitment options (in minutes)
- */
+// Time commitment options (in minutes)
 export const TimeCommitmentEnum = z.enum(["10", "20", "30", "45"]);
 
-export type Domain = z.infer<typeof DomainEnum>;
-export type Level = z.infer<typeof LevelEnum>;
-export type Goal = z.infer<typeof GoalEnum>;
+// Re-export common types for convenience
+export type { Domain, Level } from "../common";
+export type ProfileGoal = z.infer<typeof ProfileGoalEnum>;
 export type TimeCommitment = z.infer<typeof TimeCommitmentEnum>;

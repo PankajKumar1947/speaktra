@@ -1,25 +1,36 @@
 import { z } from "zod";
+import { DomainEnum, LevelEnum } from "../common";
+import { GoalEnum, RoleEnum } from "./user.enum";
 
-/**
- * User Schema
- * Represents the full user entity as it exists in the database.
- */
+// Full user entity schema as it exists in the database
 export const UserSchema = z.object({
-  id: z.number().int().positive().describe("The unique identifier of the user"),
-  name: z
+  id: z
     .string()
-    .min(2, { message: "Name must be at least 2 characters long" })
-    .describe("The full name of the user (e.g. John Doe)"),
-  age: z
-    .number()
-    .int()
-    .positive({ message: "Age must be a positive number" })
-    .describe("The age of the user in years"),
+    .describe("The unique identifier of the user (MongoDB ObjectId)"),
   email: z
     .string()
     .email({ message: "Invalid email address" })
-    .optional()
     .describe("The email address of the user"),
+  name: z
+    .string()
+    .min(2, { message: "Name must be at least 2 characters long" })
+    .describe("The full name of the user"),
+  password: z
+    .string()
+    .min(6, { message: "Password must be at least 6 characters long" })
+    .describe("The hashed password of the user"),
+  domain: DomainEnum.describe("The professional domain/sector of the user"),
+  level: LevelEnum.describe("The proficiency level of the user"),
+  goals: z
+    .array(GoalEnum)
+    .default([])
+    .describe("The learning goals of the user"),
+  dailyCommitment: z
+    .number()
+    .int()
+    .min(1, { message: "Daily commitment must be at least 1 minute" })
+    .describe("Daily commitment in minutes"),
+  role: RoleEnum.default("user").describe("The role of the user"),
   createdAt: z
     .date()
     .optional()
@@ -30,20 +41,16 @@ export const UserSchema = z.object({
     .describe("The date and time when the user was last updated"),
 });
 
-/**
- * Create User Schema
- * Validates the input for creating a new user.
- * Omit system-generated fields like id, createdAt, updatedAt.
- */
-export const CreateUserSchema = UserSchema.pick({
-  name: true,
-  age: true,
-  email: true,
+// Schema for creating a new user (omits system-generated fields)
+export const CreateUserSchema = UserSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
 });
 
-/**
- * Update User Schema
- * Validates the input for updating an existing user.
- * Partial of CreateUserSchema.
- */
-export const UpdateUserSchema = CreateUserSchema.partial();
+// Schema for updating a user (partial with no system fields)
+export const UpdateUserSchema = UserSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+}).partial();
