@@ -1,8 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import type { Domain, Level, Goal, Role } from '@repo/schema';
+import bcrypt from 'bcrypt';
 
-export type UserDocument = HydratedDocument<User>;
+const SALT_ROUNDS = 10;
+export interface UserMethods {
+  comparePassword(password: string): Promise<boolean>;
+}
+export type UserDocument = HydratedDocument<User, UserMethods>;
 
 @Schema({ timestamps: true })
 export class User {
@@ -15,17 +20,17 @@ export class User {
   @Prop({ required: true })
   password!: string;
 
-  @Prop({ required: true })
-  domain!: Domain;
+  @Prop({ required: false })
+  domain?: Domain;
 
-  @Prop({ required: true })
-  level!: Level;
+  @Prop({ required: false })
+  level?: Level;
 
   @Prop({ type: [String], default: [] })
-  goals!: Goal[];
+  goals?: Goal[];
 
-  @Prop({ required: true, min: 1 })
-  dailyCommitment!: number;
+  @Prop({ required: false, min: 1 })
+  dailyCommitment?: number;
 
   @Prop({ default: 'user' })
   role!: Role;
@@ -36,3 +41,23 @@ export class User {
 }
 
 export const UserEntity = SchemaFactory.createForClass(User);
+
+// hooks to hash password
+UserEntity.pre('save', async function (this: UserDocument) {
+  // only hash the password if it has been modified (or is new)
+  if (!this.isModified('password')) {
+    return;
+  }
+
+  const salt = await bcrypt.genSalt(SALT_ROUNDS);
+  const hashedPassword = await bcrypt.hash(this.password, salt);
+  this.password = hashedPassword;
+});
+
+UserEntity.methods.comparePassword = async function (
+  this: UserDocument,
+  password: string,
+): Promise<boolean> {
+  if (!this.password) return false;
+  return await bcrypt.compare(password, this.password);
+};
