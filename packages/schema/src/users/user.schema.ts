@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { DomainEnum, LevelEnum } from "../common";
-import { GoalEnum, RoleEnum } from "./user.enum";
+import { GoalEnum, Role, RoleEnum } from "./user.enum";
 
 // Full user entity schema as it exists in the database
 export const UserSchema = z.object({
@@ -30,7 +30,7 @@ export const UserSchema = z.object({
     .int()
     .min(1, { message: "Daily commitment must be at least 1 minute" })
     .describe("Daily commitment in minutes"),
-  role: RoleEnum.default("user").describe("The role of the user"),
+  role: RoleEnum.default(Role.USER).describe("The role of the user"),
   createdAt: z
     .date()
     .optional()

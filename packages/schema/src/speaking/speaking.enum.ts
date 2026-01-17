@@ -1,6 +1,5 @@
-import { z } from "zod";
-import { DifficultyEnum } from "../common";
+import { Difficulty, DifficultyEnum } from "../common";
 
-// Re-export DifficultyEnum for backward compatibility
+// Re-export for backward compatibility
+export { Difficulty as SpeakingDifficulty };
 export { DifficultyEnum as SpeakingDifficultyEnum };
-export type SpeakingDifficulty = z.infer<typeof DifficultyEnum>;

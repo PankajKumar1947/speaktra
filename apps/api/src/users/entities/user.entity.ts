@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-import type { Domain, Level, Goal, Role } from '@repo/schema';
+import { Domain, Level, Goal, Role } from '@repo/schema';
 import bcrypt from 'bcrypt';
 
 const SALT_ROUNDS = 10;
@@ -32,7 +32,7 @@ export class User {
   @Prop({ required: false, min: 1 })
   dailyCommitment?: number;
 
-  @Prop({ default: 'user' })
+  @Prop({ default: Role.USER })
   role!: Role;
 
   // Timestamps (automatically added by { timestamps: true })

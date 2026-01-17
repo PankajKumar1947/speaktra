@@ -3,18 +3,23 @@ import { z } from "zod";
 /**
  * Skill enum
  */
-export const SkillEnum = z.enum([
-  "Fluency",
-  "Pronunciation",
-  "Vocabulary",
-  "Grammar",
-  "Confidence",
-]);
+export enum Skill {
+  FLUENCY = "Fluency",
+  PRONUNCIATION = "Pronunciation",
+  VOCABULARY = "Vocabulary",
+  GRAMMAR = "Grammar",
+  CONFIDENCE = "Confidence",
+}
 
 /**
  * Trend enum
  */
-export const TrendEnum = z.enum(["up", "down", "stable"]);
+export enum Trend {
+  UP = "up",
+  DOWN = "down",
+  STABLE = "stable",
+}
 
-export type Skill = z.infer<typeof SkillEnum>;
-export type Trend = z.infer<typeof TrendEnum>;
+// Zod schemas for validation
+export const SkillEnum = z.nativeEnum(Skill);
+export const TrendEnum = z.nativeEnum(Trend);

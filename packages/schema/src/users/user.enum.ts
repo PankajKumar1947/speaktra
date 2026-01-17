@@ -1,19 +1,24 @@
 import { z } from "zod";
 
 // Learning goals enum (user-specific)
-export const GoalEnum = z.enum([
-  "fluency",
-  "business_communication",
-  "travel",
-  "exam_preparation",
-  "confidence_building",
-  "pronunciation",
-]);
+export enum Goal {
+  FLUENCY = "fluency",
+  BUSINESS_COMMUNICATION = "business_communication",
+  TRAVEL = "travel",
+  EXAM_PREPARATION = "exam_preparation",
+  CONFIDENCE_BUILDING = "confidence_building",
+  PRONUNCIATION = "pronunciation",
+}
 
 // User role enum
-export const RoleEnum = z.enum(["user", "admin", "premium"]);
+export enum Role {
+  USER = "user",
+  ADMIN = "admin",
+}
+
+// Zod schemas for validation
+export const GoalEnum = z.nativeEnum(Goal);
+export const RoleEnum = z.nativeEnum(Role);
 
 // Re-export common types for convenience
 export type { Domain, Level } from "../common";
-export type Goal = z.infer<typeof GoalEnum>;
-export type Role = z.infer<typeof RoleEnum>;

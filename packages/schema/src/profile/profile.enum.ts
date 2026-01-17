@@ -1,18 +1,25 @@
 import { z } from "zod";
 
 // Learning goal enum (profile-specific)
-export const ProfileGoalEnum = z.enum([
-  "Fluency",
-  "Pronunciation",
-  "Vocabulary",
-  "Confidence",
-  "Grammar",
-]);
+export enum ProfileGoal {
+  FLUENCY = "Fluency",
+  PRONUNCIATION = "Pronunciation",
+  VOCABULARY = "Vocabulary",
+  CONFIDENCE = "Confidence",
+  GRAMMAR = "Grammar",
+}
 
 // Time commitment options (in minutes)
-export const TimeCommitmentEnum = z.enum(["10", "20", "30", "45"]);
+export enum TimeCommitment {
+  TEN = "10",
+  TWENTY = "20",
+  THIRTY = "30",
+  FORTY_FIVE = "45",
+}
+
+// Zod schemas for validation
+export const ProfileGoalEnum = z.nativeEnum(ProfileGoal);
+export const TimeCommitmentEnum = z.nativeEnum(TimeCommitment);
 
 // Re-export common types for convenience
 export type { Domain, Level } from "../common";
-export type ProfileGoal = z.infer<typeof ProfileGoalEnum>;
-export type TimeCommitment = z.infer<typeof TimeCommitmentEnum>;
