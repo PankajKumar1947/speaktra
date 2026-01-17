@@ -8,11 +8,13 @@ import { Model } from 'mongoose';
 import { User, UserDocument } from 'src/users/entities/user.entity';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<User>,
+    private jwtService: JwtService,
   ) {}
 
   async register(registerDto: RegisterDto) {
@@ -60,19 +62,20 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
-    // Return user without password
-    const userData = {
-      _id: user._id,
-      name: user.name,
+    const payload = {
+      sub: user._id,
       email: user.email,
       role: user.role,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
     };
 
     return {
       message: 'Login successful',
-      user: userData,
+      accessToken: this.jwtService.sign(payload, {
+        expiresIn: '1h',
+      }),
+      refreshToken: this.jwtService.sign(payload, {
+        expiresIn: '7d',
+      }),
     };
   }
 }

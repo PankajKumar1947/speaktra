@@ -16,7 +16,7 @@
     "dev": {
       "cache": false,
       "persistent": true,
-      "env": ["MONGODB_URI"]
+      "env": ["MONGODB_URI", "JWT_SECRET"]
     }
   }
 }
