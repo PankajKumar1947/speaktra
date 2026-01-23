@@ -1,13 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
 import { Domain, Level, Goal, Role } from '@repo/schema';
 import bcrypt from 'bcrypt';
+import { BaseDocument } from 'src/common/types/base-document.type';
 
 const SALT_ROUNDS = 10;
 export interface UserMethods {
   comparePassword(password: string): Promise<boolean>;
 }
-export type UserDocument = HydratedDocument<User, UserMethods>;
+export type UserDocument = BaseDocument<User> & UserMethods;
 
 @Schema({ timestamps: true })
 export class User {
