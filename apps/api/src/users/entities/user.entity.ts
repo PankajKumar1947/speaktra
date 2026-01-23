@@ -34,10 +34,6 @@ export class User {
 
   @Prop({ default: Role.USER })
   role!: Role;
-
-  // Timestamps (automatically added by { timestamps: true })
-  createdAt?: Date;
-  updatedAt?: Date;
 }
 
 export const UserEntity = SchemaFactory.createForClass(User);

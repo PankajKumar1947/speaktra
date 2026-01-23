@@ -10,10 +10,6 @@ export class Domain {
 
   @Prop({ required: false })
   description?: string;
-
-  // Timestamps (automatically added by { timestamps: true })
-  createdAt?: Date;
-  updatedAt?: Date;
 }
 
 export const DomainEntity = SchemaFactory.createForClass(Domain);
