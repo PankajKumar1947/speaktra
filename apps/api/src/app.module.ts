@@ -11,6 +11,7 @@ import { DomainModule } from './domain/domain.module';
 import { VocabularyModule } from './vocabulary/vocabulary.module';
 import { ZodValidationPipe } from './zod-validation.pipe';
 import { SentenceModule } from './sentence/sentence.module';
+import { ArticleModule } from './article/article.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { SentenceModule } from './sentence/sentence.module';
     DomainModule,
     VocabularyModule,
     SentenceModule,
+    ArticleModule,
   ],
   controllers: [AppController],
   providers: [
