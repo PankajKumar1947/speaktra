@@ -6,3 +6,4 @@ export * from "./speaking";
 export * from "./progress";
 export * from "./auth";
 export * from "./domain";
+export * from "./vocabulary";

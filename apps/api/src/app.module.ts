@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './auth/auth.module';
 import { DomainModule } from './domain/domain.module';
+import { VocabularyModule } from './vocabulary/vocabulary.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { DomainModule } from './domain/domain.module';
     UsersModule,
     AuthModule,
     DomainModule,
+    VocabularyModule,
   ],
   controllers: [AppController],
   providers: [
