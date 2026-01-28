@@ -6,12 +6,10 @@ import {
   Patch,
   Param,
   Delete,
-  UsePipes,
   UseGuards,
 } from '@nestjs/common';
 import { DomainService } from './domain.service';
-import { CreateDomainSchema, Role } from '@repo/schema';
-import { ZodValidationPipe } from 'src/zod-validation.pipe';
+import { Role } from '@repo/schema';
 import { CreateDomainDto } from './dto/create-domain.dto';
 import { UpdateDomainDto } from './dto/update-domain.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
@@ -27,7 +25,6 @@ export class DomainController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   @ApiBearerAuth('JWT-auth')
-  @UsePipes(new ZodValidationPipe(CreateDomainSchema))
   create(@Body() createDomainDto: CreateDomainDto) {
     return this.domainService.create(createDomainDto);
   }

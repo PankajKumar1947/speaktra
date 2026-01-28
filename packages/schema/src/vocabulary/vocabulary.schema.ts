@@ -27,6 +27,9 @@ export const VocabularySchema = z.object({
   adverb: WordFormSchema.optional().describe("Adverb form of the word"),
   domainId: z
     .string()
+    .regex(/^[0-9a-fA-F]{24}$/, {
+      message: "domainId must be a valid MongoDB ObjectId",
+    })
     .describe("Reference to the domain this vocabulary belongs to"),
   difficulty: DifficultyLevelEnum.describe(
     "Difficulty level of the vocabulary",

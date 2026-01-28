@@ -2,13 +2,14 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
-import { ZodSerializerInterceptor, ZodValidationPipe } from 'nestjs-zod';
+import { ZodSerializerInterceptor } from 'nestjs-zod';
 import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './auth/auth.module';
 import { DomainModule } from './domain/domain.module';
 import { VocabularyModule } from './vocabulary/vocabulary.module';
+import { ZodValidationPipe } from './zod-validation.pipe';
 
 @Module({
   imports: [

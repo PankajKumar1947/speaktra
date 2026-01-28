@@ -6,12 +6,10 @@ import {
   Patch,
   Param,
   Delete,
-  UsePipes,
   UseGuards,
 } from '@nestjs/common';
 import { VocabularyService } from './vocabulary.service';
-import { CreateVocabularySchema, Role } from '@repo/schema';
-import { ZodValidationPipe } from 'src/zod-validation.pipe';
+import { Role } from '@repo/schema';
 import { CreateVocabularyDto } from './dto/create-vocabulary.dto';
 import { UpdateVocabularyDto } from './dto/update-vocabulary.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
@@ -27,7 +25,6 @@ export class VocabularyController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   @ApiBearerAuth('JWT-auth')
-  @UsePipes(new ZodValidationPipe(CreateVocabularySchema))
   create(@Body() createVocabularyDto: CreateVocabularyDto) {
     return this.vocabularyService.create(createVocabularyDto);
   }

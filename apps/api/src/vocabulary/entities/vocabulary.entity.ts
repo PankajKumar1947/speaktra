@@ -38,10 +38,6 @@ export class Vocabulary {
 
   @Prop({ required: true, enum: Difficulty })
   difficulty!: string;
-
-  // Timestamps (automatically added by { timestamps: true })
-  createdAt?: Date;
-  updatedAt?: Date;
 }
 
 export const VocabularyEntity = SchemaFactory.createForClass(Vocabulary);

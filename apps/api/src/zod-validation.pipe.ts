@@ -1,22 +1,45 @@
+import {
+  PipeTransform,
+  ArgumentMetadata,
+  BadRequestException,
+} from '@nestjs/common';
+import { ZodValidationPipe as NestJsZodValidationPipe } from 'nestjs-zod';
 
-import { PipeTransform, ArgumentMetadata, BadRequestException } from '@nestjs/common';
-import { ZodSchema, ZodError } from 'zod';
+interface ValidationError {
+  path: string | string[];
+  message: string;
+}
 
-export class ZodValidationPipe implements PipeTransform {
-  constructor(private schema: ZodSchema) {}
+interface ErrorResponse {
+  errors?: ValidationError[];
+  message?: string;
+  statusCode?: number;
+}
 
-  transform(value: unknown, metadata: ArgumentMetadata) {
+export class ZodValidationPipe
+  extends NestJsZodValidationPipe
+  implements PipeTransform
+{
+  async transform(value: unknown, metadata: ArgumentMetadata) {
     try {
-      return this.schema.parse(value);
+      return await super.transform(value, metadata);
     } catch (error) {
-      if (error instanceof ZodError) {
-        throw new BadRequestException({
-          message: 'Validation failed',
-          errors: error.issues.map(issue => ({
-            path: issue.path.join('.'),
-            message: issue.message,
-          })),
-        });
+      if (error instanceof BadRequestException) {
+        const response = error.getResponse() as ErrorResponse;
+
+        // Check if it's a Zod validation error with errors array
+        if (response.errors && Array.isArray(response.errors)) {
+          // Transform to our custom clean format
+          const errors = response.errors.map((err) => ({
+            field: Array.isArray(err.path) ? err.path.join('.') : err.path,
+            message: err.message,
+          }));
+
+          throw new BadRequestException({
+            message: 'Validation failed',
+            errors,
+          });
+        }
       }
 
       throw error;
