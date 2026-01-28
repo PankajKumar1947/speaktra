@@ -10,6 +10,7 @@ import { AuthModule } from './auth/auth.module';
 import { DomainModule } from './domain/domain.module';
 import { VocabularyModule } from './vocabulary/vocabulary.module';
 import { ZodValidationPipe } from './zod-validation.pipe';
+import { SentenceModule } from './sentence/sentence.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { ZodValidationPipe } from './zod-validation.pipe';
     AuthModule,
     DomainModule,
     VocabularyModule,
+    SentenceModule,
   ],
   controllers: [AppController],
   providers: [
