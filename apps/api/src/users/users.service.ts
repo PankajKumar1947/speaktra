@@ -4,6 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './entities/user.entity';
 import { Model } from 'mongoose';
+import { CompleteOnboardingDto } from './dto/complete-onboarding.dto';
 
 @Injectable()
 export class UsersService {
@@ -29,5 +30,18 @@ export class UsersService {
 
   remove(id: string) {
     return this.userModel.findByIdAndDelete(id);
+  }
+
+  completeOnboarding(userId: string, onboardingData: CompleteOnboardingDto) {
+    return this.userModel.findByIdAndUpdate(
+      userId,
+      {
+        domain: onboardingData.domain,
+        level: onboardingData.level,
+        goals: onboardingData.goals,
+        dailyCommitment: onboardingData.dailyCommitment,
+      },
+      { new: true },
+    );
   }
 }

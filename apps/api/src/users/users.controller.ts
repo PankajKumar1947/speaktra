@@ -6,15 +6,14 @@ import {
   Patch,
   Param,
   Delete,
-  UsePipes,
   UseGuards,
   Req,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserSchema, Role } from '@repo/schema';
-import { ZodValidationPipe } from 'src/zod-validation.pipe';
+import { Role } from '@repo/schema';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { CompleteOnboardingDto } from './dto/complete-onboarding.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
@@ -29,7 +28,6 @@ export class UsersController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   @ApiBearerAuth('JWT-auth')
-  @UsePipes(new ZodValidationPipe(CreateUserSchema))
   create(@Body() createUserDto: CreateUserDto, @Req() req: Request) {
     console.log(req.user);
     return this.usersService.create(createUserDto);
@@ -65,5 +63,16 @@ export class UsersController {
   @ApiBearerAuth('JWT-auth')
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);
+  }
+
+  @Patch('onboarding/complete')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  completeOnboarding(
+    @Body() completeOnboardingDto: CompleteOnboardingDto,
+    @Req() req: Request,
+  ) {
+    const userId = req.user?.sub as string;
+    return this.usersService.completeOnboarding(userId, completeOnboardingDto);
   }
 }
