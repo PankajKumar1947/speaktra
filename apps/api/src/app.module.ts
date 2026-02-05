@@ -12,6 +12,7 @@ import { VocabularyModule } from './vocabulary/vocabulary.module';
 import { ZodValidationPipe } from './zod-validation.pipe';
 import { SentenceModule } from './sentence/sentence.module';
 import { ArticleModule } from './article/article.module';
+import { DailyChallengeModule } from './daily-challenge/daily-challenge.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { ArticleModule } from './article/article.module';
     VocabularyModule,
     SentenceModule,
     ArticleModule,
+    DailyChallengeModule,
   ],
   controllers: [AppController],
   providers: [
