@@ -15,7 +15,6 @@ export class DailyChallengeService {
     private readonly vocabularyService: VocabularyService,
   ) {}
   async create(createDailyChallengeDto: CreateDailyChallengeDto) {
-    console.log(createDailyChallengeDto);
     // 1. generate the 5 vocabularies
     const domain = await this.domainService.findOne(
       createDailyChallengeDto.domain,
