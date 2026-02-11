@@ -2,6 +2,7 @@ import { Mistral } from '@mistralai/mistralai';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
+  CreateArticleSchema,
   CreateSentenceSchema,
   CreateVocabularySchema,
   Level,
@@ -10,6 +11,7 @@ import { DomainDocument } from 'src/domain/entities/domain.entity';
 import z from 'zod';
 import { buildVocabularyPrompt } from './ai-prompts/vocabulary.prompt';
 import { buildSentencePrompt } from './ai-prompts/sentence.prompt';
+import { buildArticlePrompt } from './ai-prompts/article.prompt';
 
 @Injectable()
 export class AIContentGenerationService {
@@ -99,6 +101,42 @@ export class AIContentGenerationService {
       this.logger.log('-------------sentences validated');
 
       return validated.sentences;
+    } catch (error) {
+      this.logger.error(error);
+      return [];
+    }
+  }
+
+  async generateArticles(domain: DomainDocument, level: Level) {
+    const { _id, name } = domain;
+    console.log('domain Id', _id);
+
+    const schema = z.object({
+      articles: z.array(CreateArticleSchema.omit({ domainId: true })),
+    });
+
+    try {
+      const response = await this.mistral.chat.complete({
+        model: 'mistral-large-latest',
+        messages: [
+          {
+            role: 'system',
+            content: buildArticlePrompt(name, level),
+          },
+        ],
+        responseFormat: { type: 'json_object' },
+      });
+
+      const content = response.choices?.[0]?.message?.content;
+      if (!content || typeof content !== 'string') return [];
+
+      const parsed = JSON.parse(content);
+      this.logger.log('--------------articles parsed');
+
+      const validated = schema.parse(parsed);
+      this.logger.log('-------------articles validated');
+
+      return validated.articles;
     } catch (error) {
       this.logger.error(error);
       return [];
