@@ -5,6 +5,7 @@ import { AIContentGenerationService } from './ai-content-generation.service';
 import { DomainService } from 'src/domain/domain.service';
 import { DomainDocument } from 'src/domain/entities/domain.entity';
 import { VocabularyService } from 'src/vocabulary/vocabulary.service';
+import { SentenceService } from 'src/sentence/sentence.service';
 
 @Injectable()
 export class DailyChallengeService {
@@ -13,6 +14,7 @@ export class DailyChallengeService {
     private readonly aiContentGenerationService: AIContentGenerationService,
     private readonly domainService: DomainService,
     private readonly vocabularyService: VocabularyService,
+    private readonly sentenceService: SentenceService,
   ) {}
   async create(createDailyChallengeDto: CreateDailyChallengeDto) {
     // 1. generate the 5 vocabularies
@@ -24,22 +26,37 @@ export class DailyChallengeService {
       throw new Error('Domain not found');
     }
 
-    const response = await this.aiContentGenerationService.generateVocabularies(
-      domain as DomainDocument,
-      createDailyChallengeDto.level,
-      5,
-    );
+    // const response = await this.aiContentGenerationService.generateVocabularies(
+    //   domain as DomainDocument,
+    //   createDailyChallengeDto.level,
+    //   5,
+    // );
 
-    response.map(async (v) => {
-      await this.vocabularyService.create({
-        ...v,
+    // response.map(async (v) => {
+    //   await this.vocabularyService.create({
+    //     ...v,
+    //     domainId: domain?._id?.toString(),
+    //   });
+    // });
+
+    // this.logger.log(`✅ Created ${response.length} vocabularies`);
+
+    // 2. generate the 5 sentences
+    const sentencesGenerated =
+      await this.aiContentGenerationService.generateSentences(
+        domain as DomainDocument,
+        createDailyChallengeDto.level,
+        5,
+      );
+
+    sentencesGenerated.map(async (s) => {
+      await this.sentenceService.create({
+        ...s,
         domainId: domain?._id?.toString(),
       });
     });
+    this.logger.log(`✅ Created ${sentencesGenerated.length} sentences`);
 
-    this.logger.log(`✅ Created ${response.length} vocabularies`);
-
-    // 2. generate the 5 sentences
     // 3. generate the 3 articles
     // 4. create the daily challenge
     return 'This action adds a new dailyChallenge';

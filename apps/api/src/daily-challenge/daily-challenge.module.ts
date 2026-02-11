@@ -15,6 +15,11 @@ import {
   Vocabulary,
   VocabularyEntity,
 } from 'src/vocabulary/entities/vocabulary.entity';
+import { SentenceService } from 'src/sentence/sentence.service';
+import {
+  Sentence,
+  SentenceEntity,
+} from 'src/sentence/entities/sentence.entity';
 
 @Module({
   imports: [
@@ -22,6 +27,7 @@ import {
       { name: DailyChallenge.name, schema: DailyChallengeEntity },
       { name: Domain.name, schema: DomainEntity },
       { name: Vocabulary.name, schema: VocabularyEntity },
+      { name: Sentence.name, schema: SentenceEntity },
     ]),
   ],
   controllers: [DailyChallengeController],
@@ -30,6 +36,7 @@ import {
     AIContentGenerationService,
     DomainService,
     VocabularyService,
+    SentenceService,
   ],
 })
 export class DailyChallengeModule {}
