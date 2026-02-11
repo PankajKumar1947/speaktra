@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CreateDailyChallengeDto } from './dto/create-daily-challenge.dto';
 import { UpdateDailyChallengeDto } from './dto/update-daily-challenge.dto';
 import { AIContentGenerationService } from './ai-content-generation.service';
@@ -7,17 +7,25 @@ import { DomainDocument } from 'src/domain/entities/domain.entity';
 import { VocabularyService } from 'src/vocabulary/vocabulary.service';
 import { SentenceService } from 'src/sentence/sentence.service';
 import { ArticleService } from 'src/article/article.service';
+import mongoose, { Model } from 'mongoose';
+import { DailyChallenge } from './entities/daily-challenge.entity';
+import { InjectModel } from '@nestjs/mongoose';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class DailyChallengeService {
   private readonly logger = new Logger(DailyChallengeService.name);
   constructor(
+    @InjectModel(DailyChallenge.name)
+    private readonly dailyChallengeModel: Model<DailyChallenge>,
     private readonly aiContentGenerationService: AIContentGenerationService,
     private readonly domainService: DomainService,
     private readonly vocabularyService: VocabularyService,
     private readonly sentenceService: SentenceService,
     private readonly articleService: ArticleService,
+    private readonly userService: UsersService,
   ) {}
+
   async create(createDailyChallengeDto: CreateDailyChallengeDto) {
     // 1. generate the 5 vocabularies
     const domain = await this.domainService.findOne(
@@ -28,6 +36,16 @@ export class DailyChallengeService {
       throw new Error('Domain not found');
     }
 
+    const dailyChallenge = {
+      sequenceNumber: 1,
+      domain: domain._id as mongoose.Types.ObjectId,
+      difficulty: createDailyChallengeDto.difficulty,
+      level: createDailyChallengeDto.level,
+      vocabularies: [] as mongoose.Types.ObjectId[],
+      sentences: [] as mongoose.Types.ObjectId[],
+      articles: [] as mongoose.Types.ObjectId[],
+    };
+
     const vocabulariesGenerated =
       await this.aiContentGenerationService.generateVocabularies(
         domain as DomainDocument,
@@ -35,12 +53,13 @@ export class DailyChallengeService {
         5,
       );
 
-    vocabulariesGenerated.map(async (v) => {
-      await this.vocabularyService.create({
+    for (const v of vocabulariesGenerated) {
+      const res = await this.vocabularyService.create({
         ...v,
         domainId: domain?._id?.toString(),
       });
-    });
+      dailyChallenge.vocabularies.push(res._id as mongoose.Types.ObjectId);
+    }
 
     this.logger.log(`✅ Created ${vocabulariesGenerated.length} vocabularies`);
 
@@ -52,12 +71,13 @@ export class DailyChallengeService {
         5,
       );
 
-    sentencesGenerated.map(async (s) => {
-      await this.sentenceService.create({
+    for (const s of sentencesGenerated) {
+      const res = await this.sentenceService.create({
         ...s,
         domainId: domain?._id?.toString(),
       });
-    });
+      dailyChallenge.sentences.push(res._id as mongoose.Types.ObjectId);
+    }
     this.logger.log(`✅ Created ${sentencesGenerated.length} sentences`);
 
     // 3. generate the 3 articles
@@ -67,31 +87,90 @@ export class DailyChallengeService {
         createDailyChallengeDto.level,
       );
 
-    articlesGenerated.map(async (a) => {
-      await this.articleService.create({
+    for (const a of articlesGenerated) {
+      const res = await this.articleService.create({
         ...a,
         domainId: domain?._id?.toString(),
       });
-    });
+      dailyChallenge.articles.push(res._id as mongoose.Types.ObjectId);
+    }
     this.logger.log(`✅ Created ${articlesGenerated.length} articles`);
+
     // 4. create the daily challenge
-    return 'This action adds a new dailyChallenge';
+    const dailyChallengeCreated = await this.dailyChallengeModel.create(
+      dailyChallenge as unknown as DailyChallenge,
+    );
+    this.logger.log(`✅ Created daily challenge`);
+    return dailyChallengeCreated;
   }
 
   findAll() {
-    return `This action returns all dailyChallenge`;
+    return this.dailyChallengeModel.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} dailyChallenge`;
+  findOne(id: string) {
+    return this.dailyChallengeModel
+      .findById(id)
+      .populate('domain')
+      .populate('vocabularies')
+      .populate('sentences')
+      .populate('articles');
   }
 
-  update(id: number, updateDailyChallengeDto: UpdateDailyChallengeDto) {
-    console.log(updateDailyChallengeDto);
-    return `This action updates a #${id} dailyChallenge`;
+  update(id: string, updateDailyChallengeDto: UpdateDailyChallengeDto) {
+    return this.dailyChallengeModel.findByIdAndUpdate(
+      id,
+      updateDailyChallengeDto,
+      { new: true },
+    );
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} dailyChallenge`;
+  async remove(id: string) {
+    // deleting this daily challenge and its related vocabularies, sentences, and articles
+    const dailyChallenge = await this.dailyChallengeModel.findById(id);
+    if (!dailyChallenge) {
+      throw new Error('Daily challenge not found');
+    }
+
+    for (const v of dailyChallenge.vocabularies) {
+      await this.vocabularyService.remove(v.toString());
+    }
+    for (const s of dailyChallenge.sentences) {
+      await this.sentenceService.remove(s.toString());
+    }
+    for (const a of dailyChallenge.articles) {
+      await this.articleService.remove(a.toString());
+    }
+
+    return this.dailyChallengeModel.findByIdAndDelete(id);
+  }
+
+  async getDailyChallengeForUser(userId: string) {
+    // get the user's domain and level
+    const user = await this.userService.findOne(userId);
+    if (!user || !user.createdAt) {
+      throw new Error('User not found');
+    }
+
+    const sequenceNumber =
+      Math.floor(
+        (Date.now() - user.createdAt.getTime()) / (1000 * 60 * 60 * 24),
+      ) + 1;
+    this.logger.log(`Sequence number for user ${user.name}: ${sequenceNumber}`);
+
+    const dailyChallenge = await this.dailyChallengeModel
+      .findOne({
+        domain: user.domain,
+        level: user.level,
+        sequenceNumber: sequenceNumber,
+      })
+      .populate('domain')
+      .populate('vocabularies')
+      .populate('sentences')
+      .populate('articles');
+    if (!dailyChallenge) {
+      throw new NotFoundException('Daily challenge not found');
+    }
+    return dailyChallenge;
   }
 }

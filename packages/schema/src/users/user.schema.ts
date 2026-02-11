@@ -19,7 +19,7 @@ export const UserSchema = z.object({
     .string()
     .min(6, { message: "Password must be at least 6 characters long" })
     .describe("The hashed password of the user"),
-  domain: DomainEnum.describe("The professional domain/sector of the user"),
+  domain: z.string().describe("The professional domain/sector of the user"),
   level: LevelEnum.describe("The proficiency level of the user"),
   goals: z
     .array(GoalEnum)

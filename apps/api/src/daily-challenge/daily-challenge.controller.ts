@@ -6,10 +6,15 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { DailyChallengeService } from './daily-challenge.service';
 import { CreateDailyChallengeDto } from './dto/create-daily-challenge.dto';
 import { UpdateDailyChallengeDto } from './dto/update-daily-challenge.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
+import type { Request } from 'express';
 
 @Controller('daily-challenge')
 export class DailyChallengeController {
@@ -25,9 +30,20 @@ export class DailyChallengeController {
     return this.dailyChallengeService.findAll();
   }
 
+  @Get('user')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  getDailyChallengeForUser(@Req() req: Request) {
+    const userId = req.user?.sub;
+    if (!userId) {
+      throw new Error('User not found');
+    }
+    return this.dailyChallengeService.getDailyChallengeForUser(userId);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.dailyChallengeService.findOne(+id);
+    return this.dailyChallengeService.findOne(id);
   }
 
   @Patch(':id')
@@ -35,11 +51,11 @@ export class DailyChallengeController {
     @Param('id') id: string,
     @Body() updateDailyChallengeDto: UpdateDailyChallengeDto,
   ) {
-    return this.dailyChallengeService.update(+id, updateDailyChallengeDto);
+    return this.dailyChallengeService.update(id, updateDailyChallengeDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.dailyChallengeService.remove(+id);
+    return this.dailyChallengeService.remove(id);
   }
 }

@@ -22,6 +22,8 @@ import {
 } from 'src/sentence/entities/sentence.entity';
 import { Article, ArticleEntity } from 'src/article/entities/article.entity';
 import { ArticleService } from 'src/article/article.service';
+import { UsersService } from 'src/users/users.service';
+import { User, UserEntity } from 'src/users/entities/user.entity';
 
 @Module({
   imports: [
@@ -31,6 +33,7 @@ import { ArticleService } from 'src/article/article.service';
       { name: Vocabulary.name, schema: VocabularyEntity },
       { name: Sentence.name, schema: SentenceEntity },
       { name: Article.name, schema: ArticleEntity },
+      { name: User.name, schema: UserEntity },
     ]),
   ],
   controllers: [DailyChallengeController],
@@ -41,6 +44,7 @@ import { ArticleService } from 'src/article/article.service';
     VocabularyService,
     SentenceService,
     ArticleService,
+    UsersService,
   ],
 })
 export class DailyChallengeModule {}
