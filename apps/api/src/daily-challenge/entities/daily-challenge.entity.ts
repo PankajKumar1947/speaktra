@@ -9,7 +9,7 @@ export type DailyChallengeDocument = HydratedDocument<DailyChallenge>;
 
 @Schema({ timestamps: true })
 export class DailyChallenge {
-  @Prop({ required: true, unique: true })
+  @Prop({ required: true })
   sequenceNumber!: number;
 
   @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'Domain' })
@@ -33,3 +33,8 @@ export class DailyChallenge {
 
 export const DailyChallengeEntity =
   SchemaFactory.createForClass(DailyChallenge);
+
+DailyChallengeEntity.index(
+  { sequenceNumber: 1, domain: 1, level: 1 },
+  { unique: true },
+);

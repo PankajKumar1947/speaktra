@@ -46,8 +46,10 @@ export class DailyChallengeService {
       articles: [] as mongoose.Types.ObjectId[],
     };
 
-    const lastVocabularies =
-      await this.vocabularyService.getLastNVocabularies(50);
+    const lastVocabularies = await this.vocabularyService.getLastNVocabularies(
+      50,
+      domain._id,
+    );
 
     const vocabulariesGenerated =
       await this.aiContentGenerationService.generateVocabularies({

@@ -3,7 +3,7 @@ import { CreateVocabularyDto } from './dto/create-vocabulary.dto';
 import { UpdateVocabularyDto } from './dto/update-vocabulary.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Vocabulary } from './entities/vocabulary.entity';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 
 @Injectable()
 export class VocabularyService {
@@ -38,9 +38,9 @@ export class VocabularyService {
     return this.vocabularyModel.findByIdAndDelete(id);
   }
 
-  async getLastNVocabularies(count: number) {
+  async getLastNVocabularies(count: number, domainId: mongoose.Types.ObjectId) {
     const vocabularies = await this.vocabularyModel
-      .find()
+      .find({ domainId })
       .sort({ createdAt: -1 })
       .limit(count)
       .select('word');
