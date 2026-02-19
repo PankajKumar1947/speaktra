@@ -48,7 +48,7 @@ export class DailyChallengeService {
 
     const lastVocabularies =
       await this.vocabularyService.getLastNVocabularies(50);
-    console.log('last 50 vocabularies', lastVocabularies);
+
     const vocabulariesGenerated =
       await this.aiContentGenerationService.generateVocabularies({
         domain: domain.name,
@@ -69,11 +69,12 @@ export class DailyChallengeService {
 
     // 2. generate the 5 sentences
     const sentencesGenerated =
-      await this.aiContentGenerationService.generateSentences(
-        domain as DomainDocument,
-        createDailyChallengeDto.level,
-        5,
-      );
+      await this.aiContentGenerationService.generateSentences({
+        domain: domain.name,
+        level: createDailyChallengeDto.level,
+        count: 5,
+        vocabBasedOn: vocabulariesGenerated.map((v) => v.word),
+      });
 
     for (const s of sentencesGenerated) {
       const res = await this.sentenceService.create({

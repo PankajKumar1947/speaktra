@@ -12,7 +12,10 @@ import z from 'zod';
 import { buildVocabularyPrompt } from './ai-prompts/vocabulary.prompt';
 import { buildSentencePrompt } from './ai-prompts/sentence.prompt';
 import { buildArticlePrompt } from './ai-prompts/article.prompt';
-import { GenerateVocabularyDto } from './dto/ai-content-generation.dto';
+import {
+  GenerateSentencesDto,
+  GenerateVocabularyDto,
+} from './dto/ai-content-generation.dto';
 
 @Injectable()
 export class AIContentGenerationService {
@@ -44,7 +47,7 @@ export class AIContentGenerationService {
             content: buildVocabularyPrompt(domain, level, count),
           },
           {
-            role: 'user',
+            role: 'system',
             content: `Previously generated words: ${lastVocabularies.join(', ')}.               
               ULTRA IMPORTANT: 
               1. Do NOT repeat any of the words listed above.
@@ -74,13 +77,8 @@ export class AIContentGenerationService {
     }
   }
 
-  async generateSentences(
-    domain: DomainDocument,
-    level: Level,
-    count: number = 5,
-  ) {
-    const { _id, name } = domain;
-    console.log('domain Id', _id);
+  async generateSentences(dto: GenerateSentencesDto) {
+    const { domain, level, count, vocabBasedOn } = dto;
 
     const schema = z.object({
       sentences: z.array(CreateSentenceSchema.omit({ domainId: true })),
@@ -92,7 +90,18 @@ export class AIContentGenerationService {
         messages: [
           {
             role: 'system',
-            content: buildSentencePrompt(name, level, count),
+            content: buildSentencePrompt(domain, level, count),
+          },
+          {
+            role: 'system',
+            content: `ULTRA IMPORTANT: 
+              1. Generate sentences using ONLY the words provided below.
+              2. Do NOT use any other words.
+              3. Use each word AT LEAST once.
+              4. Make the sentences meaningful and grammatically correct.
+              5. Scale the difficulty appropriately for the "${level}" level.
+              
+              Words to use: ${vocabBasedOn.join(', ')}.`,
           },
         ],
         responseFormat: { type: 'json_object' },
