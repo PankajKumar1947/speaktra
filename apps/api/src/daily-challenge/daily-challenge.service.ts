@@ -1,4 +1,9 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateDailyChallengeDto } from './dto/create-daily-challenge.dto';
 import { UpdateDailyChallengeDto } from './dto/update-daily-challenge.dto';
 import { AIContentGenerationService } from './ai-content-generation.service';
@@ -27,6 +32,16 @@ export class DailyChallengeService {
   ) {}
 
   async create(createDailyChallengeDto: CreateDailyChallengeDto) {
+    // check if the daily challenge already exists
+    const existingDailyChallenge = await this.dailyChallengeModel.findOne({
+      domain: createDailyChallengeDto.domain,
+      difficulty: createDailyChallengeDto.difficulty,
+      level: createDailyChallengeDto.level,
+      sequenceNumber: createDailyChallengeDto.sequenceNumber,
+    });
+    if (existingDailyChallenge) {
+      throw new BadRequestException('Daily challenge already exists');
+    }
     // 1. generate the 5 vocabularies
     const domain = await this.domainService.findOne(
       createDailyChallengeDto.domain,
