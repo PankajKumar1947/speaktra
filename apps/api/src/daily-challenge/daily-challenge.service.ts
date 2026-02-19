@@ -46,12 +46,16 @@ export class DailyChallengeService {
       articles: [] as mongoose.Types.ObjectId[],
     };
 
+    const lastVocabularies =
+      await this.vocabularyService.getLastNVocabularies(50);
+    console.log('last 50 vocabularies', lastVocabularies);
     const vocabulariesGenerated =
-      await this.aiContentGenerationService.generateVocabularies(
-        domain as DomainDocument,
-        createDailyChallengeDto.level,
-        5,
-      );
+      await this.aiContentGenerationService.generateVocabularies({
+        domain: domain.name,
+        level: createDailyChallengeDto.level,
+        count: 5,
+        lastVocabularies: lastVocabularies,
+      });
 
     for (const v of vocabulariesGenerated) {
       const res = await this.vocabularyService.create({

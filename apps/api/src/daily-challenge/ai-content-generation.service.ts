@@ -12,6 +12,7 @@ import z from 'zod';
 import { buildVocabularyPrompt } from './ai-prompts/vocabulary.prompt';
 import { buildSentencePrompt } from './ai-prompts/sentence.prompt';
 import { buildArticlePrompt } from './ai-prompts/article.prompt';
+import { GenerateVocabularyDto } from './dto/ai-content-generation.dto';
 
 @Injectable()
 export class AIContentGenerationService {
@@ -27,13 +28,8 @@ export class AIContentGenerationService {
     this.mistral = new Mistral({ apiKey });
   }
 
-  async generateVocabularies(
-    domain: DomainDocument,
-    level: Level,
-    count: number = 5,
-  ) {
-    const { _id, name } = domain;
-    console.log('domain Id', _id);
+  async generateVocabularies(dto: GenerateVocabularyDto) {
+    const { domain, level, count, lastVocabularies } = dto;
 
     const schema = z.object({
       vocabularies: z.array(CreateVocabularySchema.omit({ domainId: true })),
@@ -45,10 +41,21 @@ export class AIContentGenerationService {
         messages: [
           {
             role: 'system',
-            content: buildVocabularyPrompt(name, level, count),
+            content: buildVocabularyPrompt(domain, level, count),
+          },
+          {
+            role: 'user',
+            content: `Previously generated words: ${lastVocabularies.join(', ')}.               
+              ULTRA IMPORTANT: 
+              1. Do NOT repeat any of the words listed above.
+              2. Generate COMPLETELY NEW vocabularies.
+              3. Scale the difficulty appropriately for the "${level}" level.`,
           },
         ],
         responseFormat: { type: 'json_object' },
+        temperature: 1,
+        frequencyPenalty: 0.5,
+        presencePenalty: 0.2,
       });
 
       const content = response.choices?.[0]?.message?.content;
@@ -89,6 +96,8 @@ export class AIContentGenerationService {
           },
         ],
         responseFormat: { type: 'json_object' },
+        temperature: 0.8,
+        frequencyPenalty: 0.3,
       });
 
       const content = response.choices?.[0]?.message?.content;
@@ -125,6 +134,8 @@ export class AIContentGenerationService {
           },
         ],
         responseFormat: { type: 'json_object' },
+        temperature: 0.8,
+        frequencyPenalty: 0.3,
       });
 
       const content = response.choices?.[0]?.message?.content;

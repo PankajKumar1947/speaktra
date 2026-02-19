@@ -37,4 +37,13 @@ export class VocabularyService {
   remove(id: string) {
     return this.vocabularyModel.findByIdAndDelete(id);
   }
+
+  async getLastNVocabularies(count: number) {
+    const vocabularies = await this.vocabularyModel
+      .find()
+      .sort({ createdAt: -1 })
+      .limit(count)
+      .select('word');
+    return vocabularies.map((v) => v.word);
+  }
 }
