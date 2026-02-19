@@ -28,7 +28,7 @@ export class AuthService {
     }
 
     // Create new user (password will be hashed by the pre-save hook)
-    const user = await this.userModel.create(registerDto);
+    const user = (await this.userModel.create(registerDto)) as UserDocument;
 
     // Return user without password
     const userData = {

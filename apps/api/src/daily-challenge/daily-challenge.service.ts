@@ -33,7 +33,7 @@ export class DailyChallengeService {
     );
 
     if (!domain) {
-      throw new Error('Domain not found');
+      throw new NotFoundException('Domain not found');
     }
 
     const dailyChallenge = {
@@ -148,8 +148,8 @@ export class DailyChallengeService {
   async getDailyChallengeForUser(userId: string) {
     // get the user's domain and level
     const user = await this.userService.findOne(userId);
-    if (!user || !user.createdAt) {
-      throw new Error('User not found');
+    if (!user || !user.domain || !user.level) {
+      throw new Error('User not found or onboarding not completed');
     }
 
     const sequenceNumber =
