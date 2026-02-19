@@ -19,7 +19,7 @@ export const UserSchema = z.object({
     .string()
     .min(6, { message: "Password must be at least 6 characters long" })
     .describe("The hashed password of the user"),
-  domain: DomainEnum.describe("The professional domain/sector of the user"),
+  domain: z.string().describe("The professional domain/sector of the user"),
   level: LevelEnum.describe("The proficiency level of the user"),
   goals: z
     .array(GoalEnum)
@@ -54,3 +54,19 @@ export const UpdateUserSchema = UserSchema.omit({
   createdAt: true,
   updatedAt: true,
 }).partial();
+
+// Schema for completing user onboarding
+export const CompleteOnboardingSchema = z.object({
+  domain: DomainEnum.describe("The professional domain/sector of the user"),
+  level: LevelEnum.describe("The proficiency level of the user"),
+  goals: z
+    .array(GoalEnum)
+    .min(1, { message: "At least one learning goal is required" })
+    .describe("The learning goals of the user"),
+  dailyCommitment: z
+    .number()
+    .int()
+    .min(1, { message: "Daily commitment must be at least 1 minute" })
+    .optional()
+    .describe("Daily commitment in minutes (optional)"),
+});

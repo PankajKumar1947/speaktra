@@ -8,30 +8,35 @@ import {
   Delete,
   UseGuards,
 } from '@nestjs/common';
-import { DomainService } from './domain.service';
+import { SentenceService } from './sentence.service';
 import { Role } from '@repo/schema';
-import { CreateDomainDto } from './dto/create-domain.dto';
-import { UpdateDomainDto } from './dto/update-domain.dto';
+import { CreateSentenceDto } from './dto/create-sentence.dto';
+import { UpdateSentenceDto } from './dto/update-sentence.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { RolesGuard } from 'src/auth/roles.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { Roles } from 'src/auth/roles.decorator';
 
-@Controller('domain')
-export class DomainController {
-  constructor(private readonly domainService: DomainService) {}
+@Controller('sentence')
+export class SentenceController {
+  constructor(private readonly sentenceService: SentenceService) {}
 
   @Post()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   @ApiBearerAuth('JWT-auth')
-  create(@Body() createDomainDto: CreateDomainDto) {
-    return this.domainService.create(createDomainDto);
+  create(@Body() createSentenceDto: CreateSentenceDto) {
+    return this.sentenceService.create(createSentenceDto);
   }
 
   @Get()
   findAll() {
-    return this.domainService.findAll();
+    return this.sentenceService.findAll();
+  }
+
+  @Get('domain/:domainId')
+  findByDomain(@Param('domainId') domainId: string) {
+    return this.sentenceService.findByDomain(domainId);
   }
 
   @Get(':id')
@@ -39,15 +44,18 @@ export class DomainController {
   @Roles(Role.ADMIN)
   @ApiBearerAuth('JWT-auth')
   findOne(@Param('id') id: string) {
-    return this.domainService.findOne(id);
+    return this.sentenceService.findOne(id);
   }
 
   @Patch(':id')
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   @ApiBearerAuth('JWT-auth')
-  update(@Param('id') id: string, @Body() updateDomainDto: UpdateDomainDto) {
-    return this.domainService.update(id, updateDomainDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateSentenceDto: UpdateSentenceDto,
+  ) {
+    return this.sentenceService.update(id, updateSentenceDto);
   }
 
   @Delete(':id')
@@ -55,6 +63,6 @@ export class DomainController {
   @Roles(Role.ADMIN)
   @ApiBearerAuth('JWT-auth')
   remove(@Param('id') id: string) {
-    return this.domainService.remove(id);
+    return this.sentenceService.remove(id);
   }
 }
