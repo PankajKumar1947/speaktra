@@ -1,6 +1,6 @@
 "use client";
 
-import { useAuth } from "../hooks/mutation/use-auth";
+import { useAuth } from "@repo/query";
 
 export default function Home() {
   const { loginMutation } = useAuth();
