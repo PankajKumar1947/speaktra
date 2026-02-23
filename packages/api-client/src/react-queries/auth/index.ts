@@ -1,12 +1,10 @@
 export const authQueries = {
   register: {
     key: "register",
-    url: "/auth/register",
-    method: "POST",
+    endpoint: "/auth/register",
   },
   login: {
     key: "login",
-    url: "/auth/login",
-    method: "POST",
+    endpoint: "/auth/login",
   },
 };
