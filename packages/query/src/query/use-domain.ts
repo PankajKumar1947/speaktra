@@ -4,7 +4,7 @@ import { findAllDomains, findOneDomain, domainQueries } from "@repo/api-client";
 export const useDomains = () => {
   return useQuery({
     queryKey: domainQueries.findAll.key,
-    queryFn: findAllDomains,
+    queryFn: () => findAllDomains(),
   });
 };
 

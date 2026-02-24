@@ -10,33 +10,54 @@ import { useRouter } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { Button } from "../../components";
 import Theme from "../../constants/theme";
-import type { Domain } from "@repo/schema";
+import { useDomains } from "@repo/query";
+import type { DomainEntity } from "@repo/schema";
 
-const DOMAINS: { value: Domain; label: string; description: string }[] = [
-  { value: "Corporate", label: "Corporate", description: "Business & Office" },
-  { value: "Healthcare", label: "Healthcare", description: "Medical & Care" },
-  { value: "IT", label: "IT", description: "Technology & Software" },
-  { value: "Legal", label: "Legal", description: "Law & Justice" },
-  {
-    value: "Hospitality",
-    label: "Hospitality",
-    description: "Hotels & Service",
-  },
-];
-
-/**
- * Domain Selection Screen
- * Choose professional sector for personalized learning
- */
 export default function DomainSelectionScreen() {
   const router = useRouter();
-  const [selectedDomain, setSelectedDomain] = useState<Domain | null>(null);
+  const [selectedDomain, setSelectedDomain] = useState<string | null>(null);
+
+  const { data: domains, isLoading, isError } = useDomains();
 
   const handleContinue = () => {
     if (selectedDomain) {
       router.push("/(auth)/level-selection");
     }
   };
+
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <LinearGradient
+          colors={Theme.colors.gradientPrimary}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.header}
+        >
+          <Text style={styles.headerTitle}>Choose Your Domain</Text>
+          <Text style={styles.headerSubtitle}>Loading domains...</Text>
+        </LinearGradient>
+      </View>
+    );
+  }
+
+  if (isError) {
+    return (
+      <View style={styles.container}>
+        <LinearGradient
+          colors={Theme.colors.gradientPrimary}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.header}
+        >
+          <Text style={styles.headerTitle}>Choose Your Domain</Text>
+          <Text style={styles.headerSubtitle}>
+            Failed to load domains. Please try again later.
+          </Text>
+        </LinearGradient>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -58,32 +79,34 @@ export default function DomainSelectionScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        {DOMAINS.map((domain) => (
+        {domains?.map((domain: DomainEntity) => (
           <TouchableOpacity
-            key={domain.value}
+            key={domain._id}
             style={[
               styles.card,
-              selectedDomain === domain.value && styles.cardSelected,
+              selectedDomain === domain._id && styles.cardSelected,
             ]}
-            onPress={() => setSelectedDomain(domain.value)}
+            onPress={() => setSelectedDomain(domain._id)}
           >
             <Text
               style={[
                 styles.cardTitle,
-                selectedDomain === domain.value && styles.cardTitleSelected,
+                selectedDomain === domain._id && styles.cardTitleSelected,
               ]}
             >
-              {domain.label}
+              {domain.name}
             </Text>
-            <Text
-              style={[
-                styles.cardDescription,
-                selectedDomain === domain.value &&
-                  styles.cardDescriptionSelected,
-              ]}
-            >
-              {domain.description}
-            </Text>
+            {domain.description ? (
+              <Text
+                style={[
+                  styles.cardDescription,
+                  selectedDomain === domain._id &&
+                    styles.cardDescriptionSelected,
+                ]}
+              >
+                {domain.description}
+              </Text>
+            ) : null}
           </TouchableOpacity>
         ))}
       </ScrollView>

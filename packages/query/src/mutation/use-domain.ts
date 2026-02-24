@@ -18,26 +18,25 @@ export const useCreateDomain = () => {
   });
 };
 
-export const useUpdateDomain = () => {
+export const useUpdateDomain = (_id: string) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationKey: domainQueries.update.key,
-    mutationFn: ({ id, data }: { id: string; data: UpdateDomainEntity }) =>
-      updateDomain(id, data),
-    onSuccess: (data, variables) => {
+    mutationFn: (data: UpdateDomainEntity) => updateDomain(_id, data),
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: domainQueries.findAll.key });
       queryClient.invalidateQueries({
-        queryKey: [...domainQueries.findOne.key, variables.id],
+        queryKey: domainQueries.findOne.key,
       });
     },
   });
 };
 
-export const useRemoveDomain = () => {
+export const useRemoveDomain = (_id: string) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationKey: domainQueries.remove.key,
-    mutationFn: (id: string) => removeDomain(id),
+    mutationFn: () => removeDomain(_id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: domainQueries.findAll.key });
     },

@@ -50,10 +50,10 @@ export default function LoginScreen() {
   };
 
   // TODO: Implement Google OAuth
-  // const handleGoogleLogin = () => {
-  //   // Placeholder for Google OAuth
-  //   router.push("/(auth)/domain-selection");
-  // };
+  const handleGoogleLogin = () => {
+    // Placeholder for Google OAuth
+    router.push("/(auth)/domain-selection");
+  };
 
   return (
     <LinearGradient
@@ -83,7 +83,7 @@ export default function LoginScreen() {
           </Text>
 
           {/* Google Login Button */}
-          {/* <TouchableOpacity
+          <TouchableOpacity
             style={styles.socialButton}
             onPress={handleGoogleLogin}
           >
@@ -95,7 +95,7 @@ export default function LoginScreen() {
             <View style={styles.dividerLine} />
             <Text style={styles.dividerText}>OR</Text>
             <View style={styles.dividerLine} />
-          </View> */}
+          </View>
 
           <FormProvider {...methods}>
             {/* Email Input */}

@@ -2,7 +2,7 @@ import { z } from "zod";
 
 // Full domain entity schema
 export const DomainSchema = z.object({
-  id: z
+  _id: z
     .string()
     .describe("The unique identifier of the domain (MongoDB ObjectId)"),
   name: z
@@ -11,25 +11,25 @@ export const DomainSchema = z.object({
     .describe("The name of the domain"),
   description: z.string().optional().describe("Description of the domain"),
   createdAt: z
-    .date()
+    .string()
     .optional()
     .describe("The date and time when the domain was created"),
   updatedAt: z
-    .date()
+    .string()
     .optional()
     .describe("The date and time when the domain was last updated"),
 });
 
 // Schema for creating a new domain (omits system-generated fields)
 export const CreateDomainSchema = DomainSchema.omit({
-  id: true,
+  _id: true,
   createdAt: true,
   updatedAt: true,
 });
 
 // Schema for updating a domain (partial with no system fields)
 export const UpdateDomainSchema = DomainSchema.omit({
-  id: true,
+  _id: true,
   createdAt: true,
   updatedAt: true,
 }).partial();
