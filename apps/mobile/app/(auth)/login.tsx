@@ -1,46 +1,54 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-} from "react-native";
+import React from "react";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import { useForm, FormProvider } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Input, Button } from "../../components";
 import Theme from "../../constants/theme";
 import { useAuth } from "@repo/query";
+import { LoginBody, LoginSchema } from "@repo/schema";
+import Toast from "react-native-toast-message";
 
-/**
- * Login Screen
- * Email/Phone authentication with social login options
- */
 export default function LoginScreen() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const { loginMutation } = useAuth();
   const { mutate: login, isPending } = loginMutation;
 
-  const handleContinue = () => {
-    const payload = {
-      email,
-      password,
-    };
+  const methods = useForm<LoginBody>({
+    resolver: zodResolver(LoginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
 
-    login(payload, {
+  const handleContinue = (data: LoginBody) => {
+    login(data, {
       onSuccess: () => {
+        Toast.show({
+          type: "success",
+          text1: "Login Successful",
+          text2: "You have successfully logged in.",
+        });
         router.push("/(auth)/domain-selection");
+      },
+      onError: (error) => {
+        Toast.show({
+          type: "error",
+          text1: "Login Failed",
+          text2: error.message || "An unexpected error occurred.",
+        });
       },
     });
   };
 
-  const handleGoogleLogin = () => {
-    // Placeholder for Google OAuth
-    router.push("/(auth)/domain-selection");
-  };
+  // TODO: Implement Google OAuth
+  // const handleGoogleLogin = () => {
+  //   // Placeholder for Google OAuth
+  //   router.push("/(auth)/domain-selection");
+  // };
 
   return (
     <LinearGradient
@@ -70,7 +78,7 @@ export default function LoginScreen() {
           </Text>
 
           {/* Google Login Button */}
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={styles.socialButton}
             onPress={handleGoogleLogin}
           >
@@ -78,48 +86,49 @@ export default function LoginScreen() {
             <Text style={styles.socialButtonText}>Continue with Google</Text>
           </TouchableOpacity>
 
-          {/* Divider */}
           <View style={styles.divider}>
             <View style={styles.dividerLine} />
             <Text style={styles.dividerText}>OR</Text>
             <View style={styles.dividerLine} />
-          </View>
+          </View> */}
 
-          {/* Email Input */}
-          <Input
-            placeholder="Email address"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-            leftIcon={
-              <Ionicons
-                name="mail"
-                size={20}
-                color={Theme.colors.textSecondary}
-              />
-            }
-          />
+          <FormProvider {...methods}>
+            {/* Email Input */}
+            <Input
+              name="email"
+              placeholder="Email address"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              leftIcon={
+                <Ionicons
+                  name="mail"
+                  size={20}
+                  color={Theme.colors.textSecondary}
+                />
+              }
+            />
 
-          <Input
-            placeholder="Password"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-            leftIcon={
-              <Ionicons
-                name="lock-closed"
-                size={20}
-                color={Theme.colors.textSecondary}
-              />
-            }
-          />
+            {/* Password Input */}
+            <Input
+              name="password"
+              placeholder="Password"
+              secureTextEntry
+              showPasswordToggle
+              leftIcon={
+                <Ionicons
+                  name="lock-closed"
+                  size={20}
+                  color={Theme.colors.textSecondary}
+                />
+              }
+            />
+          </FormProvider>
 
           {/* Continue Button */}
           <Button
             title={isPending ? "Loading..." : "Continue"}
-            onPress={handleContinue}
-            disabled={!email || isPending}
+            onPress={methods.handleSubmit(handleContinue)}
+            disabled={isPending}
             style={styles.continueButton}
           />
 

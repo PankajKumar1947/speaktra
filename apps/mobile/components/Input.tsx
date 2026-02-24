@@ -8,9 +8,11 @@ import {
   ViewStyle,
   TouchableOpacity,
 } from "react-native";
+import { useFormContext, useController } from "react-hook-form";
 import Theme from "../constants/theme";
 
 export interface InputProps extends TextInputProps {
+  name?: string;
   label?: string;
   error?: string;
   helperText?: string;
@@ -22,11 +24,13 @@ export interface InputProps extends TextInputProps {
 
 /**
  * Reusable Input Component
- * Supports labels, error states, icons, and password visibility toggle
+ * Supports labels, error states, icons, and password visibility toggle.
+ * Integrated with react-hook-form via name prop.
  */
 export default function Input({
+  name,
   label,
-  error,
+  error: manualError,
   helperText,
   containerStyle,
   leftIcon,
@@ -38,8 +42,22 @@ export default function Input({
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
 
+  const formContext = useFormContext();
+  const isHookForm = !!(name && formContext);
+
+  const { field, fieldState } = isHookForm
+    ? useController({ name, control: formContext.control })
+    : { field: null, fieldState: null };
+
+  const error = manualError || fieldState?.error?.message;
   const hasError = !!error;
   const isPassword = secureTextEntry || showPasswordToggle;
+
+  const value = field ? field.value : textInputProps.value;
+  const onChangeText = (text: string) => {
+    field?.onChange(text);
+    textInputProps.onChangeText?.(text);
+  };
 
   return (
     <View style={[styles.container, containerStyle]}>
@@ -56,6 +74,13 @@ export default function Input({
 
         <TextInput
           {...textInputProps}
+          value={value}
+          onChangeText={onChangeText}
+          onBlur={(e) => {
+            field?.onBlur();
+            setIsFocused(false);
+            textInputProps.onBlur?.(e);
+          }}
           secureTextEntry={isPassword && !isPasswordVisible}
           style={[
             styles.input,
@@ -67,10 +92,6 @@ export default function Input({
           onFocus={(e) => {
             setIsFocused(true);
             textInputProps.onFocus?.(e);
-          }}
-          onBlur={(e) => {
-            setIsFocused(false);
-            textInputProps.onBlur?.(e);
           }}
         />
 
