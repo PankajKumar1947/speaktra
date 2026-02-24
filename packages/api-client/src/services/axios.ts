@@ -8,7 +8,10 @@ export const setAccessToken = (token: string | null) => {
 };
 
 export const apiClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || process.env.API_URL,
+  baseURL:
+    process.env.EXPO_PUBLIC_API_URL ||
+    process.env.NEXT_PUBLIC_API_URL ||
+    process.env.API_URL,
 });
 
 apiClient.interceptors.request.use((config) => {

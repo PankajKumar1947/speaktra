@@ -21,7 +21,8 @@
         "JWT_SECRET",
         "PORT",
         "NEXT_PUBLIC_API_URL",
-        "API_URL"
+        "API_URL",
+        "EXPO_PUBLIC_API_URL"
       ]
     }
   }
