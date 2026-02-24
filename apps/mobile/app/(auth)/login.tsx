@@ -13,14 +13,13 @@ import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input, Button } from "../../components";
 import Theme from "../../constants/theme";
-import { useAuth } from "@repo/query";
+import { useLogin } from "@repo/query";
 import { LoginBody, LoginSchema } from "@repo/schema";
 import Toast from "react-native-toast-message";
 
 export default function LoginScreen() {
   const router = useRouter();
-  const { loginMutation } = useAuth();
-  const { mutate: login, isPending } = loginMutation;
+  const { mutate: login, isPending } = useLogin();
 
   const methods = useForm<LoginBody>({
     resolver: zodResolver(LoginSchema),

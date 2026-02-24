@@ -13,14 +13,13 @@ import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input, Button } from "../../components";
 import Theme from "../../constants/theme";
-import { useAuth } from "@repo/query";
+import { useRegister } from "@repo/query";
 import { RegisterBody, RegisterSchema } from "@repo/schema";
 import Toast from "react-native-toast-message";
 
 export default function RegisterScreen() {
   const router = useRouter();
-  const { registerMutation } = useAuth();
-  const { mutate: register, isPending } = registerMutation;
+  const { mutate: register, isPending } = useRegister();
 
   const methods = useForm<RegisterBody>({
     resolver: zodResolver(RegisterSchema),
