@@ -4,11 +4,18 @@ import { useAuth } from "@repo/query";
 
 export default function Home() {
   const { loginMutation } = useAuth();
+  const { mutate: login } = loginMutation;
 
   const handleLogin = () => {
-    loginMutation.mutate({
+    const payload = {
       email: "test@example.com",
       password: "password",
+    };
+
+    login(payload, {
+      onSuccess: () => {
+        console.log("Login successful");
+      },
     });
   };
 

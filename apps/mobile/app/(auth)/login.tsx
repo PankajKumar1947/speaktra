@@ -11,6 +11,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Input, Button } from "../../components";
 import Theme from "../../constants/theme";
+import { useAuth } from "@repo/query";
 
 /**
  * Login Screen
@@ -19,16 +20,21 @@ import Theme from "../../constants/theme";
 export default function LoginScreen() {
   const router = useRouter();
   const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [password, setPassword] = useState("");
+  const { loginMutation } = useAuth();
+  const { mutate: login, isPending } = loginMutation;
 
   const handleContinue = () => {
-    setLoading(true);
-    // Simulate authentication delay
-    setTimeout(() => {
-      setLoading(false);
-      // Navigate to onboarding or main app
-      router.push("/(auth)/domain-selection");
-    }, 1000);
+    const payload = {
+      email,
+      password,
+    };
+
+    login(payload, {
+      onSuccess: () => {
+        router.push("/(auth)/domain-selection");
+      },
+    });
   };
 
   const handleGoogleLogin = () => {
@@ -95,11 +101,25 @@ export default function LoginScreen() {
             }
           />
 
+          <Input
+            placeholder="Password"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            leftIcon={
+              <Ionicons
+                name="lock-closed"
+                size={20}
+                color={Theme.colors.textSecondary}
+              />
+            }
+          />
+
           {/* Continue Button */}
           <Button
-            title={loading ? "Loading..." : "Continue"}
+            title={isPending ? "Loading..." : "Continue"}
             onPress={handleContinue}
-            disabled={!email || loading}
+            disabled={!email || isPending}
             style={styles.continueButton}
           />
 
