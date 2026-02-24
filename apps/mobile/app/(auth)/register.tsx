@@ -14,47 +14,42 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input, Button } from "../../components";
 import Theme from "../../constants/theme";
 import { useAuth } from "@repo/query";
-import { LoginBody, LoginSchema } from "@repo/schema";
+import { RegisterBody, RegisterSchema } from "@repo/schema";
 import Toast from "react-native-toast-message";
 
-export default function LoginScreen() {
+export default function RegisterScreen() {
   const router = useRouter();
-  const { loginMutation } = useAuth();
-  const { mutate: login, isPending } = loginMutation;
+  const { registerMutation } = useAuth();
+  const { mutate: register, isPending } = registerMutation;
 
-  const methods = useForm<LoginBody>({
-    resolver: zodResolver(LoginSchema),
+  const methods = useForm<RegisterBody>({
+    resolver: zodResolver(RegisterSchema),
     defaultValues: {
+      name: "",
       email: "",
       password: "",
     },
   });
 
-  const handleContinue = (data: LoginBody) => {
-    login(data, {
+  const handleContinue = (data: RegisterBody) => {
+    register(data, {
       onSuccess: () => {
         Toast.show({
           type: "success",
-          text1: "Login Successful",
-          text2: "You have successfully logged in.",
+          text1: "Registration Successful",
+          text2: "Your account has been created.",
         });
         router.push("/(auth)/domain-selection");
       },
       onError: (error) => {
         Toast.show({
           type: "error",
-          text1: "Login Failed",
+          text1: "Registration Failed",
           text2: error.message || "An unexpected error occurred.",
         });
       },
     });
   };
-
-  // TODO: Implement Google OAuth
-  // const handleGoogleLogin = () => {
-  //   // Placeholder for Google OAuth
-  //   router.push("/(auth)/domain-selection");
-  // };
 
   return (
     <LinearGradient
@@ -76,29 +71,28 @@ export default function LoginScreen() {
           <Text style={styles.tagline}>Master English Speaking</Text>
         </View>
 
-        {/* Login Card */}
+        {/* Register Card */}
         <View style={styles.card}>
-          <Text style={styles.title}>Welcome Back</Text>
+          <Text style={styles.title}>Join Us</Text>
           <Text style={styles.subtitle}>
-            Continue your English learning journey
+            Start your English learning journey today
           </Text>
 
-          {/* Google Login Button */}
-          {/* <TouchableOpacity
-            style={styles.socialButton}
-            onPress={handleGoogleLogin}
-          >
-            <Ionicons name="logo-google" size={20} color={Theme.colors.error} />
-            <Text style={styles.socialButtonText}>Continue with Google</Text>
-          </TouchableOpacity>
-
-          <View style={styles.divider}>
-            <View style={styles.dividerLine} />
-            <Text style={styles.dividerText}>OR</Text>
-            <View style={styles.dividerLine} />
-          </View> */}
-
           <FormProvider {...methods}>
+            {/* Name Input */}
+            <Input
+              name="name"
+              placeholder="Full Name"
+              autoCapitalize="words"
+              leftIcon={
+                <Ionicons
+                  name="person"
+                  size={20}
+                  color={Theme.colors.textSecondary}
+                />
+              }
+            />
+
             {/* Email Input */}
             <Input
               name="email"
@@ -130,22 +124,22 @@ export default function LoginScreen() {
             />
           </FormProvider>
 
-          {/* Continue Button */}
+          {/* Create Account Button */}
           <Button
-            title={isPending ? "Loading..." : "Continue"}
+            title={isPending ? "Creating Account..." : "Create Account"}
             onPress={methods.handleSubmit(handleContinue)}
             disabled={isPending}
             style={styles.continueButton}
           />
 
-          {/* Register Link */}
+          {/* Login Link */}
           <TouchableOpacity
-            onPress={() => router.push("/(auth)/register")}
-            style={styles.registerLinkContainer}
+            onPress={() => router.push("/(auth)/login")}
+            style={styles.loginLinkContainer}
           >
-            <Text style={styles.registerLinkText}>
-              Don't have an account?{" "}
-              <Text style={styles.registerLinkHighlight}>Register</Text>
+            <Text style={styles.loginLinkText}>
+              Already have an account?{" "}
+              <Text style={styles.loginLinkHighlight}>Login</Text>
             </Text>
           </TouchableOpacity>
 
@@ -218,50 +212,18 @@ const styles = StyleSheet.create({
     color: Theme.colors.textSecondary,
     marginBottom: Theme.spacing.xl,
   },
-  socialButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: Theme.colors.background,
-    borderWidth: 1,
-    borderColor: Theme.colors.border,
-    borderRadius: Theme.borderRadius.lg,
-    paddingVertical: Theme.spacing.md,
-    paddingHorizontal: Theme.spacing.base,
-    gap: Theme.spacing.sm,
-  },
-  socialButtonText: {
-    fontSize: Theme.typography.fontSize.base,
-    fontWeight: Theme.typography.fontWeight.semiBold,
-    color: Theme.colors.textPrimary,
-  },
-  divider: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginVertical: Theme.spacing.lg,
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: Theme.colors.border,
-  },
-  dividerText: {
-    marginHorizontal: Theme.spacing.md,
-    fontSize: Theme.typography.fontSize.sm,
-    color: Theme.colors.textSecondary,
-  },
   continueButton: {
     marginTop: Theme.spacing.base,
   },
-  registerLinkContainer: {
+  loginLinkContainer: {
     marginTop: Theme.spacing.lg,
     alignItems: "center",
   },
-  registerLinkText: {
+  loginLinkText: {
     fontSize: Theme.typography.fontSize.sm,
     color: Theme.colors.textSecondary,
   },
-  registerLinkHighlight: {
+  loginLinkHighlight: {
     color: Theme.colors.primary,
     fontWeight: Theme.typography.fontWeight.semiBold,
   },
