@@ -76,6 +76,7 @@ export class AuthService {
       refreshToken: this.jwtService.sign(payload, {
         expiresIn: '7d',
       }),
+      onboardingCompleted: user.onboardingCompleted,
     };
   }
 }

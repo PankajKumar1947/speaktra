@@ -40,6 +40,7 @@ export class UsersService {
         level: onboardingData.level,
         goals: onboardingData.goals,
         dailyCommitment: onboardingData.dailyCommitment,
+        onboardingCompleted: true,
       },
       { new: true },
     );

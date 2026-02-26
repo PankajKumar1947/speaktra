@@ -21,7 +21,10 @@ export default function DomainSelectionScreen() {
 
   const handleContinue = () => {
     if (selectedDomain) {
-      router.push("/(auth)/level-selection");
+      router.push({
+        pathname: "/(auth)/level-selection",
+        params: { domain: selectedDomain },
+      });
     }
   };
 

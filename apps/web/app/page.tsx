@@ -1,10 +1,9 @@
 "use client";
 
-import { useAuth } from "@repo/query";
+import { useLogin } from "@repo/query";
 
 export default function Home() {
-  const { loginMutation } = useAuth();
-  const { mutate: login } = loginMutation;
+  const { mutate: login } = useLogin();
 
   const handleLogin = () => {
     const payload = {

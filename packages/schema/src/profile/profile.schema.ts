@@ -1,10 +1,7 @@
 import { z } from "zod";
 import { DomainEnum, LevelEnum } from "../common";
-import { ProfileGoalEnum, TimeCommitmentEnum } from "./profile.enum";
+import { ProfileGoal, ProfileGoalEnum } from "./profile.enum";
 
-/**
- * User Profile Schema for Speaktra
- */
 export const UserProfileSchema = z.object({
   id: z.string(),
   name: z.string(),
@@ -12,7 +9,18 @@ export const UserProfileSchema = z.object({
   domain: DomainEnum,
   level: LevelEnum,
   goals: z.array(ProfileGoalEnum),
-  dailyCommitment: TimeCommitmentEnum,
   createdAt: z.date(),
   onboardingCompleted: z.boolean().default(false),
 });
+
+export const userGoals = [
+  { value: ProfileGoal.FLUENCY, label: "Speak Fluently", icon: "chatbubbles" },
+  {
+    value: ProfileGoal.PRONUNCIATION,
+    label: "Better Pronunciation",
+    icon: "mic",
+  },
+  { value: ProfileGoal.VOCABULARY, label: "Expand Vocabulary", icon: "book" },
+  { value: ProfileGoal.CONFIDENCE, label: "Build Confidence", icon: "trophy" },
+  { value: ProfileGoal.GRAMMAR, label: "Improve Grammar", icon: "construct" },
+];

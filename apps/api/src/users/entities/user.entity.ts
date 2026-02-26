@@ -34,6 +34,9 @@ export class User {
 
   @Prop({ default: Role.USER })
   role!: Role;
+
+  @Prop({ default: false })
+  onboardingCompleted!: boolean;
 }
 
 export const UserEntity = SchemaFactory.createForClass(User);

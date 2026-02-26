@@ -31,13 +31,17 @@ export default function LoginScreen() {
 
   const handleContinue = (data: LoginBody) => {
     login(data, {
-      onSuccess: () => {
+      onSuccess: (data) => {
         Toast.show({
           type: "success",
-          text1: "Login Successful",
+          text1: data?.message || "Login Successful",
           text2: "You have successfully logged in.",
         });
-        router.push("/(auth)/domain-selection");
+        if (data?.onboardingCompleted) {
+          router.push("/(tabs)/home");
+        } else {
+          router.push("/(auth)/domain-selection");
+        }
       },
       onError: (error) => {
         Toast.show({

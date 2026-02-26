@@ -6,41 +6,41 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { Button } from "../../components";
 import Theme from "../../constants/theme";
-import type { Level } from "@repo/schema";
+import { Level } from "@repo/schema";
 
 const LEVELS: { value: Level; label: string; description: string }[] = [
   {
-    value: "Beginner",
+    value: Level.BEGINNER,
     label: "Beginner",
     description: "Starting with basics, learning fundamentals",
   },
   {
-    value: "Intermediate",
+    value: Level.INTERMEDIATE,
     label: "Intermediate",
     description: "Can communicate, improving fluency",
   },
   {
-    value: "Advanced",
+    value: Level.ADVANCED,
     label: "Advanced",
     description: "Fluent speaker, perfecting skills",
   },
 ];
 
-/**
- * Level Selection Screen
- * Choose English proficiency level
- */
 export default function LevelSelectionScreen() {
   const router = useRouter();
+  const { domain } = useLocalSearchParams<{ domain: string }>();
   const [selectedLevel, setSelectedLevel] = useState<Level | null>(null);
 
   const handleContinue = () => {
     if (selectedLevel) {
-      router.push("/(auth)/goal-selection");
+      router.push({
+        pathname: "/(auth)/goal-selection",
+        params: { domain, level: selectedLevel },
+      });
     }
   };
 

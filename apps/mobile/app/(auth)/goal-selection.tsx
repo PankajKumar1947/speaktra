@@ -6,34 +6,22 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Button } from "../../components";
 import Theme from "../../constants/theme";
-import type { Goal } from "@repo/schema";
+import { ProfileGoal, userGoals } from "@repo/schema";
 
-const GOALS: {
-  value: Goal;
-  label: string;
-  icon: keyof typeof Ionicons.glyphMap;
-}[] = [
-  { value: "Fluency", label: "Speak Fluently", icon: "chatbubbles" },
-  { value: "Pronunciation", label: "Better Pronunciation", icon: "mic" },
-  { value: "Vocabulary", label: "Expand Vocabulary", icon: "book" },
-  { value: "Confidence", label: "Build Confidence", icon: "trophy" },
-  { value: "Grammar", label: "Improve Grammar", icon: "construct" },
-];
-
-/**
- * Goal Selection Screen
- * Multi-select learning goals
- */
 export default function GoalSelectionScreen() {
   const router = useRouter();
-  const [selectedGoals, setSelectedGoals] = useState<Goal[]>([]);
+  const { domain, level } = useLocalSearchParams<{
+    domain: string;
+    level: string;
+  }>();
+  const [selectedGoals, setSelectedGoals] = useState<ProfileGoal[]>([]);
 
-  const toggleGoal = (goal: Goal) => {
+  const toggleGoal = (goal: ProfileGoal) => {
     if (selectedGoals.includes(goal)) {
       setSelectedGoals(selectedGoals.filter((g) => g !== goal));
     } else {
@@ -43,7 +31,14 @@ export default function GoalSelectionScreen() {
 
   const handleContinue = () => {
     if (selectedGoals.length > 0) {
-      router.push("/(auth)/time-commitment");
+      router.push({
+        pathname: "/(tabs)/home",
+        params: {
+          domain,
+          level,
+          goals: selectedGoals.join(","),
+        },
+      });
     }
   };
 
@@ -67,7 +62,7 @@ export default function GoalSelectionScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {GOALS.map((goal) => {
+        {userGoals.map((goal) => {
           const isSelected = selectedGoals.includes(goal.value);
           return (
             <TouchableOpacity
@@ -83,7 +78,7 @@ export default function GoalSelectionScreen() {
                   ]}
                 >
                   <Ionicons
-                    name={goal.icon}
+                    name={goal.icon as keyof typeof Ionicons.glyphMap}
                     size={24}
                     color={
                       isSelected
