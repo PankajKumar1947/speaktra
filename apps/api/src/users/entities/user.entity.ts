@@ -29,9 +29,6 @@ export class User {
   @Prop({ type: [String], default: [] })
   goals?: Goal[];
 
-  @Prop({ required: false, min: 1 })
-  dailyCommitment?: number;
-
   @Prop({ default: Role.USER })
   role!: Role;
 

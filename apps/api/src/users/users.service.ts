@@ -36,10 +36,9 @@ export class UsersService {
     return this.userModel.findByIdAndUpdate(
       userId,
       {
-        domain: onboardingData.domain,
+        domain: onboardingData.domainId,
         level: onboardingData.level,
         goals: onboardingData.goals,
-        dailyCommitment: onboardingData.dailyCommitment,
         onboardingCompleted: true,
       },
       { new: true },

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { AuthContext } from "@/contexts/auth-context";
 import {
   View,
   Text,
@@ -32,6 +33,8 @@ export default function GoalSelectionScreen() {
     }
   };
 
+  const authContext = React.useContext(AuthContext);
+
   const handleContinue = () => {
     if (selectedGoals.length > 0) {
       completeOnboarding(
@@ -46,6 +49,7 @@ export default function GoalSelectionScreen() {
               type: "success",
               text1: "Goals selected successfully",
             });
+            authContext.updateLoginData({ onboardingCompleted: true });
             router.replace("/(tabs)/home");
           },
           onError: (error) => {

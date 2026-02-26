@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   View,
   Text,
@@ -16,10 +16,12 @@ import Theme from "../../constants/theme";
 import { useLogin } from "@repo/query";
 import { LoginBody, LoginSchema } from "@repo/schema";
 import Toast from "react-native-toast-message";
+import { AuthContext } from "@/contexts/auth-context";
 
 export default function LoginScreen() {
   const router = useRouter();
   const { mutate: login, isPending } = useLogin();
+  const authContext = useContext(AuthContext);
 
   const methods = useForm<LoginBody>({
     resolver: zodResolver(LoginSchema),
@@ -37,11 +39,7 @@ export default function LoginScreen() {
           text1: data?.message || "Login Successful",
           text2: "You have successfully logged in.",
         });
-        if (data?.onboardingCompleted) {
-          router.push("/(tabs)/home");
-        } else {
-          router.push("/(auth)/domain-selection");
-        }
+        authContext.login(data);
       },
       onError: (error) => {
         Toast.show({
@@ -58,6 +56,20 @@ export default function LoginScreen() {
     // Placeholder for Google OAuth
     router.push("/(auth)/domain-selection");
   };
+
+  React.useEffect(() => {
+    if (authContext.isReady && authContext.isLoggedIn) {
+      if (authContext.loginData?.onboardingCompleted) {
+        router.replace("/(tabs)/home");
+      } else {
+        router.replace("/(auth)/domain-selection");
+      }
+    }
+  }, [authContext.isReady, authContext.isLoggedIn, authContext.loginData]);
+
+  if (!authContext.isReady) {
+    return null;
+  }
 
   return (
     <LinearGradient

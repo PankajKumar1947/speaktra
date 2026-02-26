@@ -1,12 +1,21 @@
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import Theme from "../../constants/theme";
+import { Redirect } from "expo-router";
+import { useContext } from "react";
+import { AuthContext } from "@/contexts/auth-context";
+import SplashScreen from "../splash";
 
-/**
- * Bottom Tabs Navigator
- * Main app navigation with 5 tabs
- */
 export default function TabsLayout() {
+  const authContext = useContext(AuthContext);
+
+  if (!authContext.isReady) {
+    return <SplashScreen />;
+  }
+
+  if (!authContext.isLoggedIn) {
+    return <Redirect href="/(auth)/login" />;
+  }
   return (
     <Tabs
       screenOptions={{
