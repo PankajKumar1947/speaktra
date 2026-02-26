@@ -1,5 +1,4 @@
-import type { Domain, Level } from "../common";
-import type { ProfileGoal } from "./profile.enum";
+import type { Domain, Level, Goal } from "../common";
 
 export interface UserProfile {
   id: string;
@@ -7,7 +6,7 @@ export interface UserProfile {
   email?: string;
   domain: Domain;
   level: Level;
-  goals: ProfileGoal[];
+  goals: Goal[];
   createdAt: Date;
   onboardingCompleted: boolean;
 }

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { DomainEnum, LevelEnum } from "../common";
+import { LevelEnum } from "../common";
 import { GoalEnum, Role, RoleEnum } from "./user.enum";
 
 // Full user entity schema as it exists in the database
@@ -19,17 +19,14 @@ export const UserSchema = z.object({
     .string()
     .min(6, { message: "Password must be at least 6 characters long" })
     .describe("The hashed password of the user"),
-  domain: z.string().describe("The professional domain/sector of the user"),
+  domainId: z
+    .string()
+    .describe("The unique identifier of the professional domain"),
   level: LevelEnum.describe("The proficiency level of the user"),
   goals: z
     .array(GoalEnum)
     .default([])
     .describe("The learning goals of the user"),
-  dailyCommitment: z
-    .number()
-    .int()
-    .min(1, { message: "Daily commitment must be at least 1 minute" })
-    .describe("Daily commitment in minutes"),
   role: RoleEnum.default(Role.USER).describe("The role of the user"),
   createdAt: z
     .date()
@@ -57,16 +54,12 @@ export const UpdateUserSchema = UserSchema.omit({
 
 // Schema for completing user onboarding
 export const CompleteOnboardingSchema = z.object({
-  domain: DomainEnum.describe("The professional domain/sector of the user"),
+  domainId: z
+    .string()
+    .describe("The unique identifier of the professional domain"),
   level: LevelEnum.describe("The proficiency level of the user"),
   goals: z
     .array(GoalEnum)
     .min(1, { message: "At least one learning goal is required" })
     .describe("The learning goals of the user"),
-  dailyCommitment: z
-    .number()
-    .int()
-    .min(1, { message: "Daily commitment must be at least 1 minute" })
-    .optional()
-    .describe("Daily commitment in minutes (optional)"),
 });

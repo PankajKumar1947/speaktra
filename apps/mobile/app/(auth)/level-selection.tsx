@@ -10,36 +10,18 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { Button } from "../../components";
 import Theme from "../../constants/theme";
-import { Level } from "@repo/schema";
-
-const LEVELS: { value: Level; label: string; description: string }[] = [
-  {
-    value: Level.BEGINNER,
-    label: "Beginner",
-    description: "Starting with basics, learning fundamentals",
-  },
-  {
-    value: Level.INTERMEDIATE,
-    label: "Intermediate",
-    description: "Can communicate, improving fluency",
-  },
-  {
-    value: Level.ADVANCED,
-    label: "Advanced",
-    description: "Fluent speaker, perfecting skills",
-  },
-];
+import { Level, userLevels } from "@repo/schema";
 
 export default function LevelSelectionScreen() {
   const router = useRouter();
-  const { domain } = useLocalSearchParams<{ domain: string }>();
+  const { domainId } = useLocalSearchParams<{ domainId: string }>();
   const [selectedLevel, setSelectedLevel] = useState<Level | null>(null);
 
   const handleContinue = () => {
     if (selectedLevel) {
       router.push({
         pathname: "/(auth)/goal-selection",
-        params: { domain, level: selectedLevel },
+        params: { domainId, level: selectedLevel },
       });
     }
   };
@@ -64,7 +46,7 @@ export default function LevelSelectionScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {LEVELS.map((level) => (
+        {userLevels.map((level) => (
           <TouchableOpacity
             key={level.value}
             style={[

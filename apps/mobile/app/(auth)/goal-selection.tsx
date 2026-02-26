@@ -11,17 +11,20 @@ import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Button } from "../../components";
 import Theme from "../../constants/theme";
-import { ProfileGoal, userGoals } from "@repo/schema";
+import { Goal, userGoals, Level } from "@repo/schema";
+import { useCompleteOnboarding } from "@repo/query";
+import Toast from "react-native-toast-message";
 
 export default function GoalSelectionScreen() {
   const router = useRouter();
-  const { domain, level } = useLocalSearchParams<{
-    domain: string;
-    level: string;
+  const { domainId, level } = useLocalSearchParams<{
+    domainId: string;
+    level: Level;
   }>();
-  const [selectedGoals, setSelectedGoals] = useState<ProfileGoal[]>([]);
+  const [selectedGoals, setSelectedGoals] = useState<Goal[]>([]);
+  const { mutate: completeOnboarding, isPending } = useCompleteOnboarding();
 
-  const toggleGoal = (goal: ProfileGoal) => {
+  const toggleGoal = (goal: Goal) => {
     if (selectedGoals.includes(goal)) {
       setSelectedGoals(selectedGoals.filter((g) => g !== goal));
     } else {
@@ -31,14 +34,29 @@ export default function GoalSelectionScreen() {
 
   const handleContinue = () => {
     if (selectedGoals.length > 0) {
-      router.push({
-        pathname: "/(tabs)/home",
-        params: {
-          domain,
+      completeOnboarding(
+        {
+          domainId,
           level,
-          goals: selectedGoals.join(","),
+          goals: selectedGoals as Goal[],
         },
-      });
+        {
+          onSuccess: () => {
+            Toast.show({
+              type: "success",
+              text1: "Goals selected successfully",
+            });
+            router.replace("/(tabs)/home");
+          },
+          onError: (error) => {
+            Toast.show({
+              type: "error",
+              text1: "Failed to select goals",
+              text2: error.message,
+            });
+          },
+        },
+      );
     }
   };
 
@@ -119,9 +137,10 @@ export default function GoalSelectionScreen() {
           selected
         </Text>
         <Button
+          loading={isPending}
           title="Continue"
           onPress={handleContinue}
-          disabled={selectedGoals.length === 0}
+          disabled={selectedGoals.length === 0 || isPending}
         />
       </View>
     </View>

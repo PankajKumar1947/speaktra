@@ -23,7 +23,7 @@ export default function DomainSelectionScreen() {
     if (selectedDomain) {
       router.push({
         pathname: "/(auth)/level-selection",
-        params: { domain: selectedDomain },
+        params: { domainId: selectedDomain },
       });
     }
   };
