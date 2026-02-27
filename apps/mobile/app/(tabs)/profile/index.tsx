@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   View,
   Text,
@@ -12,6 +12,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Card } from "../../../components";
 import Theme from "../../../constants/theme";
 import { DUMMY_USER } from "../../../data/user";
+import { AuthContext } from "@/contexts/auth-context";
 
 type ProfileRoute =
   | "/(tabs)/profile/preferences"
@@ -19,6 +20,7 @@ type ProfileRoute =
 
 export default function ProfileScreen() {
   const router = useRouter();
+  const authContext = useContext(AuthContext);
 
   const menuItems = [
     {
@@ -34,6 +36,11 @@ export default function ProfileScreen() {
       route: "/(tabs)/profile/subscription",
     },
   ];
+
+  const handleLogout = () => {
+    authContext.logout();
+    router.replace("/(auth)/login");
+  };
 
   return (
     <ScrollView style={styles.container}>
@@ -65,9 +72,6 @@ export default function ProfileScreen() {
           </View>
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>Daily Commitment</Text>
-            <Text style={styles.infoValue}>
-              {DUMMY_USER.dailyCommitment} minutes
-            </Text>
           </View>
           <View style={styles.goalsContainer}>
             <Text style={styles.infoLabel}>Goals</Text>
@@ -106,7 +110,7 @@ export default function ProfileScreen() {
         ))}
 
         {/* Logout Button */}
-        <TouchableOpacity onPress={() => router.replace("/(auth)/login")}>
+        <TouchableOpacity onPress={handleLogout}>
           <Card style={styles.logoutCard}>
             <View style={styles.menuContent}>
               <Ionicons
