@@ -5,7 +5,6 @@ import {
   VocabularySchema,
 } from "./vocabulary.schema";
 
-// Type inference from Zod schemas
-export type VocabularyEntity = z.infer<typeof VocabularySchema>;
-export type CreateVocabularyEntity = z.infer<typeof CreateVocabularySchema>;
-export type UpdateVocabularyEntity = z.infer<typeof UpdateVocabularySchema>;
+export type Vocabulary = z.infer<typeof VocabularySchema>;
+export type CreateVocabulary = z.infer<typeof CreateVocabularySchema>;
+export type UpdateVocabulary = z.infer<typeof UpdateVocabularySchema>;
