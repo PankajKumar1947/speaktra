@@ -41,6 +41,21 @@ export class DailyChallengeController {
     return this.dailyChallengeService.getDailyChallengeForUser(userId);
   }
 
+  @Get(':id/vocabularies')
+  getDailyVocabularies(@Param('id') id: string) {
+    return this.dailyChallengeService.getDailyVocabularies(id);
+  }
+
+  @Get(':id/sentences')
+  getDailySentences(@Param('id') id: string) {
+    return this.dailyChallengeService.getDailySentences(id);
+  }
+
+  @Get(':id/articles')
+  getDailyArticles(@Param('id') id: string) {
+    return this.dailyChallengeService.getDailyArticles(id);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.dailyChallengeService.findOne(id);

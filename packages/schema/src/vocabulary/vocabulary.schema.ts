@@ -23,7 +23,7 @@ export const VocabularySchema = z.object({
   verb: WordFormSchema.optional().describe("Verb form of the word"),
   adjective: WordFormSchema.optional().describe("Adjective form of the word"),
   adverb: WordFormSchema.optional().describe("Adverb form of the word"),
-  domain_Id: z
+  domainId: z
     .string()
     .regex(/^[0-9a-fA-F]{24}$/, {
       message: "domainId must be a valid MongoDB ObjectId",

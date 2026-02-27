@@ -180,19 +180,35 @@ export class DailyChallengeService {
       ) + 1;
     this.logger.log(`Sequence number for user ${user.name}: ${sequenceNumber}`);
 
-    const dailyChallenge = await this.dailyChallengeModel
-      .findOne({
-        domain: user.domain,
-        level: user.level,
-        sequenceNumber: sequenceNumber,
-      })
-      .populate('domain')
-      .populate('vocabularies')
-      .populate('sentences')
-      .populate('articles');
+    const dailyChallenge = await this.dailyChallengeModel.findOne({
+      domain: user.domain,
+      level: user.level,
+      sequenceNumber: sequenceNumber,
+    });
     if (!dailyChallenge) {
       throw new NotFoundException('Daily challenge not found');
     }
     return dailyChallenge;
+  }
+
+  async getDailyVocabularies(dailyChallengeId: string) {
+    const dailyChallenge = await this.dailyChallengeModel
+      .findById(dailyChallengeId)
+      .populate('vocabularies');
+    return dailyChallenge?.vocabularies;
+  }
+
+  async getDailySentences(dailyChallengeId: string) {
+    const dailyChallenge = await this.dailyChallengeModel
+      .findById(dailyChallengeId)
+      .populate('sentences');
+    return dailyChallenge?.sentences;
+  }
+
+  async getDailyArticles(dailyChallengeId: string) {
+    const dailyChallenge = await this.dailyChallengeModel
+      .findById(dailyChallengeId)
+      .populate('articles');
+    return dailyChallenge?.articles;
   }
 }
