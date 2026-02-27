@@ -107,14 +107,41 @@ export default function VocabularyScreen() {
                     {
                       backgroundColor:
                         item.difficulty === "easy"
-                          ? Theme.colors.success
+                          ? Theme.colors.success + "20"
                           : item.difficulty === "medium"
-                            ? Theme.colors.warning
-                            : Theme.colors.error,
+                            ? Theme.colors.warning + "20"
+                            : Theme.colors.error + "20",
                     },
                   ]}
                 >
-                  <Text style={styles.difficultyText}>{item.difficulty}</Text>
+                  <View
+                    style={[
+                      styles.difficultyDot,
+                      {
+                        backgroundColor:
+                          item.difficulty === "easy"
+                            ? Theme.colors.success
+                            : item.difficulty === "medium"
+                              ? Theme.colors.warning
+                              : Theme.colors.error,
+                      },
+                    ]}
+                  />
+                  <Text
+                    style={[
+                      styles.difficultyText,
+                      {
+                        color:
+                          item.difficulty === "easy"
+                            ? Theme.colors.success
+                            : item.difficulty === "medium"
+                              ? Theme.colors.warning
+                              : Theme.colors.error,
+                      },
+                    ]}
+                  >
+                    {item.difficulty}
+                  </Text>
                 </View>
                 <TouchableOpacity style={styles.pronounceButton}>
                   <Ionicons
@@ -150,12 +177,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: Theme.spacing.sm,
+    flex: 1,
   },
   word: {
     fontSize: Theme.typography.fontSize.xl,
     fontWeight: Theme.typography.fontWeight.bold,
     color: Theme.colors.textPrimary,
-    letterSpacing: -0.5,
+    textTransform: "capitalize",
+    flex: 1,
   },
   learnedBadge: {
     flexDirection: "row",
@@ -237,14 +266,22 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   difficultyBadge: {
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: Theme.spacing.sm,
     paddingVertical: Theme.spacing.xs,
-    borderRadius: Theme.borderRadius.sm,
+    borderRadius: Theme.borderRadius.full,
+    gap: 4,
+  },
+  difficultyDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
   },
   difficultyText: {
-    fontSize: Theme.typography.fontSize.xs,
+    fontSize: 10,
     fontWeight: Theme.typography.fontWeight.bold,
-    color: Theme.colors.textInverse,
+    textTransform: "capitalize",
   },
   pronounceButton: {
     flexDirection: "row",

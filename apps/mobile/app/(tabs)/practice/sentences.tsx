@@ -109,18 +109,45 @@ export default function SentencePracticeScreen() {
             <View style={styles.footer}>
               <View
                 style={[
-                  styles.badge,
+                  styles.difficultyBadge,
                   {
                     backgroundColor:
                       item.difficulty === "easy"
-                        ? Theme.colors.success
+                        ? Theme.colors.success + "20"
                         : item.difficulty === "medium"
-                          ? Theme.colors.warning
-                          : Theme.colors.error,
+                          ? Theme.colors.warning + "20"
+                          : Theme.colors.error + "20",
                   },
                 ]}
               >
-                <Text style={styles.badgeText}>{item.difficulty}</Text>
+                <View
+                  style={[
+                    styles.difficultyDot,
+                    {
+                      backgroundColor:
+                        item.difficulty === "easy"
+                          ? Theme.colors.success
+                          : item.difficulty === "medium"
+                            ? Theme.colors.warning
+                            : Theme.colors.error,
+                    },
+                  ]}
+                />
+                <Text
+                  style={[
+                    styles.difficultyText,
+                    {
+                      color:
+                        item.difficulty === "easy"
+                          ? Theme.colors.success
+                          : item.difficulty === "medium"
+                            ? Theme.colors.warning
+                            : Theme.colors.error,
+                    },
+                  ]}
+                >
+                  {item.difficulty}
+                </Text>
               </View>
 
               <TouchableOpacity style={styles.pronounceBtn}>
@@ -241,15 +268,23 @@ const styles = StyleSheet.create({
     borderTopColor: Theme.colors.borderLight,
     paddingTop: Theme.spacing.md,
   },
-  badge: {
+  difficultyBadge: {
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: Theme.spacing.sm,
     paddingVertical: Theme.spacing.xs,
-    borderRadius: Theme.borderRadius.sm,
+    borderRadius: Theme.borderRadius.full,
+    gap: 4,
   },
-  badgeText: {
-    fontSize: Theme.typography.fontSize.xs,
+  difficultyDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  difficultyText: {
+    fontSize: 10,
     fontWeight: Theme.typography.fontWeight.bold,
-    color: Theme.colors.textInverse,
+    textTransform: "capitalize",
   },
   pronounceBtn: {
     flexDirection: "row",
