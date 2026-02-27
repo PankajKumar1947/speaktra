@@ -17,15 +17,18 @@ export class UsersService {
   }
 
   findAll() {
-    return this.userModel.find();
+    return this.userModel.find().select('-password').populate('domain');
   }
 
   findOne(id: string) {
-    return this.userModel.findById(id).exec();
+    return this.userModel.findById(id).select('-password').populate('domain');
   }
 
   update(id: string, updateUserDto: UpdateUserDto) {
-    return this.userModel.findByIdAndUpdate(id, updateUserDto);
+    return this.userModel
+      .findByIdAndUpdate(id, updateUserDto, { new: true })
+      .select('-password')
+      .populate('domain');
   }
 
   remove(id: string) {
@@ -33,15 +36,18 @@ export class UsersService {
   }
 
   completeOnboarding(userId: string, onboardingData: CompleteOnboardingDto) {
-    return this.userModel.findByIdAndUpdate(
-      userId,
-      {
-        domain: onboardingData.domainId,
-        level: onboardingData.level,
-        goals: onboardingData.goals,
-        onboardingCompleted: true,
-      },
-      { new: true },
-    );
+    return this.userModel
+      .findByIdAndUpdate(
+        userId,
+        {
+          domain: onboardingData.domain,
+          level: onboardingData.level,
+          goals: onboardingData.goals,
+          onboardingCompleted: true,
+        },
+        { new: true },
+      )
+      .select('-password')
+      .populate('domain');
   }
 }

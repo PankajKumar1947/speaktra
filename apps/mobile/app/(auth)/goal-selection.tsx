@@ -18,8 +18,8 @@ import Toast from "react-native-toast-message";
 
 export default function GoalSelectionScreen() {
   const router = useRouter();
-  const { domainId, level } = useLocalSearchParams<{
-    domainId: string;
+  const { domain, level } = useLocalSearchParams<{
+    domain: string;
     level: Level;
   }>();
   const [selectedGoals, setSelectedGoals] = useState<Goal[]>([]);
@@ -39,7 +39,7 @@ export default function GoalSelectionScreen() {
     if (selectedGoals.length > 0) {
       completeOnboarding(
         {
-          domainId,
+          domain,
           level,
           goals: selectedGoals as Goal[],
         },

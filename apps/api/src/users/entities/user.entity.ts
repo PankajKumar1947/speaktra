@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Level, Goal, Role } from '@repo/schema';
+import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import { BaseDocument } from 'src/common/types/base-document.type';
 
@@ -20,7 +21,11 @@ export class User {
   @Prop({ required: true })
   password!: string;
 
-  @Prop({ required: false })
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Domain',
+    required: false,
+  })
   domain?: string;
 
   @Prop({ required: false })

@@ -14,14 +14,14 @@ import { Level, userLevels } from "@repo/schema";
 
 export default function LevelSelectionScreen() {
   const router = useRouter();
-  const { domainId } = useLocalSearchParams<{ domainId: string }>();
+  const { domain } = useLocalSearchParams<{ domain: string }>();
   const [selectedLevel, setSelectedLevel] = useState<Level | null>(null);
 
   const handleContinue = () => {
     if (selectedLevel) {
       router.push({
         pathname: "/(auth)/goal-selection",
-        params: { domainId, level: selectedLevel },
+        params: { domain, level: selectedLevel },
       });
     }
   };

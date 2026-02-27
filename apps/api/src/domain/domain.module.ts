@@ -10,6 +10,6 @@ import { Domain, DomainEntity } from './entities/domain.entity';
   ],
   controllers: [DomainController],
   providers: [DomainService],
-  exports: [DomainService],
+  exports: [DomainService, MongooseModule],
 })
 export class DomainModule {}

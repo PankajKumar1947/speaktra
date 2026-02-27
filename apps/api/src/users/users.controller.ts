@@ -33,6 +33,22 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
+  @Get('me')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  getMe(@Req() req: Request) {
+    const userId = req.user?.sub as string;
+    return this.usersService.findOne(userId);
+  }
+
+  @Patch('me')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  updateMe(@Body() updateUserDto: UpdateUserDto, @Req() req: Request) {
+    const userId = req.user?.sub as string;
+    return this.usersService.update(userId, updateUserDto);
+  }
+
   @Get()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
