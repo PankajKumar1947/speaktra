@@ -75,7 +75,14 @@ export default function PracticeHubScreen() {
         {PRACTICE_MODULES.map((module) => (
           <TouchableOpacity
             key={module.id}
-            onPress={() => router.push(module.route as ModuleRoute)}
+            onPress={() =>
+              router.push({
+                pathname: module.route as ModuleRoute,
+                params: {
+                  dailyChallengeId: dailyChallenge?._id,
+                },
+              })
+            }
           >
             <Card style={styles.moduleCard}>
               <View

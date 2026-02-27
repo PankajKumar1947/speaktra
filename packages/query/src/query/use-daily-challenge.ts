@@ -14,21 +14,21 @@ export const useDailyChallengeForUser = () => {
   });
 };
 
-export const useVocabularies = (dailyChallengeId: string) => {
+export const useDailyChallengeVocabularies = (dailyChallengeId: string) => {
   return useQuery({
     queryKey: dailyChallengeQueries.getVocabularies.key,
     queryFn: () => getDailyChallengeVocabularies(dailyChallengeId),
   });
 };
 
-export const useSentences = (dailyChallengeId: string) => {
+export const useDailyChallengeSentences = (dailyChallengeId: string) => {
   return useQuery({
     queryKey: dailyChallengeQueries.getSentences.key,
     queryFn: () => getDailyChallengeSentences(dailyChallengeId),
   });
 };
 
-export const useArticles = (dailyChallengeId: string) => {
+export const useDailyChallengeArticles = (dailyChallengeId: string) => {
   return useQuery({
     queryKey: dailyChallengeQueries.getArticles.key,
     queryFn: () => getDailyChallengeArticles(dailyChallengeId),
