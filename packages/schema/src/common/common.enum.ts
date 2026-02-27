@@ -1,19 +1,5 @@
 import { z } from "zod";
 
-// Professional domain/sector enum (unified from users & profile)
-export enum Domain {
-  BUSINESS = "business",
-  TECHNOLOGY = "technology",
-  HEALTHCARE = "healthcare",
-  EDUCATION = "education",
-  TRAVEL = "travel",
-  LEGAL = "legal",
-  HOSPITALITY = "hospitality",
-  CORPORATE = "corporate",
-  IT = "it",
-  OTHER = "other",
-}
-
 // Proficiency level enum
 export enum Level {
   BEGINNER = "beginner",
@@ -41,7 +27,6 @@ export enum Goal {
 }
 
 // Zod schemas for validation (derived from enums)
-export const DomainEnum = z.nativeEnum(Domain);
 export const LevelEnum = z.nativeEnum(Level);
 export const DifficultyEnum = z.nativeEnum(Difficulty);
 export const GoalEnum = z.nativeEnum(Goal);

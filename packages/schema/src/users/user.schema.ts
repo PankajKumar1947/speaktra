@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { LevelEnum } from "../common";
-import { GoalEnum, Role, RoleEnum } from "./user.enum";
+import { GoalEnum, LevelEnum } from "../common";
+import { Role, RoleEnum } from "./user.enum";
 
 // Full user entity schema as it exists in the database
 export const UserSchema = z.object({
