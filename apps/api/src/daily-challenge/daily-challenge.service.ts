@@ -206,9 +206,15 @@ export class DailyChallengeService {
   }
 
   async getDailyArticles(dailyChallengeId: string) {
+    // exclude description from the articles
     const dailyChallenge = await this.dailyChallengeModel
       .findById(dailyChallengeId)
-      .populate('articles');
+      .populate('articles')
+      .select({
+        articles: {
+          description: 0,
+        },
+      });
     return dailyChallenge?.articles;
   }
 }
