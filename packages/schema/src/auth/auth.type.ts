@@ -10,6 +10,7 @@ export type LoginData = {
   accessToken: string;
   refreshToken: string;
   onboardingCompleted: boolean;
+  name?: string;
 };
 
 export type RegisterData = {

@@ -9,59 +9,80 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { Card } from "../../../components";
 import Theme from "../../../constants/theme";
-import { VOCABULARY_WORDS } from "../../../data/vocabulary";
+import { useDailyChallengeForUser } from "@repo/query";
+import { ActivityIndicator } from "react-native";
 
 export default function VocabularyScreen() {
+  const { data: dailyChallenge, isLoading } = useDailyChallengeForUser();
+
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={Theme.colors.primary} />
+      </View>
+    );
+  }
+
+  const vocabList = dailyChallenge?.vocabularies || [];
+
+  if (vocabList.length === 0) {
+    return (
+      <View style={styles.emptyContainer}>
+        <Text style={styles.emptyText}>
+          No vocabulary words available for today.
+        </Text>
+      </View>
+    );
+  }
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.content}>
-        {VOCABULARY_WORDS.map((word) => (
-          <Card key={word.id} style={styles.wordCard}>
-            <View style={styles.wordHeader}>
-              <Text style={styles.word}>{word.word}</Text>
-              {word.learned && (
-                <View style={styles.learnedBadge}>
-                  <Ionicons
-                    name="checkmark-circle"
-                    size={20}
-                    color={Theme.colors.success}
-                  />
-                  <Text style={styles.learnedText}>Learned</Text>
+        {vocabList.map((item) => {
+          // Get the primary form display
+          const displayForm =
+            item.noun || item.verb || item.adjective || item.adverb;
+
+          return (
+            <Card key={item._id} style={styles.wordCard}>
+              <View style={styles.wordHeader}>
+                <Text style={styles.word}>{item.word}</Text>
+              </View>
+              <Text style={styles.definition}>{displayForm?.meaning}</Text>
+              {displayForm?.example && (
+                <View style={styles.exampleContainer}>
+                  <Text style={styles.exampleLabel}>Example:</Text>
+                  <Text style={styles.example}>{displayForm.example}</Text>
                 </View>
               )}
-            </View>
-            <Text style={styles.definition}>{word.definition}</Text>
-            <View style={styles.exampleContainer}>
-              <Text style={styles.exampleLabel}>Example:</Text>
-              <Text style={styles.example}>{word.example}</Text>
-            </View>
-            <View style={styles.footer}>
-              <View
-                style={[
-                  styles.difficultyBadge,
-                  {
-                    backgroundColor:
-                      word.difficulty === "Easy"
-                        ? Theme.colors.success
-                        : word.difficulty === "Medium"
-                          ? Theme.colors.warning
-                          : Theme.colors.error,
-                  },
-                ]}
-              >
-                <Text style={styles.difficultyText}>{word.difficulty}</Text>
+              <View style={styles.footer}>
+                <View
+                  style={[
+                    styles.difficultyBadge,
+                    {
+                      backgroundColor:
+                        item.difficulty === "easy"
+                          ? Theme.colors.success
+                          : item.difficulty === "medium"
+                            ? Theme.colors.warning
+                            : Theme.colors.error,
+                    },
+                  ]}
+                >
+                  <Text style={styles.difficultyText}>{item.difficulty}</Text>
+                </View>
+                <TouchableOpacity style={styles.pronounceButton}>
+                  <Ionicons
+                    name="volume-high"
+                    size={20}
+                    color={Theme.colors.primary}
+                  />
+                  <Text style={styles.pronounceText}>Pronounce</Text>
+                </TouchableOpacity>
               </View>
-              <TouchableOpacity style={styles.pronounceButton}>
-                <Ionicons
-                  name="volume-high"
-                  size={20}
-                  color={Theme.colors.primary}
-                />
-                <Text style={styles.pronounceText}>Pronounce</Text>
-              </TouchableOpacity>
-            </View>
-          </Card>
-        ))}
+            </Card>
+          );
+        })}
       </View>
     </ScrollView>
   );
@@ -138,5 +159,21 @@ const styles = StyleSheet.create({
     fontSize: Theme.typography.fontSize.sm,
     color: Theme.colors.primary,
     fontWeight: Theme.typography.fontWeight.semiBold,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: Theme.spacing.xl,
+  },
+  emptyText: {
+    textAlign: "center",
+    color: Theme.colors.textSecondary,
+    fontSize: Theme.typography.fontSize.base,
   },
 });

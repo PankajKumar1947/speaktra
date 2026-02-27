@@ -4,4 +4,5 @@ export * from "./mutation/use-domain";
 export * from "./query/use-domain";
 export * from "./mutation/use-users";
 export * from "./query/use-users";
+export * from "./query/use-daily-challenge";
 export * from "./provider";

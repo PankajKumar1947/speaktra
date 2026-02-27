@@ -2,14 +2,36 @@ import React from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { Card } from "../../../components";
 import Theme from "../../../constants/theme";
-import { SENTENCE_PRACTICES } from "../../../data/sentences";
+
+import { useDailyChallengeForUser } from "@repo/query";
+import { ActivityIndicator } from "react-native";
 
 export default function SentencePracticeScreen() {
+  const { data: dailyChallenge, isLoading } = useDailyChallengeForUser();
+
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={Theme.colors.primary} />
+      </View>
+    );
+  }
+
+  const sentenceList = dailyChallenge?.sentences || [];
+
+  if (sentenceList.length === 0) {
+    return (
+      <View style={styles.emptyContainer}>
+        <Text style={styles.emptyText}>No sentences available for today.</Text>
+      </View>
+    );
+  }
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.content}>
-        {SENTENCE_PRACTICES.map((item) => (
-          <Card key={item.id} style={styles.sentenceCard}>
+        {sentenceList.map((item) => (
+          <Card key={item?._id} style={styles.sentenceCard}>
             <Text style={styles.sentence}>{item.sentence}</Text>
             <Text style={styles.context}>Context: {item.context}</Text>
             <View style={styles.footer}>
@@ -18,9 +40,9 @@ export default function SentencePracticeScreen() {
                   styles.badge,
                   {
                     backgroundColor:
-                      item.difficulty === "Easy"
+                      item.difficulty === "easy"
                         ? Theme.colors.success
-                        : item.difficulty === "Medium"
+                        : item.difficulty === "medium"
                           ? Theme.colors.warning
                           : Theme.colors.error,
                   },
@@ -28,9 +50,6 @@ export default function SentencePracticeScreen() {
               >
                 <Text style={styles.badgeText}>{item.difficulty}</Text>
               </View>
-              {item.completed && (
-                <Text style={styles.completed}>✓ Completed</Text>
-              )}
             </View>
           </Card>
         ))}
@@ -74,5 +93,21 @@ const styles = StyleSheet.create({
     fontSize: Theme.typography.fontSize.sm,
     color: Theme.colors.success,
     fontWeight: Theme.typography.fontWeight.semiBold,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: Theme.spacing.xl,
+  },
+  emptyText: {
+    textAlign: "center",
+    color: Theme.colors.textSecondary,
+    fontSize: Theme.typography.fontSize.base,
   },
 });

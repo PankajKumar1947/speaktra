@@ -11,55 +11,66 @@ import { Ionicons } from "@expo/vector-icons";
 import { Card } from "../../../components";
 import Theme from "../../../constants/theme";
 
+import { useDailyChallengeForUser } from "@repo/query";
+import { ActivityIndicator } from "react-native";
+
 type ModuleRoute =
   | "/(tabs)/practice/vocabulary"
   | "/(tabs)/practice/sentences"
   | "/(tabs)/practice/reading-list";
 
-const PRACTICE_MODULES = [
-  {
-    id: "vocabulary",
-    title: "Vocabulary",
-    description: "Learn domain-specific words",
-    icon: "book" as const,
-    route: "/(tabs)/practice/vocabulary",
-    color: Theme.colors.primary,
-    progress: 65,
-  },
-  {
-    id: "sentences",
-    title: "Sentence Practice",
-    description: "Practice corporate sentences",
-    icon: "chatbubbles" as const,
-    route: "/(tabs)/practice/sentences",
-    color: Theme.colors.secondary,
-    progress: 40,
-  },
-  {
-    id: "reading",
-    title: "Reading",
-    description: "Business articles & topics",
-    icon: "newspaper" as const,
-    route: "/(tabs)/practice/reading-list",
-    color: Theme.colors.accent,
-    progress: 33,
-  },
-];
-
-/**
- * Practice Hub Screen
- * Main practice modules overview
- */
 export default function PracticeHubScreen() {
   const router = useRouter();
+  const { data: dailyChallenge, isLoading } = useDailyChallengeForUser();
+
+  const PRACTICE_MODULES = [
+    {
+      id: "vocabulary",
+      title: "Vocabulary",
+      description: dailyChallenge
+        ? `${dailyChallenge.vocabularies?.length || 0} words for today`
+        : "Learn domain-specific words",
+      icon: "book" as const,
+      route: "/(tabs)/practice/vocabulary",
+      color: Theme.colors.primary,
+      progress: 65,
+    },
+    {
+      id: "sentences",
+      title: "Sentence Practice",
+      description: dailyChallenge
+        ? `${dailyChallenge.sentences?.length || 0} sentences for today`
+        : "Practice corporate sentences",
+      icon: "chatbubbles" as const,
+      route: "/(tabs)/practice/sentences",
+      color: Theme.colors.secondary,
+      progress: 40,
+    },
+    {
+      id: "reading",
+      title: "Reading",
+      description: dailyChallenge
+        ? `${dailyChallenge.articles?.length || 0} articles for today`
+        : "Business articles & topics",
+      icon: "newspaper" as const,
+      route: "/(tabs)/practice/reading-list",
+      color: Theme.colors.accent,
+      progress: 33,
+    },
+  ];
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <View style={styles.content}>
-        <Text style={styles.title}>Practice Modules</Text>
-        <Text style={styles.subtitle}>
-          Choose a module to improve your skills
-        </Text>
+        <View style={styles.headerRow}>
+          <View>
+            <Text style={styles.title}>Practice Modules</Text>
+            <Text style={styles.subtitle}>
+              Choose a module to improve your skills
+            </Text>
+          </View>
+          {isLoading && <ActivityIndicator color={Theme.colors.primary} />}
+        </View>
 
         {PRACTICE_MODULES.map((module) => (
           <TouchableOpacity
@@ -132,6 +143,11 @@ const styles = StyleSheet.create({
     fontSize: Theme.typography.fontSize.base,
     color: Theme.colors.textSecondary,
     marginBottom: Theme.spacing.xl,
+  },
+  headerRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
   },
   moduleCard: {
     flexDirection: "row",

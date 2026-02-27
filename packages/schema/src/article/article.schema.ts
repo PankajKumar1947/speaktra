@@ -3,7 +3,7 @@ import { DifficultyEnum } from "../common/common.enum";
 
 // Full article entity schema
 export const ArticleSchema = z.object({
-  id: z
+  _id: z
     .string()
     .describe("The unique identifier of the article (MongoDB ObjectId)"),
   type: z
@@ -47,14 +47,14 @@ export const ArticleSchema = z.object({
 
 // Schema for creating a new article (omits system-generated fields)
 export const CreateArticleSchema = ArticleSchema.omit({
-  id: true,
+  _id: true,
   createdAt: true,
   updatedAt: true,
 });
 
 // Schema for updating an article (partial with no system fields)
 export const UpdateArticleSchema = ArticleSchema.omit({
-  id: true,
+  _id: true,
   createdAt: true,
   updatedAt: true,
 }).partial();

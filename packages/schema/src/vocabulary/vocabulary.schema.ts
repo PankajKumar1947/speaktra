@@ -12,7 +12,7 @@ const WordFormSchema = z.object({
 
 // Full vocabulary entity schema
 export const VocabularySchema = z.object({
-  id: z
+  _id: z
     .string()
     .describe("The unique identifier of the vocabulary (MongoDB ObjectId)"),
   word: z
@@ -23,7 +23,7 @@ export const VocabularySchema = z.object({
   verb: WordFormSchema.optional().describe("Verb form of the word"),
   adjective: WordFormSchema.optional().describe("Adjective form of the word"),
   adverb: WordFormSchema.optional().describe("Adverb form of the word"),
-  domainId: z
+  domain_Id: z
     .string()
     .regex(/^[0-9a-fA-F]{24}$/, {
       message: "domainId must be a valid MongoDB ObjectId",
@@ -42,14 +42,14 @@ export const VocabularySchema = z.object({
 
 // Schema for creating a new vocabulary (omits system-generated fields)
 export const CreateVocabularySchema = VocabularySchema.omit({
-  id: true,
+  _id: true,
   createdAt: true,
   updatedAt: true,
 });
 
 // Schema for updating a vocabulary (partial with no system fields)
 export const UpdateVocabularySchema = VocabularySchema.omit({
-  id: true,
+  _id: true,
   createdAt: true,
   updatedAt: true,
 }).partial();

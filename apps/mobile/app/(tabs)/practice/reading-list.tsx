@@ -10,35 +10,56 @@ import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { Card } from "../../../components";
 import Theme from "../../../constants/theme";
-import { READING_ARTICLES } from "../../../data/reading";
+
+import { useDailyChallengeForUser } from "@repo/query";
+import { ActivityIndicator } from "react-native";
 
 export default function ReadingListScreen() {
   const router = useRouter();
+  const { data: dailyChallenge, isLoading } = useDailyChallengeForUser();
+
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={Theme.colors.primary} />
+      </View>
+    );
+  }
+
+  const articleList = dailyChallenge?.articles || [];
+
+  if (articleList.length === 0) {
+    return (
+      <View style={styles.emptyContainer}>
+        <Text style={styles.emptyText}>No articles available for today.</Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView style={styles.container}>
       <View style={styles.content}>
-        {READING_ARTICLES.map((article) => (
+        {articleList.map((article) => (
           <TouchableOpacity
-            key={article.id}
+            key={article._id}
             onPress={() =>
               router.push({
                 pathname: "/(tabs)/practice/reading-detail",
-                params: { id: article.id },
+                params: { id: article._id },
               })
             }
           >
             <Card style={styles.articleCard}>
               <View style={styles.header}>
-                <Text style={styles.category}>{article.category}</Text>
+                <Text style={styles.category}>{article.type}</Text>
                 <View
                   style={[
                     styles.badge,
                     {
                       backgroundColor:
-                        article.difficulty === "Easy"
+                        article.difficulty === "easy"
                           ? Theme.colors.success
-                          : article.difficulty === "Medium"
+                          : article.difficulty === "medium"
                             ? Theme.colors.warning
                             : Theme.colors.error,
                     },
@@ -56,12 +77,9 @@ export default function ReadingListScreen() {
                     color={Theme.colors.textSecondary}
                   />
                   <Text style={styles.metaText}>
-                    {article.estimatedMinutes} min read
+                    {article.minRead} min read
                   </Text>
                 </View>
-                {article.completed && (
-                  <Text style={styles.completed}>✓ Read</Text>
-                )}
               </View>
             </Card>
           </TouchableOpacity>
@@ -116,5 +134,21 @@ const styles = StyleSheet.create({
     fontSize: Theme.typography.fontSize.sm,
     color: Theme.colors.success,
     fontWeight: Theme.typography.fontWeight.semiBold,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: Theme.spacing.xl,
+  },
+  emptyText: {
+    textAlign: "center",
+    color: Theme.colors.textSecondary,
+    fontSize: Theme.typography.fontSize.base,
   },
 });

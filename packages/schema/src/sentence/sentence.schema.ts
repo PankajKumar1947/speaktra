@@ -5,7 +5,7 @@ import { DifficultyEnum } from "../common/common.enum";
 
 // Full sentence entity schema
 export const SentenceSchema = z.object({
-  id: z
+  _id: z
     .string()
     .describe("The unique identifier of the sentence (MongoDB ObjectId)"),
   sentence: z
@@ -46,14 +46,14 @@ export const SentenceSchema = z.object({
 
 // Schema for creating a new sentence (omits system-generated fields)
 export const CreateSentenceSchema = SentenceSchema.omit({
-  id: true,
+  _id: true,
   createdAt: true,
   updatedAt: true,
 });
 
 // Schema for updating a sentence (partial with no system fields)
 export const UpdateSentenceSchema = SentenceSchema.omit({
-  id: true,
+  _id: true,
   createdAt: true,
   updatedAt: true,
 }).partial();

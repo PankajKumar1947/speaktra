@@ -1,5 +1,13 @@
 import { z } from "zod";
-import { DifficultyEnum, LevelEnum } from "../common/common.enum";
+import {
+  Difficulty,
+  DifficultyEnum,
+  Level,
+  LevelEnum,
+} from "../common/common.enum";
+import { VocabularyEntity } from "../vocabulary";
+import { SentenceEntity } from "../sentence";
+import { ArticleEntity } from "../article";
 
 /**
  * Daily Challenge Schema
@@ -63,3 +71,18 @@ export const CreateDailyChallengeSchema = DailyChallengeSchema.omit({
 
 // Schema for updating an existing daily challenge (all fields optional)
 export const UpdateDailyChallengeSchema = CreateDailyChallengeSchema.partial();
+// Output types
+export type DailyChallenge = {
+  _id: string;
+  sequenceNumber: number;
+  difficulty: Difficulty;
+  level: Level;
+  vocabularies: VocabularyEntity[];
+  sentences: SentenceEntity[];
+  articles: ArticleEntity[];
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type CreateDailyChallenge = z.infer<typeof CreateDailyChallengeSchema>;
+export type UpdateDailyChallenge = z.infer<typeof UpdateDailyChallengeSchema>;

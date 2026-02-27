@@ -77,6 +77,7 @@ export class AuthService {
         expiresIn: '7d',
       }),
       onboardingCompleted: user.onboardingCompleted,
+      name: user.name,
     };
   }
 }
