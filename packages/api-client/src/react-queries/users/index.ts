@@ -19,6 +19,14 @@ export const userQueries = {
     key: ["removeUser"],
     endpoint: (id: string) => `/users/${id}`,
   },
+  me: {
+    key: ["getMe"],
+    endpoint: "/users/me",
+  },
+  updateMe: {
+    key: ["updateMe"],
+    endpoint: "/users/me",
+  },
   completeOnboarding: {
     key: ["completeOnboarding"],
     endpoint: "/users/onboarding/complete",

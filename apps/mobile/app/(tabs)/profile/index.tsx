@@ -11,8 +11,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Card } from "../../../components";
 import Theme from "../../../constants/theme";
-import { DUMMY_USER } from "../../../data/user";
 import { AuthContext } from "@/contexts/auth-context";
+import { useMe } from "@repo/query";
+import { ActivityIndicator } from "react-native";
 
 type ProfileRoute =
   | "/(tabs)/profile/preferences"
@@ -21,6 +22,7 @@ type ProfileRoute =
 export default function ProfileScreen() {
   const router = useRouter();
   const authContext = useContext(AuthContext);
+  const { data: user, isLoading, isError } = useMe();
 
   const menuItems = [
     {
@@ -42,6 +44,31 @@ export default function ProfileScreen() {
     router.replace("/(auth)/login");
   };
 
+  if (isLoading) {
+    return (
+      <View style={[styles.container, styles.center]}>
+        <ActivityIndicator size="large" color={Theme.colors.primary} />
+      </View>
+    );
+  }
+
+  if (isError || !user) {
+    return (
+      <View style={[styles.container, styles.center]}>
+        <Text style={styles.errorText}>Failed to load profile</Text>
+        <TouchableOpacity
+          onPress={() => router.replace("/(tabs)/home")}
+          style={styles.retryButton}
+        >
+          <Text style={styles.retryText}>Back to Home</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  const domainName =
+    typeof user.domain === "object" ? user.domain.name : user.domain;
+
   return (
     <ScrollView style={styles.container}>
       {/* Profile Header */}
@@ -52,10 +79,10 @@ export default function ProfileScreen() {
         style={styles.header}
       >
         <View style={styles.avatarContainer}>
-          <Text style={styles.avatarText}>{DUMMY_USER.name[0]}</Text>
+          <Text style={styles.avatarText}>{user.name[0].toUpperCase()}</Text>
         </View>
-        <Text style={styles.name}>{DUMMY_USER.name}</Text>
-        <Text style={styles.email}>{DUMMY_USER.email}</Text>
+        <Text style={styles.name}>{user.name}</Text>
+        <Text style={styles.email}>{user.email}</Text>
       </LinearGradient>
 
       <View style={styles.content}>
@@ -64,19 +91,16 @@ export default function ProfileScreen() {
           <Text style={styles.cardTitle}>Learning Profile</Text>
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>Domain</Text>
-            <Text style={styles.infoValue}>{DUMMY_USER.domain}</Text>
+            <Text style={styles.infoValue}>{domainName || "Not set"}</Text>
           </View>
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>Level</Text>
-            <Text style={styles.infoValue}>{DUMMY_USER.level}</Text>
-          </View>
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>Daily Commitment</Text>
+            <Text style={styles.infoValue}>{user.level || "Not set"}</Text>
           </View>
           <View style={styles.goalsContainer}>
             <Text style={styles.infoLabel}>Goals</Text>
             <View style={styles.goalsChips}>
-              {DUMMY_USER.goals.map((goal, index) => (
+              {user.goals?.map((goal: string, index: number) => (
                 <View key={index} style={styles.goalChip}>
                   <Text style={styles.goalText}>{goal}</Text>
                 </View>
@@ -217,4 +241,20 @@ const styles = StyleSheet.create({
   },
   logoutCard: { borderColor: Theme.colors.error, borderWidth: 1 },
   logoutText: { color: Theme.colors.error },
+  center: { justifyContent: "center", alignItems: "center" },
+  errorText: {
+    fontSize: Theme.typography.fontSize.base,
+    color: Theme.colors.error,
+    marginBottom: Theme.spacing.md,
+  },
+  retryButton: {
+    paddingHorizontal: Theme.spacing.xl,
+    paddingVertical: Theme.spacing.md,
+    backgroundColor: Theme.colors.primary,
+    borderRadius: Theme.borderRadius.lg,
+  },
+  retryText: {
+    color: Theme.colors.textInverse,
+    fontWeight: Theme.typography.fontWeight.bold,
+  },
 });

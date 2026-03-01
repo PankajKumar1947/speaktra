@@ -68,16 +68,63 @@ export class AuthService {
       roles: [user.role],
     };
 
+    const refreshToken = this.jwtService.sign(payload, {
+      expiresIn: '7d',
+    });
+
+    // Store refresh token in user document
+    await this.userModel.updateOne(
+      { _id: user._id },
+      { $set: { refreshToken } },
+    );
+
     return {
       message: 'Login successful',
       accessToken: this.jwtService.sign(payload, {
         expiresIn: '1h',
       }),
-      refreshToken: this.jwtService.sign(payload, {
-        expiresIn: '7d',
-      }),
+      refreshToken,
       onboardingCompleted: user.onboardingCompleted,
       name: user.name,
     };
+  }
+
+  async refreshTokens(token: string) {
+    try {
+      const payload = await this.jwtService.verifyAsync(token, {
+        secret: process.env.JWT_SECRET!,
+      });
+
+      const user = await this.userModel.findById(payload.sub);
+      if (!user || user.refreshToken !== token) {
+        throw new UnauthorizedException('Invalid refresh token');
+      }
+
+      const newPayload = {
+        sub: user._id,
+        email: user.email,
+        roles: [user.role],
+      };
+
+      const accessToken = this.jwtService.sign(newPayload, {
+        expiresIn: '1h',
+      });
+      const newRefreshToken = this.jwtService.sign(newPayload, {
+        expiresIn: '7d',
+      });
+
+      // Update refresh token in user document (rotation)
+      await this.userModel.updateOne(
+        { _id: user._id },
+        { $set: { refreshToken: newRefreshToken } },
+      );
+
+      return {
+        accessToken,
+        refreshToken: newRefreshToken,
+      };
+    } catch {
+      throw new UnauthorizedException('Invalid or expired refresh token');
+    }
   }
 }

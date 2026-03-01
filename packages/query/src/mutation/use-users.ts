@@ -4,6 +4,7 @@ import {
   updateUser,
   removeUser,
   completeOnboarding,
+  updateMe,
   userQueries,
 } from "@repo/api-client";
 import { CreateUser, UpdateUser, CompleteOnboarding } from "@repo/schema";
@@ -55,6 +56,19 @@ export const useCompleteOnboarding = () => {
     onSuccess: (data) => {
       queryClient.invalidateQueries({
         queryKey: [userQueries.findOne.key, data.id],
+      });
+    },
+  });
+};
+
+export const useUpdateMe = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationKey: userQueries.updateMe.key,
+    mutationFn: (data: UpdateUser) => updateMe(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: userQueries.me.key,
       });
     },
   });

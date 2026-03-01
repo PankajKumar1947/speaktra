@@ -39,6 +39,9 @@ export class User {
 
   @Prop({ default: false })
   onboardingCompleted!: boolean;
+
+  @Prop({ required: false })
+  refreshToken?: string;
 }
 
 export const UserEntity = SchemaFactory.createForClass(User);

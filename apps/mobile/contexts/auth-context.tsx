@@ -2,7 +2,11 @@ import { LoginData } from "@repo/schema";
 import { router } from "expo-router";
 import { createContext, PropsWithChildren, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { setAccessToken } from "@repo/api-client";
+import {
+  setAccessToken,
+  setRefreshToken,
+  setOnTokenRefresh,
+} from "@repo/api-client";
 
 type AuthState = {
   isLoggedIn: boolean;
@@ -34,6 +38,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const storeAuthState = async (data: LoginData) => {
     try {
       setAccessToken(data?.accessToken);
+      setRefreshToken(data?.refreshToken);
       await AsyncStorage.setItem(authStorageKey, JSON.stringify(data));
     } catch (error) {
       console.error("Error storing auth state:", error);
@@ -76,6 +81,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
           const data = JSON.parse(authData);
           setLoginData(data);
           setAccessToken(data?.accessToken);
+          setRefreshToken(data?.refreshToken);
         }
       } catch (error) {
         console.error("Error fetching auth state:", error);
@@ -84,6 +90,11 @@ export function AuthProvider({ children }: PropsWithChildren) {
       }
     };
     getAuthFromStorage();
+
+    // Listen for token refresh events from the API client
+    setOnTokenRefresh(({ accessToken, refreshToken }) => {
+      updateLoginData({ accessToken, refreshToken });
+    });
   }, []);
 
   return (

@@ -1,5 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { findAllUsers, findOneUser, userQueries } from "@repo/api-client";
+import {
+  findAllUsers,
+  findOneUser,
+  getMe,
+  userQueries,
+} from "@repo/api-client";
 
 export const useUsers = () => {
   return useQuery({
@@ -13,5 +18,12 @@ export const useUser = (id: string) => {
     queryKey: [...userQueries.findOne.key, id],
     queryFn: () => findOneUser(id),
     enabled: !!id,
+  });
+};
+
+export const useMe = () => {
+  return useQuery({
+    queryKey: userQueries.me.key,
+    queryFn: () => getMe(),
   });
 };

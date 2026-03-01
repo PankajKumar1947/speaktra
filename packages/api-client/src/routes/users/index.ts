@@ -30,6 +30,16 @@ export const removeUser = async (id: string): Promise<{ deleted: boolean }> => {
   return res.data;
 };
 
+export const getMe = async (): Promise<User> => {
+  const res = await apiClient.get(userQueries.me.endpoint);
+  return res.data;
+};
+
+export const updateMe = async (data: UpdateUser): Promise<User> => {
+  const res = await apiClient.patch(userQueries.updateMe.endpoint, data);
+  return res.data;
+};
+
 export const completeOnboarding = async (
   data: CompleteOnboarding,
 ): Promise<User> => {
