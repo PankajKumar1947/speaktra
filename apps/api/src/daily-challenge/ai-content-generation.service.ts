@@ -38,27 +38,23 @@ export class AIContentGenerationService {
       vocabularies: z.array(CreateVocabularySchema.omit({ domainId: true })),
     });
 
+    this.logger.log(
+      `Generating ${count} vocabularies for domain: ${domain}, level: ${level}. Skipping ${lastVocabularies.length} previous words.`,
+    );
+
     try {
       const response = await this.mistral.chat.complete({
         model: 'mistral-large-latest',
         messages: [
           {
             role: 'system',
-            content: buildVocabularyPrompt(domain, level, count),
-          },
-          {
-            role: 'system',
-            content: `Previously generated words: ${lastVocabularies.join(', ')}.               
-              ULTRA IMPORTANT: 
-              1. Do NOT repeat any of the words listed above.
-              2. Generate COMPLETELY NEW vocabularies.
-              3. Scale the difficulty appropriately for the "${level}" level.`,
+            content: `${buildVocabularyPrompt(domain, level, count, lastVocabularies)}`,
           },
         ],
         responseFormat: { type: 'json_object' },
-        temperature: 1,
-        frequencyPenalty: 0.5,
-        presencePenalty: 0.2,
+        temperature: 0.7, // Slightly lower temperature for better instruction following
+        frequencyPenalty: 0.8, // Increased frequency penalty to discourage repetition
+        presencePenalty: 0.5, // Increased presence penalty
       });
 
       const content = response.choices?.[0]?.message?.content;
@@ -72,6 +68,7 @@ export class AIContentGenerationService {
 
       return validated.vocabularies;
     } catch (error) {
+      this.logger.error('Error generating vocabularies:');
       this.logger.error(error);
       return [];
     }
@@ -95,13 +92,13 @@ export class AIContentGenerationService {
           {
             role: 'system',
             content: `ULTRA IMPORTANT: 
-              1. Generate sentences using ONLY the words provided below.
-              2. Do NOT use any other words.
-              3. Use each word AT LEAST once.
-              4. Make the sentences meaningful and grammatically correct.
+              1. Generate exactly ${count} sentences, each designed to showcase one of the vocabulary words provided below.
+              2. Each sentence MUST naturally incorporate at least one of the target words.
+              3. Ensure all provided words are covered across the generated sentences.
+              4. Make the sentences meaningful and grammatically correct within the context of "${domain}".
               5. Scale the difficulty appropriately for the "${level}" level.
               
-              Words to use: ${vocabBasedOn.join(', ')}.`,
+              Target Vocabulary: ${vocabBasedOn.join(', ')}.`,
           },
         ],
         responseFormat: { type: 'json_object' },

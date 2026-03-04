@@ -16,6 +16,10 @@ export class SentenceService {
     return this.sentenceModel.create(createSentenceDto);
   }
 
+  createMany(createSentenceDto: CreateSentenceDto[]) {
+    return this.sentenceModel.insertMany(createSentenceDto);
+  }
+
   findAll() {
     return this.sentenceModel.find().exec();
   }

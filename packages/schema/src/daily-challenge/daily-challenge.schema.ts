@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { DifficultyEnum, LevelEnum } from "../common/common.enum";
+import { LevelEnum } from "../common/common.enum";
 
 export const DailyChallengeSchema = z.object({
   id: z.string().describe("The unique identifier of the daily challenge"),
@@ -13,9 +13,6 @@ export const DailyChallengeSchema = z.object({
       message: "domain must be a valid MongoDB ObjectId",
     })
     .describe("Reference to the domain this daily challenge belongs to"),
-  difficulty: DifficultyEnum.describe(
-    "Difficulty level of the daily challenge",
-  ),
   level: LevelEnum.describe("Proficiency level of the daily challenge"),
   vocabularies: z
     .array(

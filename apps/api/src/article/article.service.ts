@@ -16,6 +16,10 @@ export class ArticleService {
     return this.articleModel.create(createArticleDto);
   }
 
+  createMany(createArticleDto: CreateArticleDto[]) {
+    return this.articleModel.insertMany(createArticleDto);
+  }
+
   findAll() {
     return this.articleModel.find().exec();
   }

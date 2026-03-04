@@ -35,7 +35,6 @@ export class DailyChallengeService {
     // check if the daily challenge already exists
     const existingDailyChallenge = await this.dailyChallengeModel.findOne({
       domain: createDailyChallengeDto.domain,
-      difficulty: createDailyChallengeDto.difficulty,
       level: createDailyChallengeDto.level,
       sequenceNumber: createDailyChallengeDto.sequenceNumber,
     });
@@ -52,9 +51,8 @@ export class DailyChallengeService {
     }
 
     const dailyChallenge = {
-      sequenceNumber: 1,
+      sequenceNumber: createDailyChallengeDto.sequenceNumber,
       domain: domain._id as mongoose.Types.ObjectId,
-      difficulty: createDailyChallengeDto.difficulty,
       level: createDailyChallengeDto.level,
       vocabularies: [] as mongoose.Types.ObjectId[],
       sentences: [] as mongoose.Types.ObjectId[],
@@ -62,63 +60,122 @@ export class DailyChallengeService {
     };
 
     const lastVocabularies = await this.vocabularyService.getLastNVocabularies(
-      50,
+      500,
       domain._id,
     );
 
-    const vocabulariesGenerated =
-      await this.aiContentGenerationService.generateVocabularies({
-        domain: domain.name,
-        level: createDailyChallengeDto.level,
-        count: 5,
-        lastVocabularies: lastVocabularies,
-      });
+    // 1. Generate Vocabularies
+    let retryCount = 0;
+    let vocabulariesGenerated: string[] = [];
+    while (true) {
+      // retry max 3 times
+      if (retryCount > 3) {
+        throw new Error('Failed to generate vocabularies');
+      }
+      retryCount++;
+      const vocabularyResponse =
+        await this.aiContentGenerationService.generateVocabularies({
+          domain: domain.name,
+          level: createDailyChallengeDto.level,
+          count: 5,
+          lastVocabularies: lastVocabularies,
+        });
 
-    for (const v of vocabulariesGenerated) {
-      const res = await this.vocabularyService.create({
-        ...v,
-        domainId: domain?._id?.toString(),
-      });
-      dailyChallenge.vocabularies.push(res._id as mongoose.Types.ObjectId);
+      if (vocabularyResponse && vocabularyResponse.length > 0) {
+        const vocabulariesIds = await this.vocabularyService.createMany(
+          vocabularyResponse.map((v) => ({
+            ...v,
+            domainId: domain?._id?.toString(),
+          })),
+        );
+        dailyChallenge.vocabularies = vocabulariesIds.map(
+          (v) => v._id as mongoose.Types.ObjectId,
+        );
+        vocabulariesGenerated = vocabularyResponse.map((v) => v.word);
+
+        this.logger.log(
+          `✅ Created ${vocabulariesGenerated.length} vocabularies`,
+        );
+        break;
+      } else {
+        this.logger.log(
+          `❌ Failed to generate vocabularies. Retrying... ${retryCount}`,
+        );
+        continue;
+      }
     }
 
-    this.logger.log(`✅ Created ${vocabulariesGenerated.length} vocabularies`);
+    // 2. Generate Sentences
+    retryCount = 0;
+    while (true) {
+      // retry max 3 times
+      if (retryCount > 3) {
+        throw new Error('Failed to generate sentences');
+      }
+      retryCount++;
+      const sentenceRes =
+        await this.aiContentGenerationService.generateSentences({
+          domain: domain.name,
+          level: createDailyChallengeDto.level,
+          count: 5,
+          vocabBasedOn: vocabulariesGenerated,
+        });
 
-    // 2. generate the 5 sentences
-    const sentencesGenerated =
-      await this.aiContentGenerationService.generateSentences({
-        domain: domain.name,
-        level: createDailyChallengeDto.level,
-        count: 5,
-        vocabBasedOn: vocabulariesGenerated.map((v) => v.word),
-      });
-
-    for (const s of sentencesGenerated) {
-      const res = await this.sentenceService.create({
-        ...s,
-        domainId: domain?._id?.toString(),
-      });
-      dailyChallenge.sentences.push(res._id as mongoose.Types.ObjectId);
+      if (sentenceRes && sentenceRes.length > 0) {
+        const sentencesIds = await this.sentenceService.createMany(
+          sentenceRes.map((s) => ({
+            ...s,
+            domainId: domain?._id?.toString(),
+          })),
+        );
+        dailyChallenge.sentences = sentencesIds.map(
+          (s) => s._id as mongoose.Types.ObjectId,
+        );
+        this.logger.log(`✅ Created ${sentenceRes.length} sentences`);
+        break;
+      } else {
+        this.logger.log(
+          `❌ Failed to generate sentences. Retrying... ${retryCount}`,
+        );
+        continue;
+      }
     }
-    this.logger.log(`✅ Created ${sentencesGenerated.length} sentences`);
 
-    // 3. generate the 3 articles
-    const articlesGenerated =
-      await this.aiContentGenerationService.generateArticles(
+    // 3. Generate the 3 Articles
+    retryCount = 0;
+    while (true) {
+      // retry max 3 times
+      if (retryCount > 3) {
+        throw new Error('Failed to generate articles');
+      }
+      retryCount++;
+      const articleRes = await this.aiContentGenerationService.generateArticles(
         domain as DomainDocument,
         createDailyChallengeDto.level,
       );
 
-    for (const a of articlesGenerated) {
-      const res = await this.articleService.create({
-        ...a,
-        domainId: domain?._id?.toString(),
-      });
-      dailyChallenge.articles.push(res._id as mongoose.Types.ObjectId);
-    }
-    this.logger.log(`✅ Created ${articlesGenerated.length} articles`);
+      if (articleRes && articleRes.length > 0) {
+        const articlesIds = await this.articleService.createMany(
+          articleRes.map((a) => ({
+            ...a,
+            domainId: domain?._id?.toString(),
+          })),
+        );
 
-    // 4. create the daily challenge
+        dailyChallenge.articles = articlesIds.map(
+          (a) => a._id as mongoose.Types.ObjectId,
+        );
+        this.logger.log(`✅ Created ${articleRes.length} articles`);
+        break;
+      } else {
+        this.logger.log(
+          `❌ Failed to generate articles. Retrying... ${retryCount}`,
+        );
+        continue;
+      }
+    }
+
+    // 4. Create the Daily Challenge
     const dailyChallengeCreated = await this.dailyChallengeModel.create(
       dailyChallenge as unknown as DailyChallenge,
     );

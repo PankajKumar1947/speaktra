@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { CreateVocabularyDto } from './dto/create-vocabulary.dto';
 import { UpdateVocabularyDto } from './dto/update-vocabulary.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -7,6 +7,7 @@ import mongoose, { Model } from 'mongoose';
 
 @Injectable()
 export class VocabularyService {
+  private readonly logger = new Logger(VocabularyService.name);
   constructor(
     @InjectModel(Vocabulary.name)
     private readonly vocabularyModel: Model<Vocabulary>,
@@ -14,6 +15,10 @@ export class VocabularyService {
 
   create(createVocabularyDto: CreateVocabularyDto) {
     return this.vocabularyModel.create(createVocabularyDto);
+  }
+
+  createMany(createVocabularyDto: CreateVocabularyDto[]) {
+    return this.vocabularyModel.insertMany(createVocabularyDto);
   }
 
   findAll() {
@@ -38,9 +43,17 @@ export class VocabularyService {
     return this.vocabularyModel.findByIdAndDelete(id);
   }
 
-  async getLastNVocabularies(count: number, domainId: mongoose.Types.ObjectId) {
+  async getLastNVocabularies(
+    count: number,
+    domainId: string | mongoose.Types.ObjectId,
+  ) {
+    const stringId = domainId.toString();
+    const objectId = new mongoose.Types.ObjectId(stringId);
+
     const vocabularies = await this.vocabularyModel
-      .find({ domainId })
+      .find({
+        $or: [{ domainId: stringId }, { domainId: objectId }],
+      })
       .sort({ createdAt: -1 })
       .limit(count)
       .select('word');

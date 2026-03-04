@@ -2,6 +2,7 @@ export const buildVocabularyPrompt = (
   domainName: string,
   level: string,
   count: number,
+  lastVocabularies: string[],
 ) => `
 You are an expert language tutor.
 
@@ -48,4 +49,12 @@ Return strictly this structure:
     }
   ]
 }
+
+Previously generated words (FORBIDDEN LIST - DO NOT USE):
+${lastVocabularies.join(', ')}
+
+ULTRA IMPORTANT: 
+1. DO NOT REPEAT any of the words from the FORBIDDEN LIST above.
+2. Generate COMPLETELY NEW and diverse vocabularies.
+3. Adhere strictly to the "${level}" level.
 `;

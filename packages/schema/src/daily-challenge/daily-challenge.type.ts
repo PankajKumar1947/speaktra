@@ -1,5 +1,5 @@
 import z from "zod";
-import { Difficulty, Level } from "../common";
+import { Level } from "../common";
 import {
   CreateDailyChallengeSchema,
   UpdateDailyChallengeSchema,
@@ -8,7 +8,6 @@ import {
 export type DailyChallenge = {
   _id: string;
   sequenceNumber: number;
-  difficulty: Difficulty;
   level: Level;
   vocabularies: string[];
   sentences: string[];
