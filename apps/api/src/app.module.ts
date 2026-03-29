@@ -13,9 +13,16 @@ import { ZodValidationPipe } from './zod-validation.pipe';
 import { SentenceModule } from './sentence/sentence.module';
 import { ArticleModule } from './article/article.module';
 import { DailyChallengeModule } from './daily-challenge/daily-challenge.module';
+import { BullModule } from '@nestjs/bullmq';
 
 @Module({
   imports: [
+    BullModule.forRoot({
+      connection: {
+        host: 'localhost',
+        port: 6379,
+      },
+    }),
     ConfigModule.forRoot({
       envFilePath: ['.env', '.env.local'],
       isGlobal: true,

@@ -24,6 +24,8 @@ import { Article, ArticleEntity } from 'src/article/entities/article.entity';
 import { ArticleService } from 'src/article/article.service';
 import { UsersService } from 'src/users/users.service';
 import { User, UserEntity } from 'src/users/entities/user.entity';
+import { DailyChallengeProcessor } from './daily-challenge.processor';
+import { BullModule } from '@nestjs/bullmq';
 
 @Module({
   imports: [
@@ -35,6 +37,9 @@ import { User, UserEntity } from 'src/users/entities/user.entity';
       { name: Article.name, schema: ArticleEntity },
       { name: User.name, schema: UserEntity },
     ]),
+    BullModule.registerQueue({
+      name: 'daily-challenge',
+    }),
   ],
   controllers: [DailyChallengeController],
   providers: [
@@ -45,6 +50,7 @@ import { User, UserEntity } from 'src/users/entities/user.entity';
     SentenceService,
     ArticleService,
     UsersService,
+    DailyChallengeProcessor,
   ],
 })
 export class DailyChallengeModule {}

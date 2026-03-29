@@ -16,6 +16,9 @@ import mongoose, { Model } from 'mongoose';
 import { DailyChallenge } from './entities/daily-challenge.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { UsersService } from 'src/users/users.service';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
+import { Level } from '@repo/schema';
 
 @Injectable()
 export class DailyChallengeService {
@@ -29,7 +32,31 @@ export class DailyChallengeService {
     private readonly sentenceService: SentenceService,
     private readonly articleService: ArticleService,
     private readonly userService: UsersService,
+    @InjectQueue('daily-challenge')
+    private dailyChallengeQueue: Queue,
   ) {}
+
+  async createDailyChallengeJob() {
+    const sequenceNumber = 3;
+    const domains = await this.domainService.findAll();
+    const levels = Object.values(Level);
+    for (const domain of domains) {
+      for (const level of levels) {
+        const job = await this.dailyChallengeQueue.add(
+          'create-daily-challenge',
+          {
+            domain: domain._id,
+            level,
+            sequenceNumber,
+          },
+        );
+
+        this.logger.log(
+          `${domain.name} - ${level} - Added job to queue: ${job.id}`,
+        );
+      }
+    }
+  }
 
   async create(createDailyChallengeDto: CreateDailyChallengeDto) {
     // check if the daily challenge already exists

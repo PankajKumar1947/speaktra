@@ -20,6 +20,11 @@ import type { Request } from 'express';
 export class DailyChallengeController {
   constructor(private readonly dailyChallengeService: DailyChallengeService) {}
 
+  @Post('create-job')
+  createDailyChallenge() {
+    return this.dailyChallengeService.createDailyChallengeJob();
+  }
+
   @Post()
   create(@Body() createDailyChallengeDto: CreateDailyChallengeDto) {
     return this.dailyChallengeService.create(createDailyChallengeDto);
