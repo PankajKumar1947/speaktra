@@ -2,6 +2,7 @@ export {
   setAccessToken,
   setRefreshToken,
   setOnTokenRefresh,
+  setOnAuthError,
   apiClient,
 } from "./services/axios";
 export * from "./react-queries/auth";

@@ -6,6 +6,7 @@ let refreshToken: string | null = null;
 let onTokenRefresh:
   | ((data: { accessToken: string; refreshToken: string }) => void)
   | null = null;
+let onAuthError: (() => void) | null = null;
 
 export const setAccessToken = (token: string | null) => {
   accessToken = token;
@@ -19,6 +20,10 @@ export const setOnTokenRefresh = (
   callback: (data: { accessToken: string; refreshToken: string }) => void,
 ) => {
   onTokenRefresh = callback;
+};
+
+export const setOnAuthError = (callback: () => void) => {
+  onAuthError = callback;
 };
 
 export const apiClient = axios.create({
@@ -74,6 +79,9 @@ apiClient.interceptors.response.use(
         return apiClient(originalRequest);
       } catch (refreshError) {
         // If refresh fails, we should logout or handle it in the context
+        if (onAuthError) {
+          onAuthError();
+        }
         return Promise.reject(refreshError);
       }
     }

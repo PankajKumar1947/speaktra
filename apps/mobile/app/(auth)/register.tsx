@@ -38,7 +38,7 @@ export default function RegisterScreen() {
           text1: "Registration Successful",
           text2: "Your account has been created.",
         });
-        router.push("/(auth)/domain-selection");
+        router.push("/(auth)/login");
       },
       onError: (error) => {
         Toast.show({

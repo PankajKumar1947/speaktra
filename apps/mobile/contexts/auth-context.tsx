@@ -6,7 +6,9 @@ import {
   setAccessToken,
   setRefreshToken,
   setOnTokenRefresh,
+  getMe,
 } from "@repo/api-client";
+import Toast from "react-native-toast-message";
 
 type AuthState = {
   isLoggedIn: boolean;
@@ -71,7 +73,6 @@ export function AuthProvider({ children }: PropsWithChildren) {
   };
 
   // fetching the auth state from async storage
-
   useEffect(() => {
     const getAuthFromStorage = async () => {
       try {
@@ -82,6 +83,19 @@ export function AuthProvider({ children }: PropsWithChildren) {
           setLoginData(data);
           setAccessToken(data?.accessToken);
           setRefreshToken(data?.refreshToken);
+
+          // verify the token from the server
+          try {
+            await getMe();
+          } catch (error) {
+            console.error("Session verification failed:", error);
+            Toast.show({
+              type: "error",
+              text1: "Your session has expired",
+              text2: "Please login again",
+            });
+            logOut();
+          }
         }
       } catch (error) {
         console.error("Error fetching auth state:", error);
