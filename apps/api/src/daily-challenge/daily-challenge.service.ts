@@ -37,17 +37,22 @@ export class DailyChallengeService {
   ) {}
 
   async createDailyChallengeJob() {
-    const sequenceNumber = 3;
     const domains = await this.domainService.findAll();
     const levels = Object.values(Level);
     for (const domain of domains) {
       for (const level of levels) {
+        const prevChallenge = await this.dailyChallengeModel
+          .findOne({
+            domain: domain._id,
+            level,
+          })
+          .sort({ sequenceNumber: -1 });
         const job = await this.dailyChallengeQueue.add(
           'create-daily-challenge',
           {
             domain: domain._id,
             level,
-            sequenceNumber,
+            sequenceNumber: (prevChallenge?.sequenceNumber || 0) + 1,
           },
         );
 

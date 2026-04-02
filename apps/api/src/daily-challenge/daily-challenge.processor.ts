@@ -19,3 +19,8 @@ export class DailyChallengeProcessor extends WorkerHost {
     console.log('job completed', job.id);
   }
 }
+
+/**
+ * To Run the redis server use this command
+ * docker run -itd -p 6379:6379 redis
+ */
