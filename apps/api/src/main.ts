@@ -25,7 +25,7 @@ async function bootstrap() {
     .setTitle('Speaktra API')
     .setDescription('The Speaktra API description')
     .setVersion('1.0')
-    .addServer('http://localhost:5000')
+    .addServer(process.env.API_SERVER!)
     .addTag('users')
     .addBearerAuth(
       {
