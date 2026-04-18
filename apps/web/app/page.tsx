@@ -1,26 +1,25 @@
-"use client";
-
-import { useLogin } from "@repo/query";
+import { Navbar } from "@/components/landing/navbar";
+import { Hero } from "@/components/landing/hero";
+import { ProblemSection } from "@/components/landing/problem-section";
+import { FeaturesGrid } from "@/components/landing/features-grid";
+import { HowItWorks } from "@/components/landing/how-it-works";
+import { Testimonials } from "@/components/landing/testimonials";
+import { CTASection } from "@/components/landing/cta-section";
+import { Footer } from "@/components/landing/footer";
 
 export default function Home() {
-  const { mutate: login } = useLogin();
-
-  const handleLogin = () => {
-    const payload = {
-      email: "test@example.com",
-      password: "password",
-    };
-
-    login(payload, {
-      onSuccess: () => {
-        console.log("Login successful");
-      },
-    });
-  };
-
   return (
-    <div>
-      <button onClick={handleLogin}>Login</button>
-    </div>
+    <main className="min-h-screen">
+      <Navbar />
+      <div className="pt-16">
+        <Hero />
+        <ProblemSection />
+        <FeaturesGrid />
+        <HowItWorks />
+        <Testimonials />
+        <CTASection />
+        <Footer />
+      </div>
+    </main>
   );
 }
