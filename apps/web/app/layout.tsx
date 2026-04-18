@@ -9,9 +9,12 @@ const interHeading = Inter({ subsets: ["latin"], variable: "--font-heading" });
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
-  title: "Speaktra - Master English Through Daily Challenges",
+  title: "Speaktra | Professional English Speaking Practice",
   description:
-    "Personalized daily English learning challenges tailored to your domain and level. Remember words, learn sentences, master articles, and practice conversations.",
+    "Master professional English through daily domain-specific speaking practice. Build confidence for meetings, presentations, and collaborations.",
+  icons: {
+    icon: "/logo.png",
+  },
 };
 
 export default function RootLayout({

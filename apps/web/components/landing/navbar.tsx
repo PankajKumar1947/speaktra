@@ -17,11 +17,17 @@ export function Navbar() {
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/70 backdrop-blur-xl border-b border-white/20 shadow-sm">
       <div className="container mx-auto px-6 max-w-7xl">
         <div className="flex items-center justify-between h-16">
-          <Link href="/" className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-sky-600 flex items-center justify-center">
-              <span className="text-white font-bold text-sm">S</span>
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="relative w-10 h-10 transition-transform group-hover:scale-105">
+              <img
+                src="/logo.png"
+                alt="Speaktra Logo"
+                className="w-full h-full object-contain"
+              />
             </div>
-            <span className="text-slate-900 font-bold text-lg">Speaktra</span>
+            <span className="text-slate-900 font-bold text-2xl tracking-tight">
+              Speaktra
+            </span>
           </Link>
 
           <nav className="hidden md:flex items-center gap-10">
