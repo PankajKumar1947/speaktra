@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   description:
     "Master professional English through daily domain-specific speaking practice. Build confidence for meetings, presentations, and collaborations.",
   icons: {
-    icon: "/logo.png",
+    icon: "/logo-icon.png",
   },
 };
 
