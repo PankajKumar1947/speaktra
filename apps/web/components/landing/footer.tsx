@@ -28,11 +28,17 @@ export function Footer() {
       <div className="container mx-auto px-6 max-w-7xl">
         <div className="flex flex-col lg:flex-row justify-between items-start gap-12 mb-12">
           <div className="max-w-xs">
-            <Link href="/" className="flex items-center gap-2.5 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-sky-600 flex items-center justify-center">
-                <span className="text-white font-bold text-sm">S</span>
+            <Link href="/" className="flex items-center gap-3 mb-4 group">
+              <div className="relative w-10 h-10 transition-transform group-hover:scale-105">
+                <img
+                  src="/logo.png"
+                  alt="Speaktra Logo"
+                  className="w-full h-full object-contain"
+                />
               </div>
-              <span className="text-white font-bold text-lg">Speaktra</span>
+              <span className="text-white font-bold text-2xl tracking-tight">
+                Speaktra
+              </span>
             </Link>
             <p className="text-base text-slate-400">
               Professional English speaking app for working adults.
@@ -49,7 +55,7 @@ export function Footer() {
                   <li key={i}>
                     <Link
                       href={link.href}
-                      className="text-base text-slate-400 hover:text-white"
+                      className="text-base text-slate-400 hover:text-brand-primary transition-colors"
                     >
                       {link.label}
                     </Link>
@@ -66,7 +72,7 @@ export function Footer() {
                   <li key={i}>
                     <Link
                       href={link.href}
-                      className="text-base text-slate-400 hover:text-white"
+                      className="text-base text-slate-400 hover:text-brand-primary transition-colors"
                     >
                       {link.label}
                     </Link>
@@ -81,7 +87,7 @@ export function Footer() {
                   <li key={i}>
                     <Link
                       href={link.href}
-                      className="text-base text-slate-400 hover:text-white"
+                      className="text-base text-slate-400 hover:text-brand-primary transition-colors"
                     >
                       {link.label}
                     </Link>
@@ -101,7 +107,7 @@ export function Footer() {
               <a
                 key={i}
                 href={social.href}
-                className="text-base text-slate-400 hover:text-white"
+                className="text-base text-slate-400 hover:text-brand-primary transition-colors"
               >
                 {social.label}
               </a>

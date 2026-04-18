@@ -46,13 +46,13 @@ const features = [
 
 export function FeaturesGrid() {
   return (
-    <section id="features" className="py-20 bg-slate-50">
+    <section id="features" className="py-20 bg-surface-muted/30">
       <div className="container mx-auto px-6 max-w-7xl">
         <div className="max-w-2xl mx-auto text-center mb-14">
-          <h2 className="text-3xl sm:text-4xl font-bold text-[#0C4A6E] mb-4">
+          <h2 className="text-3xl sm:text-4xl font-bold text-brand-heading mb-4">
             Everything You Need
           </h2>
-          <p className="text-lg text-slate-600">
+          <p className="text-lg text-foreground-muted">
             Built specifically for working professionals who want real results.
           </p>
         </div>
@@ -61,15 +61,15 @@ export function FeaturesGrid() {
           {features.map((feature, index) => (
             <div
               key={index}
-              className="p-6 rounded-2xl bg-white hover:bg-slate-50 transition-colors cursor-pointer group"
+              className="p-6 rounded-2xl bg-white hover:bg-surface-muted/50 transition-colors cursor-pointer group"
             >
               <div className="flex items-start gap-4">
                 <div
                   className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${
                     [
-                      "bg-sky-100 text-sky-600",
-                      "bg-orange-100 text-orange-600",
-                      "bg-sky-100 text-sky-600",
+                      "bg-brand-primary/10 text-brand-primary",
+                      "bg-brand-secondary/10 text-brand-secondary",
+                      "bg-brand-primary/10 text-brand-primary",
                       "bg-amber-100 text-amber-600",
                       "bg-emerald-100 text-emerald-600",
                       "bg-cyan-100 text-cyan-600",
@@ -79,10 +79,10 @@ export function FeaturesGrid() {
                   <feature.icon className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold text-[#0C4A6E] mb-2 group-hover:text-sky-600 transition-colors">
+                  <h3 className="text-xl font-semibold text-brand-heading mb-2 group-hover:text-brand-primary transition-colors">
                     {feature.title}
                   </h3>
-                  <p className="text-base text-slate-600 leading-relaxed">
+                  <p className="text-base text-foreground-muted leading-relaxed">
                     {feature.description}
                   </p>
                 </div>

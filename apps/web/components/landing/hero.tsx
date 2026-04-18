@@ -5,20 +5,20 @@ import { Mic, MessageSquare } from "lucide-react";
 
 export function Hero() {
   return (
-    <section className="pt-32 pb-20 bg-[#F0F9FF]">
+    <section className="pt-32 pb-20 bg-surface-alt">
       <div className="container mx-auto px-6 max-w-7xl">
         <div className="flex flex-col lg:flex-row items-center gap-12">
           <div className="flex-1 text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-sky-100 text-sky-700 text-base font-medium mb-8">
-              <span className="w-2 h-2 rounded-full bg-sky-500" />
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-primary/10 text-brand-primary text-base font-medium mb-8">
+              <span className="w-2 h-2 rounded-full bg-brand-primary" />
               For Working Professionals
             </div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[#0C4A6E] leading-tight mb-6">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-brand-heading leading-tight mb-6">
               Speak Confident, Professional English
             </h1>
 
-            <p className="text-xl text-slate-600 mb-10 max-w-xl">
+            <p className="text-xl text-foreground-muted mb-10 max-w-xl">
               Domain-specific English learning customized for your job. Build
               real confidence at work through daily speaking practice.
             </p>
@@ -26,14 +26,14 @@ export function Hero() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-10">
               <Button
                 size="lg"
-                className="text-lg bg-orange-500 hover:bg-orange-600 text-white px-8 py-3"
+                className="text-lg bg-brand-secondary hover:brightness-110 text-white px-8 py-3 transition-all"
               >
                 Download App
               </Button>
               <Button
                 size="lg"
                 variant="outline"
-                className="text-lg border-slate-300 text-slate-700 hover:bg-white px-8 py-3"
+                className="text-lg border-slate-300 text-foreground-muted hover:bg-white px-8 py-3"
               >
                 Learn More
               </Button>
@@ -102,7 +102,7 @@ export function Hero() {
                   </div>
                 </div>
                 <div className="mt-6 flex justify-center">
-                  <div className="w-14 h-14 rounded-xl bg-orange-500 flex items-center justify-center">
+                  <div className="w-14 h-14 rounded-xl bg-brand-secondary flex items-center justify-center">
                     <Mic className="w-6 h-6 text-white" />
                   </div>
                 </div>

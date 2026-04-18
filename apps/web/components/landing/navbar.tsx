@@ -35,7 +35,7 @@ export function Navbar() {
               <Link
                 key={link.label}
                 href={link.href}
-                className="text-base text-slate-600 hover:text-sky-600 transition-colors font-medium"
+                className="text-base text-foreground-muted hover:text-brand-primary transition-colors font-medium"
               >
                 {link.label}
               </Link>
@@ -45,11 +45,11 @@ export function Navbar() {
           <div className="hidden md:flex items-center gap-3">
             <Button
               variant="ghost"
-              className="text-base text-slate-600 hover:text-slate-900"
+              className="text-base text-foreground-muted hover:text-brand-heading"
             >
               Sign In
             </Button>
-            <Button className="text-base bg-orange-500 hover:bg-orange-600 text-white px-5">
+            <Button className="text-base bg-brand-secondary hover:brightness-110 text-white px-5 transition-all">
               Get Started
             </Button>
           </div>
@@ -91,17 +91,17 @@ export function Navbar() {
               <Link
                 key={link.label}
                 href={link.href}
-                className="text-base text-slate-600 py-3 px-4 rounded-lg hover:bg-slate-50"
+                className="text-base text-foreground-muted py-3 px-4 rounded-lg hover:bg-surface-alt transition-colors"
                 onClick={() => setIsOpen(false)}
               >
                 {link.label}
               </Link>
             ))}
             <div className="flex gap-3 pt-4 border-t border-slate-100 mt-2">
-              <Button variant="ghost" className="flex-1 text-slate-600">
+              <Button variant="ghost" className="flex-1 text-foreground-muted">
                 Sign In
               </Button>
-              <Button className="flex-1 bg-orange-500 hover:bg-orange-600 text-white">
+              <Button className="flex-1 bg-brand-secondary hover:brightness-110 text-white">
                 Get Started
               </Button>
             </div>

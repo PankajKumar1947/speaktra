@@ -26,10 +26,10 @@ export function ProblemSection() {
     <section className="py-20 bg-white">
       <div className="container mx-auto px-6 max-w-7xl">
         <div className="max-w-2xl mx-auto text-center mb-14">
-          <h2 className="text-3xl sm:text-4xl font-bold text-[#0C4A6E] mb-4">
+          <h2 className="text-3xl sm:text-4xl font-bold text-brand-heading mb-4">
             The Challenge
           </h2>
-          <p className="text-lg text-slate-600">
+          <p className="text-lg text-foreground-muted">
             Existing apps feel childish or generic. They don't address the
             specific challenges working professionals face daily.
           </p>
@@ -39,15 +39,15 @@ export function ProblemSection() {
           {problems.map((problem, index) => (
             <div
               key={index}
-              className="text-center p-8 rounded-2xl bg-slate-50 hover:bg-slate-100 transition-colors"
+              className="text-center p-8 rounded-2xl bg-surface-muted/50 hover:bg-surface-muted transition-colors"
             >
-              <div className="w-14 h-14 mx-auto mb-5 rounded-xl bg-orange-100 flex items-center justify-center">
-                <problem.icon className="w-6 h-6 text-orange-600" />
+              <div className="w-14 h-14 mx-auto mb-5 rounded-xl bg-brand-secondary/10 flex items-center justify-center">
+                <problem.icon className="w-6 h-6 text-brand-secondary" />
               </div>
-              <h3 className="text-xl font-semibold text-[#0C4A6E] mb-3">
+              <h3 className="text-xl font-semibold text-brand-heading mb-3">
                 {problem.title}
               </h3>
-              <p className="text-base text-slate-600 leading-relaxed">
+              <p className="text-base text-foreground-muted leading-relaxed">
                 {problem.description}
               </p>
             </div>

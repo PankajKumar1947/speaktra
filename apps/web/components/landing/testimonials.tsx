@@ -50,10 +50,10 @@ export function Testimonials() {
     <section id="testimonials" className="py-24 bg-slate-50 overflow-hidden">
       <div className="container mx-auto px-6 max-w-7xl">
         <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl font-bold text-[#0C4A6E] mb-4">
+          <h2 className="text-3xl sm:text-4xl font-bold text-brand-heading mb-4">
             What Professionals Say
           </h2>
-          <p className="text-lg text-slate-600">
+          <p className="text-lg text-foreground-muted">
             Join thousands who have transformed their English speaking skills.
           </p>
         </div>
@@ -72,8 +72,8 @@ export function Testimonials() {
                   />
                 ))}
               </div>
-              <Quote className="w-8 h-8 text-sky-200 mb-4" />
-              <p className="text-base text-slate-700 leading-relaxed mb-6">
+              <Quote className="w-8 h-8 text-brand-primary/20 mb-4" />
+              <p className="text-base text-foreground-muted leading-relaxed mb-6">
                 {testimonial.content}
               </p>
               <div className="flex items-center gap-4 pt-4 border-t border-slate-100">
@@ -112,8 +112,8 @@ export function Testimonials() {
                 />
               ))}
             </div>
-            <span className="font-semibold text-slate-700">4.9/5</span>
-            <span className="text-slate-500">from 10,000+ reviews</span>
+            <span className="font-semibold text-foreground">4.9/5</span>
+            <span className="text-muted-foreground">from 10,000+ reviews</span>
           </div>
         </div>
       </div>

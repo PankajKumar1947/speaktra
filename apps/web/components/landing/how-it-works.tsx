@@ -32,10 +32,10 @@ export function HowItWorks() {
     <section id="how-it-works" className="py-20 bg-white">
       <div className="container mx-auto px-6 max-w-7xl">
         <div className="max-w-2xl mx-auto text-center mb-14">
-          <h2 className="text-3xl sm:text-4xl font-bold text-[#0C4A6E] mb-4">
+          <h2 className="text-3xl sm:text-4xl font-bold text-brand-heading mb-4">
             How It Works
           </h2>
-          <p className="text-lg text-slate-600">
+          <p className="text-lg text-foreground-muted">
             Follow a proven progression in just 15-20 minutes daily.
           </p>
         </div>
@@ -44,18 +44,18 @@ export function HowItWorks() {
           {steps.map((step, index) => (
             <div
               key={index}
-              className="text-center p-8 rounded-2xl bg-slate-50 hover:bg-sky-50 transition-colors"
+              className="text-center p-8 rounded-2xl bg-surface-muted/50 hover:bg-surface-alt transition-colors"
             >
               <div className="w-14 h-14 mx-auto mb-5 rounded-xl bg-white border-2 border-slate-200 flex items-center justify-center">
-                <step.icon className="w-6 h-6 text-sky-600" />
+                <step.icon className="w-6 h-6 text-brand-primary" />
               </div>
               <span className="text-base font-medium text-slate-400 block mb-3">
                 {step.number}
               </span>
-              <h3 className="text-xl font-semibold text-[#0C4A6E] mb-2">
+              <h3 className="text-xl font-semibold text-brand-heading mb-2">
                 {step.title}
               </h3>
-              <p className="text-base text-slate-600 leading-relaxed">
+              <p className="text-base text-foreground-muted leading-relaxed">
                 {step.description}
               </p>
             </div>
@@ -63,9 +63,11 @@ export function HowItWorks() {
         </div>
 
         <div className="mt-10 text-center">
-          <div className="inline-flex items-center gap-3 px-5 py-3 bg-sky-50 rounded-xl text-base">
-            <span className="text-sky-700 font-medium">Daily Target:</span>
-            <span className="text-slate-600">
+          <div className="inline-flex items-center gap-3 px-5 py-3 bg-surface-alt rounded-xl text-base">
+            <span className="text-brand-primary font-medium">
+              Daily Target:
+            </span>
+            <span className="text-foreground-muted">
               5 words • 5-10 sentences • 3-4 articles • 10-20 min
             </span>
           </div>
