@@ -9,6 +9,7 @@ import { useLogin } from "@repo/query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { PasswordInput } from "./password-input";
 
 export function LoginForm() {
   const router = useRouter();
@@ -95,17 +96,11 @@ export function LoginForm() {
         </div>
 
         <div className="space-y-1.5">
-          <Input
-            type="password"
+          <PasswordInput
             placeholder="Password"
-            {...register("password")}
-            className="h-11"
+            register={register("password")}
+            error={errors.password?.message}
           />
-          {errors.password && (
-            <p className="text-xs text-destructive">
-              {errors.password.message}
-            </p>
-          )}
         </div>
 
         <Button

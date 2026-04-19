@@ -4,31 +4,41 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { RegisterBody, RegisterSchema } from "@repo/schema";
+import { RegisterSchema } from "@repo/schema";
 import { useRegister } from "@repo/query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { PasswordInput } from "./password-input";
 
 export function RegisterForm() {
   const router = useRouter();
   const { mutate: register, isPending } = useRegister();
 
+  type RegisterFormData = {
+    name: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+  };
+
   const {
     register: registerField,
     handleSubmit,
     formState: { errors },
-  } = useForm<RegisterBody>({
+  } = useForm<RegisterFormData>({
     resolver: zodResolver(RegisterSchema),
     defaultValues: {
       name: "",
       email: "",
       password: "",
+      confirmPassword: "",
     },
   });
 
-  const onSubmit = (data: RegisterBody) => {
-    register(data, {
+  const onSubmit = (data: RegisterFormData) => {
+    const { name, email, password } = data;
+    register({ name, email, password } as never, {
       onSuccess: () => {
         toast.success("Account created successfully!");
         router.push("/domain-selection");
@@ -72,17 +82,19 @@ export function RegisterForm() {
         </div>
 
         <div className="space-y-1.5">
-          <Input
-            type="password"
+          <PasswordInput
             placeholder="Password"
-            {...registerField("password")}
-            className="h-11"
+            register={registerField("password")}
+            error={errors.password?.message}
           />
-          {errors.password && (
-            <p className="text-xs text-destructive">
-              {errors.password.message}
-            </p>
-          )}
+        </div>
+
+        <div className="space-y-1.5">
+          <PasswordInput
+            placeholder="Confirm Password"
+            register={registerField("confirmPassword")}
+            error={errors.confirmPassword?.message}
+          />
         </div>
 
         <Button
