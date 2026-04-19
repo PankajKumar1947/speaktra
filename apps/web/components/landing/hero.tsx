@@ -5,7 +5,7 @@ import { Mic, MessageSquare } from "lucide-react";
 
 export function Hero() {
   return (
-    <section className="relative min-h-screen w-full flex items-center pt-20 sm:pt-24 lg:pt-0 pb-12 sm:pb-16 lg:pb-0 overflow-hidden bg-gradient-to-b from-[#F0F9FF] to-white">
+    <section className="relative min-h-screen w-full flex items-center pt-20 sm:pt-24 lg:pt-0 pb-12 sm:pb-16 lg:pb-0 overflow-hidden bg-gradient-to-b from-surface-alt to-background">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(14,165,233,0.08),transparent_50%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(249,115,22,0.06),transparent_40%)]" />
       <div className="container mx-auto px-4 sm:px-6 max-w-7xl relative">
@@ -16,7 +16,7 @@ export function Hero() {
               For Working Professionals
             </div>
 
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 leading-tight mb-4 sm:mb-6">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight mb-4 sm:mb-6">
               Speak{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-secondary to-orange-400">
                 Confident
@@ -24,7 +24,7 @@ export function Hero() {
               , Professional English
             </h1>
 
-            <p className="text-lg sm:text-xl text-slate-600 mb-8 sm:mb-10 max-w-xl mx-auto lg:mx-0">
+            <p className="text-lg sm:text-xl text-foreground-muted mb-8 sm:mb-10 max-w-xl mx-auto lg:mx-0">
               Domain-specific English learning customized for your job. Build
               real confidence at work through daily speaking practice.
             </p>
@@ -39,7 +39,7 @@ export function Hero() {
               <Button
                 size="lg"
                 variant="outline"
-                className="text-base sm:text-lg border-slate-300 text-slate-600 hover:bg-slate-50 px-6 sm:px-8 py-3 sm:py-4 w-full sm:w-auto"
+                className="text-base sm:text-lg border-border text-foreground-muted hover:bg-accent px-6 sm:px-8 py-3 sm:py-4 w-full sm:w-auto"
               >
                 Learn More
               </Button>
@@ -65,7 +65,7 @@ export function Hero() {
                     </div>
                   ))}
                 </div>
-                <span className="font-medium text-slate-600 text-sm sm:text-base">
+                <span className="font-medium text-foreground-muted text-sm sm:text-base">
                   10K+ professionals
                 </span>
               </div>
@@ -82,7 +82,7 @@ export function Hero() {
                     </svg>
                   ))}
                 </div>
-                <span className="font-medium text-slate-600 text-sm sm:text-base">
+                <span className="font-medium text-foreground-muted text-sm sm:text-base">
                   4.9 rating
                 </span>
               </div>

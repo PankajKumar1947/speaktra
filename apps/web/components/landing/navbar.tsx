@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const navLinks = [
   { label: "Features", href: "#features" },
@@ -25,7 +26,9 @@ export function Navbar() {
   return (
     <header
       className={`fixed top-2 left-0 right-0 z-50 transition-all duration-300 rounded-2xl container mx-auto px-4 sm:px-6 max-w-7xl ${
-        scrolled ? "bg-white/70 backdrop-blur-xl shadow-md" : "bg-transparent"
+        scrolled
+          ? "bg-card/70 backdrop-blur-xl shadow-md border border-border"
+          : "bg-transparent"
       }`}
     >
       <div className="">
@@ -53,6 +56,7 @@ export function Navbar() {
           </nav>
 
           <div className="hidden md:flex items-center gap-3">
+            <ThemeToggle />
             <Button
               variant="ghost"
               className="text-base text-foreground-muted hover:text-brand-heading px-4 py-3"
@@ -65,7 +69,7 @@ export function Navbar() {
           </div>
 
           <button
-            className="md:hidden p-2 text-slate-600"
+            className="md:hidden p-2 text-foreground-muted"
             onClick={() => setIsOpen(!isOpen)}
           >
             <svg
@@ -94,7 +98,7 @@ export function Navbar() {
         </div>
 
         {isOpen && (
-          <div className="md:hidden bg-white border-t border-slate-200">
+          <div className="md:hidden bg-card border-t border-border">
             <nav className="py-4 flex flex-col gap-3">
               {navLinks.map((link) => (
                 <Link
@@ -106,7 +110,8 @@ export function Navbar() {
                   {link.label}
                 </Link>
               ))}
-              <div className="flex gap-3 pt-4 border-t border-slate-100 mt-2">
+              <div className="flex gap-3 pt-4 border-t border-border mt-2">
+                <ThemeToggle />
                 <Button
                   variant="ghost"
                   className="flex-1 text-foreground-muted py-4"

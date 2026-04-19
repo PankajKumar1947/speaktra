@@ -56,7 +56,7 @@ const SocialIcon = ({ type }: { type: string }) => {
 
 export function Footer() {
   return (
-    <footer className="bg-slate-50 relative overflow-hidden">
+    <footer className="bg-muted relative overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(249,115,22,0.04),transparent_50%)]" />
 
       <div className="container mx-auto px-6 max-w-7xl relative">
@@ -72,7 +72,7 @@ export function Footer() {
                   />
                 </div>
               </Link>
-              <p className="text-slate-600 mb-6 max-w-sm">
+              <p className="text-foreground-muted mb-6 max-w-sm">
                 Professional English speaking app for working adults. Build
                 confidence in your workplace communication.
               </p>
@@ -82,7 +82,7 @@ export function Footer() {
                     key={i}
                     href={social.href}
                     aria-label={social.label}
-                    className="w-10 h-10 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-brand-secondary hover:text-white hover:border-brand-secondary transition-all duration-200 cursor-pointer shadow-sm"
+                    className="w-10 h-10 rounded-lg bg-card border border-border flex items-center justify-center text-foreground-muted hover:bg-brand-secondary hover:text-white hover:border-brand-secondary transition-all duration-200 cursor-pointer shadow-sm"
                   >
                     <SocialIcon type={social.icon} />
                   </a>
@@ -91,7 +91,7 @@ export function Footer() {
             </div>
 
             <div>
-              <h4 className="text-slate-900 font-semibold text-base mb-5">
+              <h4 className="text-foreground font-semibold text-base mb-5">
                 Product
               </h4>
               <ul className="space-y-3">
@@ -99,7 +99,7 @@ export function Footer() {
                   <li key={i}>
                     <Link
                       href={link.href}
-                      className="text-slate-600 hover:text-brand-secondary transition-colors duration-200 cursor-pointer"
+                      className="text-foreground-muted hover:text-brand-secondary transition-colors duration-200 cursor-pointer"
                     >
                       {link.label}
                     </Link>
@@ -109,7 +109,7 @@ export function Footer() {
             </div>
 
             <div>
-              <h4 className="text-slate-900 font-semibold text-base mb-5">
+              <h4 className="text-foreground font-semibold text-base mb-5">
                 Company
               </h4>
               <ul className="space-y-3">
@@ -117,7 +117,7 @@ export function Footer() {
                   <li key={i}>
                     <Link
                       href={link.href}
-                      className="text-slate-600 hover:text-brand-secondary transition-colors duration-200 cursor-pointer"
+                      className="text-foreground-muted hover:text-brand-secondary transition-colors duration-200 cursor-pointer"
                     >
                       {link.label}
                     </Link>
@@ -127,7 +127,7 @@ export function Footer() {
             </div>
 
             <div>
-              <h4 className="text-slate-900 font-semibold text-base mb-5">
+              <h4 className="text-foreground font-semibold text-base mb-5">
                 Support
               </h4>
               <ul className="space-y-3">
@@ -135,7 +135,7 @@ export function Footer() {
                   <li key={i}>
                     <Link
                       href={link.href}
-                      className="text-slate-600 hover:text-brand-secondary transition-colors duration-200 cursor-pointer"
+                      className="text-foreground-muted hover:text-brand-secondary transition-colors duration-200 cursor-pointer"
                     >
                       {link.label}
                     </Link>

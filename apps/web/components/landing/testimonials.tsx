@@ -73,7 +73,7 @@ export function Testimonials() {
   return (
     <section
       id="testimonials"
-      className="py-24 bg-slate-50 overflow-hidden relative"
+      className="py-24 bg-muted overflow-hidden relative"
     >
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_50%,rgba(249,115,22,0.04),transparent_50%)]" />
       <div className="container mx-auto px-4 sm:px-6 max-w-7xl relative">
@@ -81,10 +81,10 @@ export function Testimonials() {
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-secondary/10 text-brand-secondary text-sm font-medium mb-4">
             Testimonials
           </div>
-          <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
+          <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
             What <span className="text-brand-secondary">Professionals</span> Say
           </h2>
-          <p className="text-lg text-slate-600 max-w-xl mx-auto">
+          <p className="text-lg text-foreground-muted max-w-xl mx-auto">
             Join thousands who have transformed their English speaking skills.
           </p>
         </div>
@@ -93,21 +93,21 @@ export function Testimonials() {
           <button
             onClick={() => scroll("left")}
             disabled={!canScrollLeft}
-            className={`absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 rounded-full bg-white border border-slate-200 shadow-md flex items-center justify-center transition-all duration-300 hover:border-brand-secondary hover:bg-brand-secondary/5 ${
+            className={`absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-10 h-10 rounded-full bg-card border border-border shadow-md flex items-center justify-center transition-all duration-300 hover:border-brand-secondary hover:bg-brand-secondary/5 ${
               canScrollLeft ? "opacity-100" : "opacity-0 pointer-events-none"
             }`}
           >
-            <ChevronLeft className="w-5 h-5 text-slate-600" />
+            <ChevronLeft className="w-5 h-5 text-foreground-muted" />
           </button>
 
           <button
             onClick={() => scroll("right")}
             disabled={!canScrollRight}
-            className={`absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-10 h-10 rounded-full bg-white border border-slate-200 shadow-md flex items-center justify-center transition-all duration-300 hover:border-brand-secondary hover:bg-brand-secondary/5 ${
+            className={`absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-10 h-10 rounded-full bg-card border border-border shadow-md flex items-center justify-center transition-all duration-300 hover:border-brand-secondary hover:bg-brand-secondary/5 ${
               canScrollRight ? "opacity-100" : "opacity-0 pointer-events-none"
             }`}
           >
-            <ChevronRight className="w-5 h-5 text-slate-600" />
+            <ChevronRight className="w-5 h-5 text-foreground-muted" />
           </button>
 
           <div
@@ -118,7 +118,7 @@ export function Testimonials() {
             {testimonials.map((testimonial, index) => (
               <div
                 key={index}
-                className="relative flex flex-col flex-shrink-0 w-80 sm:w-96 p-8 rounded-3xl bg-white border border-slate-200 hover:border-brand-secondary/20 hover:shadow-2xl hover:shadow-brand-secondary/5 transition-all duration-300 snap-center"
+                className="relative flex flex-col flex-shrink-0 w-80 sm:w-96 p-8 rounded-3xl bg-card border border-border hover:border-brand-secondary/20 hover:shadow-2xl hover:shadow-brand-secondary/5 transition-all duration-300 snap-center"
               >
                 <Quote className="absolute top-2 right-3 w-14 h-14 text-brand-secondary/40" />
                 <div className="flex items-center gap-1 mb-4">
@@ -129,10 +129,10 @@ export function Testimonials() {
                     />
                   ))}
                 </div>
-                <p className="text-base text-slate-600 leading-relaxed mb-6">
+                <p className="text-base text-foreground-muted leading-relaxed mb-6">
                   "{testimonial.content}"
                 </p>
-                <div className="flex items-center gap-4 pt-5 border-t border-slate-100 mt-auto">
+                <div className="flex items-center gap-4 pt-5 border-t border-border mt-auto">
                   <div
                     className="w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold shadow-md shrink-0"
                     style={{
@@ -148,10 +148,12 @@ export function Testimonials() {
                     {testimonial.avatar}
                   </div>
                   <div className="flex flex-col">
-                    <p className="font-semibold text-slate-900">
+                    <p className="font-semibold text-foreground">
                       {testimonial.name}
                     </p>
-                    <p className="text-sm text-slate-500">{testimonial.role}</p>
+                    <p className="text-sm text-foreground-muted">
+                      {testimonial.role}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -160,7 +162,7 @@ export function Testimonials() {
         </div>
 
         <div className="mt-16 flex justify-center">
-          <div className="flex items-center gap-4 px-8 py-5 bg-white rounded-2xl border border-slate-200 shadow-lg">
+          <div className="flex items-center gap-4 px-8 py-5 bg-card rounded-2xl border border-border shadow-lg">
             <div className="flex gap-1">
               {[1, 2, 3, 4, 5].map((_, i) => (
                 <Star
@@ -169,8 +171,8 @@ export function Testimonials() {
                 />
               ))}
             </div>
-            <span className="font-bold text-slate-900 text-lg">4.9/5</span>
-            <span className="text-slate-500">from 10,000+ reviews</span>
+            <span className="font-bold text-foreground text-lg">4.9/5</span>
+            <span className="text-foreground-muted">from 10,000+ reviews</span>
           </div>
         </div>
       </div>

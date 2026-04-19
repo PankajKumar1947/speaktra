@@ -3,6 +3,7 @@ import "./globals.css";
 import { ReactQueryProvider } from "@repo/query";
 import { Geist, Inter } from "next/font/google";
 import { cn } from "@/lib/utils";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const interHeading = Inter({ subsets: ["latin"], variable: "--font-heading" });
 
@@ -28,7 +29,9 @@ export default function RootLayout({
       className={cn("font-sans", geist.variable, interHeading.variable)}
     >
       <body>
-        <ReactQueryProvider>{children}</ReactQueryProvider>
+        <ThemeProvider>
+          <ReactQueryProvider>{children}</ReactQueryProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

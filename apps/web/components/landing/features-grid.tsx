@@ -46,17 +46,17 @@ const features = [
 
 export function FeaturesGrid() {
   return (
-    <section id="features" className="py-24 bg-slate-50">
+    <section id="features" className="py-24 bg-muted">
       <div className="container mx-auto px-6 max-w-7xl">
         <div className="max-w-2xl mx-auto text-center mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-secondary/10 text-brand-secondary text-sm font-medium mb-4">
             Features
           </div>
-          <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
+          <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
             Everything You Need to{" "}
             <span className="text-brand-secondary">Excel</span>
           </h2>
-          <p className="text-lg text-slate-600 max-w-xl mx-auto">
+          <p className="text-lg text-foreground-muted max-w-xl mx-auto">
             Built specifically for working professionals who want real results.
           </p>
         </div>
@@ -65,7 +65,7 @@ export function FeaturesGrid() {
           {features.map((feature, index) => (
             <div
               key={index}
-              className="group relative p-8 rounded-2xl bg-white border border-slate-200 hover:border-brand-secondary/30 hover:shadow-xl hover:shadow-brand-secondary/5 transition-all duration-300"
+              className="group relative p-8 rounded-2xl bg-card border border-border hover:border-brand-secondary/30 hover:shadow-xl hover:shadow-brand-secondary/5 transition-all duration-300"
             >
               <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-brand-secondary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               <div className="relative">
@@ -83,10 +83,10 @@ export function FeaturesGrid() {
                 >
                   <feature.icon className="w-7 h-7" />
                 </div>
-                <h3 className="text-xl font-semibold text-slate-800 mb-3 group-hover:text-brand-secondary transition-colors">
+                <h3 className="text-xl font-semibold text-foreground mb-3 group-hover:text-brand-secondary transition-colors">
                   {feature.title}
                 </h3>
-                <p className="text-base text-slate-600 leading-relaxed">
+                <p className="text-base text-foreground-muted leading-relaxed">
                   {feature.description}
                 </p>
               </div>
