@@ -1,5 +1,3 @@
-"use client";
-
 import { ReactNode } from "react";
 import { Mic, MessageSquare, TrendingUp, Sparkles } from "lucide-react";
 
