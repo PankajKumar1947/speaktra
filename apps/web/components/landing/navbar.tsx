@@ -57,15 +57,19 @@ export function Navbar() {
 
           <div className="hidden md:flex items-center gap-3">
             <ThemeToggle />
-            <Button
-              variant="ghost"
-              className="text-base text-foreground-muted hover:text-brand-heading px-4 py-3"
-            >
-              Sign In
-            </Button>
-            <Button className="text-base bg-brand-secondary hover:brightness-110 text-white px-5 py-4 transition-all">
-              Get Started
-            </Button>
+            <Link href="/login">
+              <Button
+                variant="ghost"
+                className="text-base text-foreground-muted hover:text-brand-heading px-4 py-3"
+              >
+                Sign In
+              </Button>
+            </Link>
+            <Link href="/register">
+              <Button className="text-base bg-brand-secondary hover:brightness-110 text-white px-5 py-4 transition-all">
+                Get Started
+              </Button>
+            </Link>
           </div>
 
           <button
@@ -112,15 +116,19 @@ export function Navbar() {
               ))}
               <div className="flex gap-3 pt-4 border-t border-border mt-2">
                 <ThemeToggle />
-                <Button
-                  variant="ghost"
-                  className="flex-1 text-foreground-muted py-4"
-                >
-                  Sign In
-                </Button>
-                <Button className="flex-1 bg-brand-secondary hover:brightness-110 text-white py-4">
-                  Get Started
-                </Button>
+                <Link href="/login" className="flex-1">
+                  <Button
+                    variant="ghost"
+                    className="w-full text-foreground-muted py-4"
+                  >
+                    Sign In
+                  </Button>
+                </Link>
+                <Link href="/register" className="flex-1">
+                  <Button className="w-full bg-brand-secondary hover:brightness-110 text-white py-4">
+                    Get Started
+                  </Button>
+                </Link>
               </div>
             </nav>
           </div>

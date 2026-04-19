@@ -4,6 +4,7 @@ import { ReactQueryProvider } from "@repo/query";
 import { Geist, Inter } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "sonner";
 
 const interHeading = Inter({ subsets: ["latin"], variable: "--font-heading" });
 
@@ -28,9 +29,24 @@ export default function RootLayout({
       lang="en"
       className={cn("font-sans", geist.variable, interHeading.variable)}
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                var theme = localStorage.getItem('theme');
+                if (theme === 'dark') {
+                  document.documentElement.classList.add('dark');
+                }
+              })();
+            `,
+          }}
+        />
+      </head>
       <body>
         <ThemeProvider>
           <ReactQueryProvider>{children}</ReactQueryProvider>
+          <Toaster position="top-center" richColors />
         </ThemeProvider>
       </body>
     </html>
