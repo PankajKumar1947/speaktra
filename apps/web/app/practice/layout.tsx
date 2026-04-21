@@ -1,4 +1,5 @@
 import { Navbar } from "@/components/landing/navbar";
+import { DailyChallengeProvider } from "@/context/daily-challenge-context";
 import { Footer } from "@/components/landing/footer";
 
 export default function PracticeLayout({
@@ -15,7 +16,11 @@ export default function PracticeLayout({
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(249,115,22,0.06),transparent_40%)] pointer-events-none" />
 
       <main className="relative pt-20">
-        <div className="container py-8 px-4 mx-auto max-w-7xl">{children}</div>
+        <DailyChallengeProvider>
+          <div className="container py-8 px-4 mx-auto max-w-7xl">
+            {children}
+          </div>
+        </DailyChallengeProvider>
       </main>
       <Footer />
     </div>

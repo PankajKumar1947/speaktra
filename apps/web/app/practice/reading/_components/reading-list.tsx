@@ -4,17 +4,10 @@ import { ArticleCard } from "./article-card";
 import { LoadingState } from "@/components/common/loading-state";
 import { EmptyState } from "@/components/common/empty-state";
 
-interface ArticleItem {
-  _id: string;
-  title: string;
-  type: string;
-  difficulty: "easy" | "medium" | "hard";
-  keywords?: string[];
-  minRead: number;
-}
+import { Article } from "@repo/schema";
 
 interface ReadingListProps {
-  articles?: ArticleItem[];
+  articles?: Article[];
   isLoading?: boolean;
 }
 

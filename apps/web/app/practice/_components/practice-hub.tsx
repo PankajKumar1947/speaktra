@@ -6,55 +6,15 @@ import {
   BookOpen,
   MessageCircle,
   Newspaper,
-  Target,
-  Flame,
-  Clock,
-  TrendingUp,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
 import { PracticeModuleCard } from "./practice-module-card";
-import { ProgressBar } from "@/components/common/progress-bar";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-
-const PRACTICE_MODULES = [
-  {
-    id: "vocabulary",
-    title: "Vocabulary",
-    description: "Learn domain-specific words",
-    route: "/practice/vocabulary",
-    color: "bg-primary",
-    iconBg: "bg-sky-100 dark:bg-sky-900/30 text-sky-600 dark:text-sky-400",
-    progress: 65,
-    todayCount: 12,
-    todayTotal: 15,
-  },
-  {
-    id: "sentences",
-    title: "Sentence Practice",
-    description: "Practice corporate sentences",
-    route: "/practice/sentences",
-    color: "bg-secondary",
-    iconBg:
-      "bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400",
-    progress: 40,
-    todayCount: 8,
-    todayTotal: 10,
-  },
-  {
-    id: "reading",
-    title: "Reading",
-    description: "Business articles & topics",
-    route: "/practice/reading",
-    color: "bg-primary",
-    iconBg: "bg-sky-100 dark:bg-sky-900/30 text-sky-600 dark:text-sky-400",
-    progress: 33,
-    todayCount: 2,
-    todayTotal: 5,
-  },
-];
+import { useDailyChallenge } from "@/context/daily-challenge-context";
+import { EmptyState } from "@/components/common/empty-state";
 
 const icons: Record<string, React.ReactNode> = {
   vocabulary: <BookOpen className="size-6" />,
@@ -64,147 +24,117 @@ const icons: Record<string, React.ReactNode> = {
 
 export function PracticeHub() {
   const [date, setDate] = useState<Date>(new Date());
+  const { dailyChallenge, isLoading } = useDailyChallenge();
 
   const handlePrev = () => setDate((prev) => subDays(prev, 1));
   const handleNext = () => setDate((prev) => addDays(prev, 1));
   const handleToday = () => setDate(new Date());
 
-  const totalToday = PRACTICE_MODULES.reduce((acc, m) => acc + m.todayCount, 0);
-  const totalTarget = PRACTICE_MODULES.reduce(
-    (acc, m) => acc + m.todayTotal,
-    0,
-  );
-  const avgProgress = Math.round(
-    PRACTICE_MODULES.reduce((acc, m) => acc + m.progress, 0) /
-      PRACTICE_MODULES.length,
-  );
+  const isTodaySelected = isSameDay(date, new Date());
+
+  const PRACTICE_MODULES = [
+    {
+      id: "vocabulary",
+      title: "Vocabulary",
+      description: dailyChallenge
+        ? `${dailyChallenge.vocabularies?.length || 0} words for today`
+        : "Learn domain-specific words",
+      route: "/practice/vocabulary",
+      color: "bg-primary",
+      iconBg: "bg-sky-100 dark:bg-sky-900/30 text-sky-600 dark:text-sky-400",
+      progress: 0,
+      todayCount: dailyChallenge?.vocabularies?.length || 0,
+    },
+    {
+      id: "sentences",
+      title: "Sentence Practice",
+      description: dailyChallenge
+        ? `${dailyChallenge.sentences?.length || 0} sentences for today`
+        : "Practice corporate sentences",
+      route: "/practice/sentences",
+      color: "bg-secondary",
+      iconBg:
+        "bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400",
+      progress: 0,
+      todayCount: dailyChallenge?.sentences?.length || 0,
+    },
+    {
+      id: "reading",
+      title: "Reading",
+      description: dailyChallenge
+        ? `${dailyChallenge.articles?.length || 0} articles for today`
+        : "Business articles & topics",
+      route: "/practice/reading",
+      color: "bg-primary",
+      iconBg: "bg-sky-100 dark:bg-sky-900/30 text-sky-600 dark:text-sky-400",
+      progress: 0,
+      todayCount: dailyChallenge?.articles?.length || 0,
+    },
+  ];
+
+  const renderModuleContent = () => {
+    if (!isTodaySelected) {
+      return (
+        <div className="bg-card border border-border rounded-2xl p-10 animate-in fade-in zoom-in-95 duration-500 mt-8">
+          <EmptyState
+            title="History Not Available"
+            description="We're currently only displaying the daily challenge for today. Historical data and archives are coming soon!"
+          />
+        </div>
+      );
+    }
+
+    if (isLoading) {
+      return (
+        <div className="grid gap-4">
+          {[1, 2, 3].map((i) => (
+            <div
+              key={i}
+              className="h-32 w-full bg-card animate-pulse rounded-2xl border border-border"
+            />
+          ))}
+        </div>
+      );
+    }
+
+    return (
+      <div className="grid gap-4">
+        {PRACTICE_MODULES.map((module) => (
+          <PracticeModuleCard
+            key={module.id}
+            title={module.title}
+            description={module.description}
+            icon={icons[module.id]}
+            iconBg={module.iconBg}
+            route={module.route}
+            color={module.color}
+            progress={module.progress}
+            itemCount={`${module.todayCount} today`}
+          />
+        ))}
+      </div>
+    );
+  };
 
   return (
     <div className="space-y-10">
-      {/* Stats & Navigation Header */}
-      <div className="space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <h2 className="text-2xl font-bold text-brand-heading">
-            Overall Performance
-          </h2>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
-          <div className="group bg-card border border-border rounded-2xl p-5 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 hover:border-primary/20">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 rounded-xl bg-primary/10 text-primary group-hover:scale-110 transition-transform duration-300">
-                <Target className="size-5" />
-              </div>
-              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Progress
-              </span>
-            </div>
-            <div>
-              <p className="text-3xl font-bold text-brand-secondary">
-                {totalToday}
-                <span className="text-lg text-muted-foreground font-medium">
-                  /{totalTarget}
-                </span>
-              </p>
-              <p className="text-xs text-muted-foreground mt-1 font-medium">
-                items completed today
-              </p>
-            </div>
-          </div>
-
-          <div className="group bg-card border border-border rounded-2xl p-5 transition-all duration-300 hover:shadow-lg hover:shadow-orange-500/5 hover:border-orange-500/20">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 rounded-xl bg-orange-500/10 text-orange-500 group-hover:scale-110 transition-transform duration-300">
-                <Flame className="size-5" />
-              </div>
-              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Streak
-              </span>
-            </div>
-            <div>
-              <p className="text-3xl font-bold text-brand-secondary">7</p>
-              <p className="text-xs text-muted-foreground mt-1 font-medium">
-                days in a row
-              </p>
-            </div>
-          </div>
-
-          <div className="group bg-card border border-border rounded-2xl p-5 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 hover:border-primary/20">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 rounded-xl bg-primary/10 text-primary group-hover:scale-110 transition-transform duration-300">
-                <Clock className="size-5" />
-              </div>
-              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Time
-              </span>
-            </div>
-            <div>
-              <p className="text-3xl font-bold text-brand-secondary">
-                45
-                <span className="text-lg text-muted-foreground font-medium">
-                  m
-                </span>
-              </p>
-              <p className="text-xs text-muted-foreground mt-1 font-medium">
-                practice time
-              </p>
-            </div>
-          </div>
-
-          <div className="group bg-card border border-border rounded-2xl p-5 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 hover:border-primary/20">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 rounded-xl bg-primary/10 text-primary group-hover:scale-110 transition-transform duration-300">
-                <TrendingUp className="size-5" />
-              </div>
-              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Overall
-              </span>
-            </div>
-            <div>
-              <p className="text-3xl font-bold text-brand-secondary">
-                {avgProgress}
-                <span className="text-lg text-muted-foreground font-medium">
-                  %
-                </span>
-              </p>
-              <ProgressBar value={avgProgress} className="mt-3 h-1.5" />
-            </div>
-          </div>
-        </div>
-      </div>
-
       <div className="flex flex-col lg:flex-row gap-8 items-start">
         {/* Main Content: Modules */}
         <div className="flex-1 space-y-8">
-          <div className="space-y-3">
-            <h2 className="text-3xl sm:text-4xl font-bold text-foreground">
+          <div className="space-y-2">
+            <h2 className="text-2xl sm:text-3xl font-bold text-foreground">
               Practice{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-secondary to-orange-400">
                 Modules
               </span>
             </h2>
-            <p className="text-muted-foreground leading-relaxed max-w-2xl">
+            <p className="text-sm text-muted-foreground max-w-2xl">
               Master professional speaking with specialized modules designed to
               build your confidence in corporate settings.
             </p>
           </div>
 
-          <div className="grid gap-4">
-            {PRACTICE_MODULES.map((module) => (
-              <PracticeModuleCard
-                key={module.id}
-                id={module.id}
-                title={module.title}
-                description={module.description}
-                icon={icons[module.id]}
-                iconBg={module.iconBg}
-                route={module.route}
-                color={module.color}
-                progress={module.progress}
-                itemCount={`${module.todayCount}/${module.todayTotal} today`}
-              />
-            ))}
-          </div>
+          {renderModuleContent()}
         </div>
 
         {/* Sidebar: Navigation & Calendar */}

@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { ProgressBar } from "../../../components/common/progress-bar";
+import { ProgressBar } from "@/components/common/progress-bar";
 
 interface PracticeModuleCardProps {
-  id: string;
+  id?: string;
   title: string;
   description: string;
   icon: React.ReactNode;

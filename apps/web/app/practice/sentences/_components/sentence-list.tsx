@@ -4,17 +4,10 @@ import { SentenceCard } from "@/app/practice/sentences/_components/sentence-card
 import { LoadingState } from "@/components/common/loading-state";
 import { EmptyState } from "@/components/common/empty-state";
 
-interface SentenceItem {
-  _id: string;
-  sentence: string;
-  explanation: string;
-  otherWays?: string[];
-  context: string;
-  difficulty: "easy" | "medium" | "hard";
-}
+import { Sentence } from "@repo/schema";
 
 interface SentenceListProps {
-  sentences?: SentenceItem[];
+  sentences?: Sentence[];
   isLoading?: boolean;
 }
 

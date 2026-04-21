@@ -4,18 +4,10 @@ import { VocabularyCard } from "./vocabulary-card";
 import { LoadingState } from "@/components/common/loading-state";
 import { EmptyState } from "@/components/common/empty-state";
 
-interface VocabularyItem {
-  _id: string;
-  word: string;
-  noun?: { meaning: string; example?: string };
-  verb?: { meaning: string; example?: string };
-  adjective?: { meaning: string; example?: string };
-  adverb?: { meaning: string; example?: string };
-  difficulty: "easy" | "medium" | "hard";
-}
+import { Vocabulary } from "@repo/schema";
 
 interface VocabularyListProps {
-  vocabularies?: VocabularyItem[];
+  vocabularies?: Vocabulary[];
   isLoading?: boolean;
 }
 
