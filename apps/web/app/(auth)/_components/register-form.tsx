@@ -41,7 +41,7 @@ export function RegisterForm() {
     register({ name, email, password } as never, {
       onSuccess: () => {
         toast.success("Account created successfully!");
-        router.push("/domain-selection");
+        router.push("/login");
       },
       onError: (error: Error) => {
         toast.error(error.message || "Registration failed");
