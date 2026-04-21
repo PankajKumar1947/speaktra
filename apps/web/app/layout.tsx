@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
 
+import { AuthProvider } from "@/context/auth-context";
+
 const interHeading = Inter({ subsets: ["latin"], variable: "--font-heading" });
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
@@ -45,7 +47,9 @@ export default function RootLayout({
       </head>
       <body>
         <ThemeProvider>
-          <ReactQueryProvider>{children}</ReactQueryProvider>
+          <AuthProvider>
+            <ReactQueryProvider>{children}</ReactQueryProvider>
+          </AuthProvider>
           <Toaster position="top-center" richColors />
         </ThemeProvider>
       </body>

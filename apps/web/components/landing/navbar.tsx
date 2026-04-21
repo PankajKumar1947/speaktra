@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { useAuth } from "@/context/auth-context";
 
 const navLinks = [
   { label: "Features", href: "#features" },
@@ -12,6 +13,7 @@ const navLinks = [
 ];
 
 export function Navbar() {
+  const { isLoggedIn, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -57,19 +59,40 @@ export function Navbar() {
 
           <div className="hidden md:flex items-center gap-3">
             <ThemeToggle />
-            <Link href="/login">
-              <Button
-                variant="ghost"
-                className="text-base text-foreground-muted hover:text-brand-heading px-4 py-3"
-              >
-                Sign In
-              </Button>
-            </Link>
-            <Link href="/register">
-              <Button className="text-base bg-brand-secondary hover:brightness-110 text-white px-5 py-4 transition-all">
-                Get Started
-              </Button>
-            </Link>
+            {isLoggedIn ? (
+              <>
+                <Link href="/practice">
+                  <Button
+                    variant="ghost"
+                    className="text-base text-foreground-muted hover:text-brand-heading px-4 py-3"
+                  >
+                    Dashboard
+                  </Button>
+                </Link>
+                <Button
+                  onClick={logout}
+                  className="text-base bg-brand-secondary hover:brightness-110 text-white px-5 py-4 transition-all"
+                >
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link href="/login">
+                  <Button
+                    variant="ghost"
+                    className="text-base text-foreground-muted hover:text-brand-heading px-4 py-3"
+                  >
+                    Sign In
+                  </Button>
+                </Link>
+                <Link href="/register">
+                  <Button className="text-base bg-brand-secondary hover:brightness-110 text-white px-5 py-4 transition-all">
+                    Get Started
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
 
           <button
@@ -114,21 +137,62 @@ export function Navbar() {
                   {link.label}
                 </Link>
               ))}
-              <div className="flex gap-3 pt-4 border-t border-border mt-2">
-                <ThemeToggle />
-                <Link href="/login" className="flex-1">
-                  <Button
-                    variant="ghost"
-                    className="w-full text-foreground-muted py-4"
-                  >
-                    Sign In
-                  </Button>
-                </Link>
-                <Link href="/register" className="flex-1">
-                  <Button className="w-full bg-brand-secondary hover:brightness-110 text-white py-4">
-                    Get Started
-                  </Button>
-                </Link>
+              <div className="flex flex-col gap-3 pt-4 border-t border-border mt-2">
+                <div className="flex items-center gap-2 mb-2">
+                  <ThemeToggle />
+                  <span className="text-sm text-foreground-muted px-2">
+                    Theme
+                  </span>
+                </div>
+                {isLoggedIn ? (
+                  <>
+                    <Link
+                      href="/practice"
+                      className="w-full"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <Button
+                        variant="ghost"
+                        className="w-full text-foreground-muted py-4 justify-start"
+                      >
+                        Dashboard
+                      </Button>
+                    </Link>
+                    <Button
+                      onClick={() => {
+                        logout();
+                        setIsOpen(false);
+                      }}
+                      className="w-full bg-brand-secondary hover:brightness-110 text-white py-4"
+                    >
+                      Logout
+                    </Button>
+                  </>
+                ) : (
+                  <div className="flex gap-3">
+                    <Link
+                      href="/login"
+                      className="flex-1"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <Button
+                        variant="ghost"
+                        className="w-full text-foreground-muted py-4"
+                      >
+                        Sign In
+                      </Button>
+                    </Link>
+                    <Link
+                      href="/register"
+                      className="flex-1"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <Button className="w-full bg-brand-secondary hover:brightness-110 text-white py-4">
+                        Get Started
+                      </Button>
+                    </Link>
+                  </div>
+                )}
               </div>
             </nav>
           </div>

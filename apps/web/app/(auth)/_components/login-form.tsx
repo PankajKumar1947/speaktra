@@ -10,8 +10,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { PasswordInput } from "./password-input";
+import { useAuth } from "@/context/auth-context";
 
 export function LoginForm() {
+  const { login: setLoginData } = useAuth();
   const router = useRouter();
   const { mutate: login, isPending } = useLogin();
 
@@ -29,9 +31,9 @@ export function LoginForm() {
 
   const onSubmit = (data: LoginBody) => {
     login(data, {
-      onSuccess: () => {
+      onSuccess: (data) => {
         toast.success("Login successful!");
-        router.push("/domain-selection");
+        setLoginData(data);
       },
       onError: (error: Error) => {
         toast.error(error.message || "Login failed");
