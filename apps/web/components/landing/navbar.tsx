@@ -7,9 +7,10 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { useAuth } from "@/context/auth-context";
 
 const navLinks = [
-  { label: "Features", href: "#features" },
-  { label: "How It Works", href: "#how-it-works" },
-  { label: "Testimonials", href: "#testimonials" },
+  { label: "Home", href: "/" },
+  { label: "Practice", href: "/practice" },
+  { label: "Speak", href: "#speak" },
+  { label: "Download", href: "/download" },
 ];
 
 export function Navbar() {

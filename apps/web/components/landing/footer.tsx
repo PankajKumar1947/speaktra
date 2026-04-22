@@ -56,8 +56,8 @@ const SocialIcon = ({ type }: { type: string }) => {
 
 export function Footer() {
   return (
-    <footer className="bg-muted relative overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(249,115,22,0.04),transparent_50%)]" />
+    <footer className="bg-background relative overflow-hidden">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(249,115,22,0.03),transparent_50%)]" />
 
       <div className="container mx-auto px-6 max-w-7xl relative">
         <div className="py-16">
@@ -72,7 +72,7 @@ export function Footer() {
                   />
                 </div>
               </Link>
-              <p className="text-foreground-muted mb-6 max-w-sm">
+              <p className="text-muted-foreground mb-6 max-w-sm">
                 Professional English speaking app for working adults. Build
                 confidence in your workplace communication.
               </p>
@@ -82,7 +82,7 @@ export function Footer() {
                     key={i}
                     href={social.href}
                     aria-label={social.label}
-                    className="w-10 h-10 rounded-lg bg-card border border-border flex items-center justify-center text-foreground-muted hover:bg-brand-secondary hover:text-white hover:border-brand-secondary transition-all duration-200 cursor-pointer shadow-sm"
+                    className="w-10 h-10 rounded-lg bg-card border border-border flex items-center justify-center text-muted-foreground hover:bg-brand-secondary hover:text-white hover:border-brand-secondary transition-all duration-200 cursor-pointer shadow-sm"
                   >
                     <SocialIcon type={social.icon} />
                   </a>
@@ -99,7 +99,7 @@ export function Footer() {
                   <li key={i}>
                     <Link
                       href={link.href}
-                      className="text-foreground-muted hover:text-brand-secondary transition-colors duration-200 cursor-pointer"
+                      className="text-muted-foreground hover:text-brand-secondary transition-colors duration-200 cursor-pointer"
                     >
                       {link.label}
                     </Link>
@@ -117,7 +117,7 @@ export function Footer() {
                   <li key={i}>
                     <Link
                       href={link.href}
-                      className="text-foreground-muted hover:text-brand-secondary transition-colors duration-200 cursor-pointer"
+                      className="text-muted-foreground hover:text-brand-secondary transition-colors duration-200 cursor-pointer"
                     >
                       {link.label}
                     </Link>
@@ -135,7 +135,7 @@ export function Footer() {
                   <li key={i}>
                     <Link
                       href={link.href}
-                      className="text-foreground-muted hover:text-brand-secondary transition-colors duration-200 cursor-pointer"
+                      className="text-muted-foreground hover:text-brand-secondary transition-colors duration-200 cursor-pointer"
                     >
                       {link.label}
                     </Link>
@@ -145,9 +145,9 @@ export function Footer() {
             </div>
           </div>
 
-          <div className="pt-10 border-t border-slate-200">
+          <div className="pt-10 border-t border-border">
             <div className="flex flex-col lg:flex-row justify-between items-center gap-6">
-              <div className="flex flex-wrap justify-center gap-x-8 gap-y-2 text-sm text-slate-500">
+              <div className="flex flex-wrap justify-center gap-x-8 gap-y-2 text-sm text-muted-foreground">
                 <span>
                   © {new Date().getFullYear()} Speaktra. All rights reserved.
                 </span>
@@ -164,7 +164,7 @@ export function Footer() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2 text-slate-500 text-sm">
+              <div className="flex items-center gap-2 text-muted-foreground text-sm">
                 <Mail className="w-4 h-4" />
                 <span>support@speaktra.com</span>
               </div>
