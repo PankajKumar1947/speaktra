@@ -1,17 +1,14 @@
 import { Metadata } from "next";
-import { ReadingDetail } from "../_components/reading-detail";
+import { ArticleDetail } from "../_components/article-detail";
 
 interface ReadingPageProps {
   params: Promise<{ id: string }>;
 }
 
-export async function generateMetadata({
-  params,
-}: ReadingPageProps): Promise<Metadata> {
-  await params;
+export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: "Reading Detail - Speaktra",
-    description: "Read article content",
+    title: `Reading Detail - Speaktra`,
+    description: "Read article content for your professional practice",
   };
 }
 
@@ -19,8 +16,8 @@ export default async function ReadingDetailPage({ params }: ReadingPageProps) {
   const { id } = await params;
 
   return (
-    <div className="container mx-auto max-w-4xl py-6 px-4">
-      <ReadingDetail articleId={id} />
+    <div className="container mx-auto max-w-7xl py-6 px-4">
+      <ArticleDetail id={id} />
     </div>
   );
 }

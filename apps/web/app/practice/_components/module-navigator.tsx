@@ -64,7 +64,7 @@ export function ModuleNavigator() {
       </Link>
 
       {modules.map((module) => {
-        const isActive = pathname === module.href;
+        const isActive = pathname.startsWith(module.href);
         const Icon = module.icon;
 
         return (
