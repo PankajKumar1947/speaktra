@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { AuthLayout } from "../_components/auth-layout";
 import { GoalSelectionForm } from "../_components/goal-selection-form";
@@ -10,7 +11,9 @@ export const metadata: Metadata = {
 export default function GoalSelectionPage() {
   return (
     <AuthLayout stepLabel="Step 3 of 3">
-      <GoalSelectionForm />
+      <Suspense fallback={null}>
+        <GoalSelectionForm />
+      </Suspense>
     </AuthLayout>
   );
 }
