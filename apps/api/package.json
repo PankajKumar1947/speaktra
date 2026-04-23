@@ -36,7 +36,8 @@
     "mongoose": "^9.1.4",
     "nestjs-zod": "^5.1.1",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "@repo/schema": "*"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
@@ -44,7 +45,6 @@
     "@nestjs/cli": "^11.0.0",
     "@nestjs/schematics": "^11.0.0",
     "@nestjs/testing": "^11.0.1",
-    "@repo/schema": "*",
     "@repo/typescript-config": "*",
     "@types/express": "^5.0.0",
     "@types/jest": "^30.0.0",
