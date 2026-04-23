@@ -57,7 +57,7 @@ export class DailyChallengeService {
         );
 
         this.logger.log(
-          `${domain.name} - ${level} - Added job to queue: ${job.id}`,
+          `${domain.name} - ${level} - Added job to queue: ${job?.id}`,
         );
       }
     }

@@ -25,7 +25,7 @@ import { ArticleService } from 'src/article/article.service';
 import { UsersService } from 'src/users/users.service';
 import { User, UserEntity } from 'src/users/entities/user.entity';
 import { DailyChallengeProcessor } from './daily-challenge.processor';
-import { BullModule } from '@nestjs/bullmq';
+import { BullModule, getQueueToken } from '@nestjs/bullmq';
 
 @Module({
   imports: [
@@ -37,9 +37,13 @@ import { BullModule } from '@nestjs/bullmq';
       { name: Article.name, schema: ArticleEntity },
       { name: User.name, schema: UserEntity },
     ]),
-    BullModule.registerQueue({
-      name: 'daily-challenge',
-    }),
+    ...(process.env.ENABLE_BULLMQ === 'true'
+      ? [
+          BullModule.registerQueue({
+            name: 'daily-challenge',
+          }),
+        ]
+      : []),
   ],
   controllers: [DailyChallengeController],
   providers: [
@@ -50,7 +54,14 @@ import { BullModule } from '@nestjs/bullmq';
     SentenceService,
     ArticleService,
     UsersService,
-    DailyChallengeProcessor,
+    ...(process.env.ENABLE_BULLMQ === 'true'
+      ? [DailyChallengeProcessor]
+      : [
+          {
+            provide: getQueueToken('daily-challenge'),
+            useValue: { add: () => ({ id: 'mock-id' }) },
+          },
+        ]),
   ],
 })
 export class DailyChallengeModule {}

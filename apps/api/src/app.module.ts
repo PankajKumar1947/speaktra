@@ -17,12 +17,16 @@ import { BullModule } from '@nestjs/bullmq';
 
 @Module({
   imports: [
-    BullModule.forRoot({
-      connection: {
-        host: 'localhost',
-        port: 6379,
-      },
-    }),
+    ...(process.env.ENABLE_BULLMQ === 'true'
+      ? [
+          BullModule.forRoot({
+            connection: {
+              host: 'localhost',
+              port: 6379,
+            },
+          }),
+        ]
+      : []),
     ConfigModule.forRoot({
       envFilePath: ['.env', '.env.local'],
       isGlobal: true,

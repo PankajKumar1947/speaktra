@@ -23,7 +23,8 @@
         "NEXT_PUBLIC_API_URL",
         "API_URL",
         "EXPO_PUBLIC_API_URL",
-        "API_SERVER"
+        "API_SERVER",
+        "ENABLE_BULLMQ"
       ]
     }
   }
