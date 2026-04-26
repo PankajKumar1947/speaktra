@@ -1,0 +1,7 @@
+interface:
+  display_name: "Speaktra Mobile Data"
+  short_description: "Wire mobile screens to data"
+  default_prompt: "Use $speaktra-mobile-data-integration to connect a mobile feature to schema, api-client, and React Query layers."
+
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,7 @@
+interface:
+  display_name: "Speaktra Schema Types"
+  short_description: "Define shared schema contracts"
+  default_prompt: "Use $speaktra-schema-type-definition to update shared Zod schemas and inferred TypeScript types."
+
+policy:
+  allow_implicit_invocation: true

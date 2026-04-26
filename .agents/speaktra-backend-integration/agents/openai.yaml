@@ -1,0 +1,7 @@
+interface:
+  display_name: "Speaktra Backend"
+  short_description: "Build features in apps/api"
+  default_prompt: "Use $speaktra-backend-integration to implement or adjust a NestJS backend feature in Speaktra."
+
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,7 @@
+interface:
+  display_name: "Speaktra Web Data"
+  short_description: "Wire web pages to shared data"
+  default_prompt: "Use $speaktra-web-data-integration to connect a web feature to schema, api-client, and React Query layers."
+
+policy:
+  allow_implicit_invocation: true

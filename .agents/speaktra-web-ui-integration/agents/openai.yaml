@@ -1,0 +1,7 @@
+interface:
+  display_name: "Speaktra Web UI"
+  short_description: "Build web UI for apps/web"
+  default_prompt: "Use $speaktra-web-ui-integration to implement or refine UI in the Next.js web app."
+
+policy:
+  allow_implicit_invocation: true

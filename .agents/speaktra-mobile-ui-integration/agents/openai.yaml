@@ -1,0 +1,7 @@
+interface:
+  display_name: "Speaktra Mobile UI"
+  short_description: "Build UI for apps/mobile"
+  default_prompt: "Use $speaktra-mobile-ui-integration to implement or refine UI in the Expo mobile app."
+
+policy:
+  allow_implicit_invocation: true
