@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Level, Goal, Role } from '@repo/schema';
 import mongoose from 'mongoose';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { BaseDocument } from 'src/common/types/base-document.type';
 
 const SALT_ROUNDS = 10;
@@ -28,13 +28,13 @@ export class User {
   })
   domain?: string;
 
-  @Prop({ required: false })
+  @Prop({ required: false, type: String, enum: Level })
   level?: Level;
 
-  @Prop({ type: [String], default: [] })
+  @Prop({ type: [String], enum: Goal, default: [] })
   goals?: Goal[];
 
-  @Prop({ default: Role.USER })
+  @Prop({ type: String, enum: Role, default: Role.USER })
   role!: Role;
 
   @Prop({ default: false })

@@ -15,7 +15,7 @@ export class DailyChallenge {
   @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'Domain' })
   domain!: mongoose.Types.ObjectId;
 
-  @Prop({ required: true, enum: Level })
+  @Prop({ required: true, type: String, enum: Level })
   level!: string;
 
   @Prop({ type: [mongoose.Schema.Types.ObjectId], ref: 'Vocabulary' })

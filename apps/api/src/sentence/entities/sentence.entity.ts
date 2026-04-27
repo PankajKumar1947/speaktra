@@ -30,7 +30,7 @@ export class Sentence {
   @Prop({ required: true, type: Types.ObjectId, ref: 'Domain' })
   domainId!: Types.ObjectId;
 
-  @Prop({ required: true, enum: Difficulty })
+  @Prop({ required: true, type: String, enum: Difficulty })
   difficulty!: string;
 }
 
