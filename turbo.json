@@ -24,7 +24,8 @@
         "API_URL",
         "EXPO_PUBLIC_API_URL",
         "API_SERVER",
-        "ENABLE_BULLMQ"
+        "ENABLE_BULLMQ",
+        "UPSTASH_REDIS_URL"
       ]
     }
   }
