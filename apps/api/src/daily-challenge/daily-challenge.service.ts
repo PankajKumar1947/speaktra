@@ -20,6 +20,8 @@ import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
 import { Level } from '@repo/schema';
 
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 @Injectable()
 export class DailyChallengeService {
   private readonly logger = new Logger(DailyChallengeService.name);
@@ -105,35 +107,46 @@ export class DailyChallengeService {
         throw new Error('Failed to generate vocabularies');
       }
       retryCount++;
-      const vocabularyResponse =
-        await this.aiContentGenerationService.generateVocabularies({
-          domain: domain.name,
-          level: createDailyChallengeDto.level,
-          count: 5,
-          lastVocabularies: lastVocabularies,
-        });
+      try {
+        const vocabularyResponse =
+          await this.aiContentGenerationService.generateVocabularies({
+            domain: domain.name,
+            level: createDailyChallengeDto.level,
+            count: 5,
+            lastVocabularies: lastVocabularies,
+          });
 
-      if (vocabularyResponse && vocabularyResponse.length > 0) {
-        const vocabulariesIds = await this.vocabularyService.createMany(
-          vocabularyResponse.map((v) => ({
-            ...v,
-            domainId: domain?._id?.toString(),
-          })),
-        );
-        dailyChallenge.vocabularies = vocabulariesIds.map(
-          (v) => v._id as mongoose.Types.ObjectId,
-        );
-        vocabulariesGenerated = vocabularyResponse.map((v) => v.word);
+        if (vocabularyResponse && vocabularyResponse.length > 0) {
+          const vocabulariesIds = await this.vocabularyService.createMany(
+            vocabularyResponse.map((v) => ({
+              ...v,
+              domainId: domain?._id?.toString(),
+            })),
+          );
+          dailyChallenge.vocabularies = vocabulariesIds.map(
+            (v) => v._id as mongoose.Types.ObjectId,
+          );
+          vocabulariesGenerated = vocabularyResponse.map((v) => v.word);
 
-        this.logger.log(
-          `✅ Created ${vocabulariesGenerated.length} vocabularies`,
+          this.logger.log(
+            `✅ Created ${vocabulariesGenerated.length} vocabularies`,
+          );
+          await sleep(2000);
+          break;
+        } else {
+          this.logger.log(
+            `❌ Failed to generate vocabularies. Retrying... ${retryCount}`,
+          );
+          await sleep(10000);
+          continue;
+        }
+      } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        this.logger.error(
+          `❌ Error generating vocabularies: ${errorMessage}. Retrying... ${retryCount}`,
         );
-        break;
-      } else {
-        this.logger.log(
-          `❌ Failed to generate vocabularies. Retrying... ${retryCount}`,
-        );
-        continue;
+        await sleep(15000);
       }
     }
 
@@ -145,31 +158,42 @@ export class DailyChallengeService {
         throw new Error('Failed to generate sentences');
       }
       retryCount++;
-      const sentenceRes =
-        await this.aiContentGenerationService.generateSentences({
-          domain: domain.name,
-          level: createDailyChallengeDto.level,
-          count: 5,
-          vocabBasedOn: vocabulariesGenerated,
-        });
+      try {
+        const sentenceRes =
+          await this.aiContentGenerationService.generateSentences({
+            domain: domain.name,
+            level: createDailyChallengeDto.level,
+            count: 5,
+            vocabBasedOn: vocabulariesGenerated,
+          });
 
-      if (sentenceRes && sentenceRes.length > 0) {
-        const sentencesIds = await this.sentenceService.createMany(
-          sentenceRes.map((s) => ({
-            ...s,
-            domainId: domain?._id?.toString(),
-          })),
+        if (sentenceRes && sentenceRes.length > 0) {
+          const sentencesIds = await this.sentenceService.createMany(
+            sentenceRes.map((s) => ({
+              ...s,
+              domainId: domain?._id?.toString(),
+            })),
+          );
+          dailyChallenge.sentences = sentencesIds.map(
+            (s) => s._id as mongoose.Types.ObjectId,
+          );
+          this.logger.log(`✅ Created ${sentenceRes.length} sentences`);
+          await sleep(2000);
+          break;
+        } else {
+          this.logger.log(
+            `❌ Failed to generate sentences. Retrying... ${retryCount}`,
+          );
+          await sleep(10000);
+          continue;
+        }
+      } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        this.logger.error(
+          `❌ Error generating sentences: ${errorMessage}. Retrying... ${retryCount}`,
         );
-        dailyChallenge.sentences = sentencesIds.map(
-          (s) => s._id as mongoose.Types.ObjectId,
-        );
-        this.logger.log(`✅ Created ${sentenceRes.length} sentences`);
-        break;
-      } else {
-        this.logger.log(
-          `❌ Failed to generate sentences. Retrying... ${retryCount}`,
-        );
-        continue;
+        await sleep(15000);
       }
     }
 
@@ -181,29 +205,41 @@ export class DailyChallengeService {
         throw new Error('Failed to generate articles');
       }
       retryCount++;
-      const articleRes = await this.aiContentGenerationService.generateArticles(
-        domain as DomainDocument,
-        createDailyChallengeDto.level,
-      );
+      try {
+        const articleRes =
+          await this.aiContentGenerationService.generateArticles(
+            domain as DomainDocument,
+            createDailyChallengeDto.level,
+          );
 
-      if (articleRes && articleRes.length > 0) {
-        const articlesIds = await this.articleService.createMany(
-          articleRes.map((a) => ({
-            ...a,
-            domainId: domain?._id?.toString(),
-          })),
-        );
+        if (articleRes && articleRes.length > 0) {
+          const articlesIds = await this.articleService.createMany(
+            articleRes.map((a) => ({
+              ...a,
+              domainId: domain?._id?.toString(),
+            })),
+          );
 
-        dailyChallenge.articles = articlesIds.map(
-          (a) => a._id as mongoose.Types.ObjectId,
+          dailyChallenge.articles = articlesIds.map(
+            (a) => a._id as mongoose.Types.ObjectId,
+          );
+          this.logger.log(`✅ Created ${articleRes.length} articles`);
+          await sleep(2000);
+          break;
+        } else {
+          this.logger.log(
+            `❌ Failed to generate articles. Retrying... ${retryCount}`,
+          );
+          await sleep(10000);
+          continue;
+        }
+      } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        this.logger.error(
+          `❌ Error generating articles: ${errorMessage}. Retrying... ${retryCount}`,
         );
-        this.logger.log(`✅ Created ${articleRes.length} articles`);
-        break;
-      } else {
-        this.logger.log(
-          `❌ Failed to generate articles. Retrying... ${retryCount}`,
-        );
-        continue;
+        await sleep(15000);
       }
     }
 
