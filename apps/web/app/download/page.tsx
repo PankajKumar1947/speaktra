@@ -1,93 +1,80 @@
-"use client";
+import { Navbar } from "@/components/landing/navbar";
+import { Footer } from "@/components/landing/footer";
+import { Smartphone, Download, CheckCircle2 } from "lucide-react";
+import { Metadata } from "next";
 
-import { Button } from "@/components/ui/button";
+export const metadata: Metadata = {
+  title: "Download App - Speaktra",
+  description: "Download the Speaktra mobile app for iOS and Android.",
+};
 
-export function Hero() {
+export default function DownloadPage() {
   return (
-    <section className="relative min-h-screen w-full flex items-center pt-20 sm:pt-24 lg:pt-0 pb-12 sm:pb-16 lg:pb-0 overflow-hidden bg-gradient-to-b from-surface-alt to-background">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(14,165,233,0.08),transparent_50%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(249,115,22,0.06),transparent_40%)]" />
-      <div className="container mx-auto px-4 sm:px-6 max-w-7xl relative">
-        <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
-          <div className="flex-1 text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-secondary/10 text-brand-secondary text-sm font-semibold mb-6">
-              <span className="w-2 h-2 rounded-full bg-brand-secondary animate-pulse" />
-              For Working Professionals
+    <div className="relative min-h-screen bg-gradient-to-b from-surface-alt to-background overflow-hidden flex flex-col">
+      <Navbar />
+
+      {/* Background Gradients */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(14,165,233,0.08),transparent_50%)] pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(249,115,22,0.06),transparent_40%)] pointer-events-none" />
+
+      <main className="relative flex-1 pt-12 pb-12 flex flex-col">
+        <div className="container mx-auto max-w-7xl px-4 flex flex-col lg:flex-row items-center lg:items-start justify-between gap-12 pt-8 lg:pt-12">
+          {/* Left Content */}
+          <div className="flex-1 space-y-8 text-center lg:text-left z-10 lg:mt-12">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-secondary/10 text-brand-secondary font-medium text-sm border border-brand-secondary/20">
+              <Smartphone className="size-4" />
+              <span>Mobile App Now Available</span>
             </div>
 
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-4 sm:mb-6">
-              Speak{" "}
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground">
+              Practice Anywhere, <br className="hidden lg:block" />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-secondary to-orange-400">
-                Confident
+                Anytime.
               </span>
-              , Professional English
             </h1>
 
-            <p className="text-lg sm:text-xl text-foreground-muted mb-8 sm:mb-10 max-w-xl mx-auto lg:mx-0">
-              Domain-specific English learning customized for your job. Build
-              real confidence at work through daily speaking practice.
-            </p>
+            <ul className="space-y-4 max-w-md mx-auto lg:mx-0 text-left">
+              {[
+                "Daily domain-specific vocabulary",
+                "Interactive voice conversations",
+                "Real-time pronunciation feedback",
+                "Offline practice mode",
+              ].map((feature, i) => (
+                <li
+                  key={i}
+                  className="flex items-center gap-3 text-foreground"
+                  style={{ animationDelay: `${i * 100}ms` }}
+                >
+                  <CheckCircle2 className="size-5 text-brand-secondary shrink-0" />
+                  <span>{feature}</span>
+                </li>
+              ))}
+            </ul>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-8 sm:mb-12">
-              <Button
-                size="lg"
-                className="text-base sm:text-lg bg-brand-secondary hover:brightness-110 text-white px-6 sm:px-8 py-3 sm:py-4 transition-all shadow-lg shadow-brand-secondary/25 hover:shadow-xl w-full sm:w-auto"
-              >
-                Download App
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="text-base sm:text-lg border-border text-foreground-muted hover:bg-accent px-6 sm:px-8 py-3 sm:py-4 w-full sm:w-auto"
-              >
-                Learn More
-              </Button>
-            </div>
+            <div className="flex flex-col sm:flex-row items-center gap-4 pt-6 justify-center lg:justify-start">
+              <button className="flex items-center justify-center gap-3 bg-foreground text-background px-6 py-4 rounded-xl font-semibold hover:scale-105 transition-transform w-full sm:w-auto shadow-xl">
+                <Download className="size-5" />
+                <div className="text-left flex flex-col">
+                  <span className="text-[10px] uppercase opacity-80 mb-1">
+                    Download on the
+                  </span>
+                  <span className="text-base">App Store</span>
+                </div>
+              </button>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-6 sm:gap-10 pt-4 border-t border-slate-200/60">
-              <div className="flex items-center gap-3">
-                <div className="flex -space-x-2">
-                  {["A", "B", "C", "D"].map((letter, i) => (
-                    <div
-                      key={i}
-                      className="w-8 h-8 rounded-full border-2 border-white flex items-center justify-center text-xs font-semibold text-white shadow-sm"
-                      style={{
-                        backgroundColor: [
-                          "#0EA5E9",
-                          "#38BDF8",
-                          "#7DD3FC",
-                          "#BAE6FD",
-                        ][i],
-                      }}
-                    >
-                      {letter}
-                    </div>
-                  ))}
+              <button className="flex items-center justify-center gap-3 bg-foreground text-background px-6 py-4 rounded-xl font-semibold hover:scale-105 transition-transform w-full sm:w-auto shadow-xl">
+                <Download className="size-5" />
+                <div className="text-left flex flex-col">
+                  <span className="text-[10px] uppercase opacity-80 mb-1">
+                    Get it on
+                  </span>
+                  <span className="text-base">Google Play</span>
                 </div>
-                <span className="font-medium text-foreground-muted text-sm sm:text-base">
-                  10K+ professionals
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="flex">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <svg
-                      key={star}
-                      className="w-4 h-4 text-amber-400"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  ))}
-                </div>
-                <span className="font-medium text-foreground-muted text-sm sm:text-base">
-                  4.9 rating
-                </span>
-              </div>
+              </button>
             </div>
           </div>
 
+          {/* Right Content - Mock Device */}
           <div className="flex-shrink-0 w-full max-w-[280px] sm:max-w-[320px] lg:w-[340px] mt-12 lg:mt-0 relative z-10 mx-auto">
             <div className="relative mx-auto w-full aspect-[9/16] rounded-[3rem] border-[8px] border-foreground/10 bg-card shadow-2xl overflow-hidden group hover:scale-105 transition-transform duration-500">
               {/* Device Notch */}
@@ -242,7 +229,9 @@ export function Hero() {
             <div className="absolute bottom-0 right-0 w-1/2 aspect-square bg-orange-400/20 blur-[80px] rounded-full z-0 pointer-events-none"></div>
           </div>
         </div>
-      </div>
-    </section>
+      </main>
+
+      <Footer />
+    </div>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useAuth } from "@/context/auth-context";
@@ -9,7 +10,7 @@ import { useAuth } from "@/context/auth-context";
 const navLinks = [
   { label: "Home", href: "/" },
   { label: "Practice", href: "/practice" },
-  { label: "Speak", href: "#speak" },
+  { label: "Speak", href: "/speak" },
   { label: "Download", href: "/download" },
 ];
 
@@ -17,6 +18,7 @@ export function Navbar() {
   const { isLoggedIn, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -47,15 +49,24 @@ export function Navbar() {
           </Link>
 
           <nav className="hidden md:flex items-center gap-10">
-            {navLinks.map((link) => (
-              <Link
-                key={link.label}
-                href={link.href}
-                className="text-base text-foreground-muted hover:text-brand-primary transition-colors font-medium"
-              >
-                {link.label}
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const isActive =
+                pathname === link.href ||
+                (link.href !== "/" && pathname?.startsWith(link.href));
+              return (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  className={`text-base transition-colors font-medium ${
+                    isActive
+                      ? "text-brand-primary"
+                      : "text-foreground-muted hover:text-brand-primary"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
           </nav>
 
           <div className="hidden md:flex items-center gap-3">
@@ -128,16 +139,25 @@ export function Navbar() {
         {isOpen && (
           <div className="md:hidden bg-card border-t border-border">
             <nav className="py-4 flex flex-col gap-3">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.label}
-                  href={link.href}
-                  className="text-base text-foreground-muted py-3 px-4 rounded-lg hover:bg-surface-alt transition-colors"
-                  onClick={() => setIsOpen(false)}
-                >
-                  {link.label}
-                </Link>
-              ))}
+              {navLinks.map((link) => {
+                const isActive =
+                  pathname === link.href ||
+                  (link.href !== "/" && pathname?.startsWith(link.href));
+                return (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    className={`text-base py-3 px-4 rounded-lg transition-colors ${
+                      isActive
+                        ? "text-brand-primary bg-brand-primary/10 font-semibold"
+                        : "text-foreground-muted hover:bg-surface-alt"
+                    }`}
+                    onClick={() => setIsOpen(false)}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
               <div className="flex flex-col gap-3 pt-4 border-t border-border mt-2">
                 <div className="flex items-center gap-2 mb-2">
                   <ThemeToggle />

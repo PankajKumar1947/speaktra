@@ -18,7 +18,7 @@ const WordFormSchema = SchemaFactory.createForClass(WordForm);
 
 @Schema({ timestamps: true })
 export class Vocabulary {
-  @Prop({ required: true, unique: true })
+  @Prop({ required: true })
   word!: string;
 
   @Prop({ type: WordFormSchema, required: false })
@@ -41,3 +41,4 @@ export class Vocabulary {
 }
 
 export const VocabularyEntity = SchemaFactory.createForClass(Vocabulary);
+VocabularyEntity.index({ domainId: 1, word: 1 }, { unique: true });
