@@ -16,6 +16,7 @@ FROM base AS deps
 # Copy the pruned lockfile and package.json
 COPY --from=pruner /app/out/json/ .
 COPY --from=pruner /app/out/yarn.lock ./yarn.lock
+RUN yarn config set network-timeout 600000
 RUN yarn install --frozen-lockfile
 
 # -------- Build --------
@@ -32,7 +33,7 @@ RUN corepack enable
 
 ENV NODE_ENV=production
 # Optional: Set the port to match your main.ts default if not provided
-ENV PORT=5000
+ENV PORT=5001
 
 # Security: Non-root user
 RUN addgroup -S app && adduser -S app -G app
@@ -41,6 +42,7 @@ RUN addgroup -S app && adduser -S app -G app
 COPY --from=pruner /app/out/json/ .
 COPY --from=pruner /app/out/yarn.lock ./yarn.lock
 # Install only production dependencies
+RUN yarn config set network-timeout 600000
 RUN yarn install --prod --frozen-lockfile
 
 # Copy the build output (NestJS monorepo builds usually go to dist/apps/api)
