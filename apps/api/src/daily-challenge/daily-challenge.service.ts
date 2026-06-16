@@ -210,6 +210,7 @@ export class DailyChallengeService {
           await this.aiContentGenerationService.generateArticles(
             domain as DomainDocument,
             createDailyChallengeDto.level,
+            vocabulariesGenerated,
           );
 
         if (articleRes && articleRes.length > 0) {

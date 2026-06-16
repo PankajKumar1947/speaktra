@@ -122,7 +122,11 @@ export class AIContentGenerationService {
     }
   }
 
-  async generateArticles(domain: DomainDocument, level: Level) {
+  async generateArticles(
+    domain: DomainDocument,
+    level: Level,
+    vocabularyWords?: string[],
+  ) {
     const { _id, name } = domain;
     console.log('domain Id', _id);
 
@@ -136,7 +140,7 @@ export class AIContentGenerationService {
         messages: [
           {
             role: 'system',
-            content: buildArticlePrompt(name, level),
+            content: buildArticlePrompt(name, level, vocabularyWords),
           },
         ],
         responseFormat: { type: 'json_object' },
