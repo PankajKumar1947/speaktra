@@ -7,19 +7,24 @@ import { Button } from "@/components/ui/button";
 import {
   Building2,
   Code,
-  ShoppingCart,
+  GraduationCap,
   Stethoscope,
   Landmark,
-  GraduationCap,
+  Scale,
+  BookOpen,
+  FlaskConical,
 } from "lucide-react";
+import { Domain } from "@repo/schema";
 
 const iconMap: Record<string, React.ElementType> = {
-  corporate: Building2,
-  it: Code,
-  sales: ShoppingCart,
-  healthcare: Stethoscope,
-  finance: Landmark,
-  education: GraduationCap,
+  [Domain.TECHNOLOGY]: Code,
+  [Domain.BUSINESS]: Building2,
+  [Domain.STUDENT]: GraduationCap,
+  [Domain.MEDICAL]: Stethoscope,
+  [Domain.FINANCE]: Landmark,
+  [Domain.LAW]: Scale,
+  [Domain.EDUCATION]: BookOpen,
+  [Domain.SCIENCE]: FlaskConical,
 };
 
 export function DomainSelectionForm() {

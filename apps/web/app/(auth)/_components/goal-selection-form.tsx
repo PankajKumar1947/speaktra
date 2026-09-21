@@ -12,7 +12,7 @@ import {
   Construction,
   type LucideIcon,
 } from "lucide-react";
-import { Goal, Level, userGoals } from "@repo/schema";
+import { Goal, Level, Domain, userGoals } from "@repo/schema";
 import { toast } from "sonner";
 
 const iconMap: Record<string, LucideIcon> = {
@@ -26,7 +26,8 @@ const iconMap: Record<string, LucideIcon> = {
 export function GoalSelectionForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const domain = searchParams.get("domain") || "corporate";
+  const domain = (searchParams.get("domain") as Domain) || Domain.TECHNOLOGY;
+  const level = (searchParams.get("level") as Level) || Level.INTERMEDIATE;
   const [selectedGoals, setSelectedGoals] = useState<Goal[]>([]);
   const { mutate: completeOnboarding, isPending } = useCompleteOnboarding();
 
@@ -41,7 +42,7 @@ export function GoalSelectionForm() {
   const handleContinue = () => {
     if (selectedGoals.length > 0) {
       completeOnboarding(
-        { domain, level: Level.INTERMEDIATE, goals: selectedGoals },
+        { domain, level, goals: selectedGoals },
         {
           onSuccess: () => {
             toast.success("Onboarding completed!");
