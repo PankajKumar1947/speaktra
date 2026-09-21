@@ -12,8 +12,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Card } from "../../../components";
 import Theme from "../../../constants/theme";
 import { AuthContext } from "@/contexts/auth-context";
-import { useMe } from "@repo/query";
-import { DOMAINS } from "@repo/schema";
+import { useMe, useDomains } from "@repo/query";
 import { ActivityIndicator } from "react-native";
 
 type ProfileRoute =
@@ -24,6 +23,7 @@ export default function ProfileScreen() {
   const router = useRouter();
   const authContext = useContext(AuthContext);
   const { data: user, isLoading, isError } = useMe();
+  const { data: domains } = useDomains();
 
   const menuItems = [
     {
@@ -68,7 +68,7 @@ export default function ProfileScreen() {
   }
 
   const domainName =
-    DOMAINS.find((d) => d.id === user.domain)?.name || user.domain;
+    domains?.find((d) => d.id === user.domain)?.name || user.domain;
 
   return (
     <ScrollView style={styles.container}>
