@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { DailyChallengeService } from './daily-challenge.service';
 import { DailyChallengeController } from './daily-challenge.controller';
 import { AIContentGenerationService } from './ai-content-generation.service';
+import { WordBankService } from './word-bank.service';
 import { VocabularyService } from 'src/vocabulary/vocabulary.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import {
@@ -49,6 +50,7 @@ import { BullModule, getQueueToken } from '@nestjs/bullmq';
     SentenceService,
     ArticleService,
     UsersService,
+    WordBankService,
     ...(process.env.ENABLE_BULLMQ === 'true'
       ? [DailyChallengeProcessor]
       : [
@@ -58,5 +60,6 @@ import { BullModule, getQueueToken } from '@nestjs/bullmq';
           },
         ]),
   ],
+  exports: [WordBankService],
 })
 export class DailyChallengeModule {}
