@@ -29,7 +29,7 @@ Each included form MUST strictly follow this structure:
 }
 
 Rules:
-- Do NOT include domainId.
+- Do NOT include domain.
 - Do NOT include extra fields.
 - Do NOT include explanations.
 - Do NOT return anything except valid JSON.

@@ -7,7 +7,6 @@ import {
   CreateVocabularySchema,
   Level,
 } from '@repo/schema';
-import { DomainDocument } from 'src/domain/entities/domain.entity';
 import z from 'zod';
 import { buildVocabularyPrompt } from './ai-prompts/vocabulary.prompt';
 import { buildSentencePrompt } from './ai-prompts/sentence.prompt';
@@ -35,7 +34,7 @@ export class AIContentGenerationService {
     const { domain, level, count, lastVocabularies } = dto;
 
     const schema = z.object({
-      vocabularies: z.array(CreateVocabularySchema.omit({ domainId: true })),
+      vocabularies: z.array(CreateVocabularySchema.omit({ domain: true })),
     });
 
     this.logger.log(
@@ -78,7 +77,7 @@ export class AIContentGenerationService {
     const { domain, level, count, vocabBasedOn } = dto;
 
     const schema = z.object({
-      sentences: z.array(CreateSentenceSchema.omit({ domainId: true })),
+      sentences: z.array(CreateSentenceSchema.omit({ domain: true })),
     });
 
     try {
@@ -123,15 +122,12 @@ export class AIContentGenerationService {
   }
 
   async generateArticles(
-    domain: DomainDocument,
+    domain: string,
     level: Level,
     vocabularyWords?: string[],
   ) {
-    const { _id, name } = domain;
-    console.log('domain Id', _id);
-
     const schema = z.object({
-      articles: z.array(CreateArticleSchema.omit({ domainId: true })),
+      articles: z.array(CreateArticleSchema.omit({ domain: true })),
     });
 
     try {
@@ -140,7 +136,7 @@ export class AIContentGenerationService {
         messages: [
           {
             role: 'system',
-            content: buildArticlePrompt(name, level, vocabularyWords),
+            content: buildArticlePrompt(domain, level, vocabularyWords),
           },
         ],
         responseFormat: { type: 'json_object' },

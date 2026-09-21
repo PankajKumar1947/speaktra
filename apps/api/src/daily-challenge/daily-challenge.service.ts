@@ -7,8 +7,6 @@ import {
 import { CreateDailyChallengeDto } from './dto/create-daily-challenge.dto';
 import { UpdateDailyChallengeDto } from './dto/update-daily-challenge.dto';
 import { AIContentGenerationService } from './ai-content-generation.service';
-import { DomainService } from 'src/domain/domain.service';
-import { DomainDocument } from 'src/domain/entities/domain.entity';
 import { VocabularyService } from 'src/vocabulary/vocabulary.service';
 import { SentenceService } from 'src/sentence/sentence.service';
 import { ArticleService } from 'src/article/article.service';
@@ -18,7 +16,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { UsersService } from 'src/users/users.service';
 import { InjectQueue } from '@nestjs/bullmq';
 import { Queue } from 'bullmq';
-import { Level } from '@repo/schema';
+import { Domain, Level } from '@repo/schema';
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -29,7 +27,6 @@ export class DailyChallengeService {
     @InjectModel(DailyChallenge.name)
     private readonly dailyChallengeModel: Model<DailyChallenge>,
     private readonly aiContentGenerationService: AIContentGenerationService,
-    private readonly domainService: DomainService,
     private readonly vocabularyService: VocabularyService,
     private readonly sentenceService: SentenceService,
     private readonly articleService: ArticleService,
@@ -39,27 +36,27 @@ export class DailyChallengeService {
   ) {}
 
   async createDailyChallengeJob() {
-    const domains = await this.domainService.findAll();
+    const domains = Object.values(Domain);
     const levels = Object.values(Level);
     for (const domain of domains) {
       for (const level of levels) {
         const prevChallenge = await this.dailyChallengeModel
           .findOne({
-            domain: domain._id,
+            domain,
             level,
           })
           .sort({ sequenceNumber: -1 });
         const job = await this.dailyChallengeQueue.add(
           'create-daily-challenge',
           {
-            domain: domain._id,
+            domain,
             level,
             sequenceNumber: (prevChallenge?.sequenceNumber || 0) + 1,
           },
         );
 
         this.logger.log(
-          `${domain.name} - ${level} - Added job to queue: ${job?.id}`,
+          `${domain} - ${level} - Added job to queue: ${job?.id}`,
         );
       }
     }
@@ -75,18 +72,11 @@ export class DailyChallengeService {
     if (existingDailyChallenge) {
       throw new BadRequestException('Daily challenge already exists');
     }
-    // 1. generate the 5 vocabularies
-    const domain = await this.domainService.findOne(
-      createDailyChallengeDto.domain,
-    );
-
-    if (!domain) {
-      throw new NotFoundException('Domain not found');
-    }
+    const domain = createDailyChallengeDto.domain;
 
     const dailyChallenge = {
       sequenceNumber: createDailyChallengeDto.sequenceNumber,
-      domain: domain._id as mongoose.Types.ObjectId,
+      domain,
       level: createDailyChallengeDto.level,
       vocabularies: [] as mongoose.Types.ObjectId[],
       sentences: [] as mongoose.Types.ObjectId[],
@@ -95,7 +85,7 @@ export class DailyChallengeService {
 
     const lastVocabularies = await this.vocabularyService.getLastNVocabularies(
       500,
-      domain._id,
+      domain,
     );
 
     // 1. Generate Vocabularies
@@ -110,7 +100,7 @@ export class DailyChallengeService {
       try {
         const vocabularyResponse =
           await this.aiContentGenerationService.generateVocabularies({
-            domain: domain.name,
+            domain,
             level: createDailyChallengeDto.level,
             count: 5,
             lastVocabularies: lastVocabularies,
@@ -120,7 +110,7 @@ export class DailyChallengeService {
           const vocabulariesIds = await this.vocabularyService.createMany(
             vocabularyResponse.map((v) => ({
               ...v,
-              domainId: domain?._id?.toString(),
+              domain,
             })),
           );
           dailyChallenge.vocabularies = vocabulariesIds.map(
@@ -161,7 +151,7 @@ export class DailyChallengeService {
       try {
         const sentenceRes =
           await this.aiContentGenerationService.generateSentences({
-            domain: domain.name,
+            domain,
             level: createDailyChallengeDto.level,
             count: 5,
             vocabBasedOn: vocabulariesGenerated,
@@ -171,7 +161,7 @@ export class DailyChallengeService {
           const sentencesIds = await this.sentenceService.createMany(
             sentenceRes.map((s) => ({
               ...s,
-              domainId: domain?._id?.toString(),
+              domain,
             })),
           );
           dailyChallenge.sentences = sentencesIds.map(
@@ -208,8 +198,8 @@ export class DailyChallengeService {
       try {
         const articleRes =
           await this.aiContentGenerationService.generateArticles(
-            domain as DomainDocument,
-            createDailyChallengeDto.level,
+            domain,
+            createDailyChallengeDto.level as Level,
             vocabulariesGenerated,
           );
 
@@ -217,7 +207,7 @@ export class DailyChallengeService {
           const articlesIds = await this.articleService.createMany(
             articleRes.map((a) => ({
               ...a,
-              domainId: domain?._id?.toString(),
+              domain,
             })),
           );
 
@@ -259,7 +249,6 @@ export class DailyChallengeService {
   findOne(id: string) {
     return this.dailyChallengeModel
       .findById(id)
-      .populate('domain')
       .populate('vocabularies')
       .populate('sentences')
       .populate('articles');

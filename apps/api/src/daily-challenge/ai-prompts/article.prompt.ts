@@ -39,7 +39,7 @@ Markdown requirements for "description":
 
 Rules:
 - Do NOT include id.
-- Do NOT include domainId.
+- Do NOT include domain.
 - Do NOT include timestamps.
 - Do NOT include extra fields.
 - Do NOT return anything except valid JSON.

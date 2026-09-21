@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Level } from '@repo/schema';
+import { Level, Domain } from '@repo/schema';
 import mongoose, { HydratedDocument } from 'mongoose';
 import { Article } from 'src/article/entities/article.entity';
 import { Sentence } from 'src/sentence/entities/sentence.entity';
@@ -12,8 +12,8 @@ export class DailyChallenge {
   @Prop({ required: true })
   sequenceNumber!: number;
 
-  @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'Domain' })
-  domain!: mongoose.Types.ObjectId;
+  @Prop({ required: true, type: String, enum: Domain })
+  domain!: Domain;
 
   @Prop({ required: true, type: String, enum: Level })
   level!: string;

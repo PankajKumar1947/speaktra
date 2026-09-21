@@ -8,9 +8,6 @@ import {
   DailyChallenge,
   DailyChallengeEntity,
 } from './entities/daily-challenge.entity';
-import { DomainService } from 'src/domain/domain.service';
-import { Domain } from 'domain';
-import { DomainEntity } from 'src/domain/entities/domain.entity';
 import {
   Vocabulary,
   VocabularyEntity,
@@ -31,7 +28,6 @@ import { BullModule, getQueueToken } from '@nestjs/bullmq';
   imports: [
     MongooseModule.forFeature([
       { name: DailyChallenge.name, schema: DailyChallengeEntity },
-      { name: Domain.name, schema: DomainEntity },
       { name: Vocabulary.name, schema: VocabularyEntity },
       { name: Sentence.name, schema: SentenceEntity },
       { name: Article.name, schema: ArticleEntity },
@@ -49,7 +45,6 @@ import { BullModule, getQueueToken } from '@nestjs/bullmq';
   providers: [
     DailyChallengeService,
     AIContentGenerationService,
-    DomainService,
     VocabularyService,
     SentenceService,
     ArticleService,

@@ -23,7 +23,7 @@ Each sentence must:
 Rules:
 - "otherWays" must be an array of strings.
 - Maximum 2 alternative sentences allowed.
-- Do NOT include domainId.
+- Do NOT include domain.
 - Do NOT include id.
 - Do NOT include timestamps.
 - Do NOT include extra fields.
