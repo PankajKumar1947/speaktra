@@ -34,9 +34,9 @@ export class VocabularyController {
     return this.vocabularyService.findAll();
   }
 
-  @Get('domain/:domainId')
-  findByDomain(@Param('domainId') domainId: string) {
-    return this.vocabularyService.findByDomain(domainId);
+  @Get('domain/:domain')
+  findByDomain(@Param('domain') domain: string) {
+    return this.vocabularyService.findByDomain(domain);
   }
 
   @Get(':id')
