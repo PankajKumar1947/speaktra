@@ -1,4 +1,4 @@
-import { Sentence, Difficulty } from "@repo/schema";
+import { Sentence, Difficulty, Domain } from "@repo/schema";
 
 /**
  * Dummy sentence practice data for Corporate domain
@@ -12,7 +12,7 @@ export const SENTENCE_PRACTICES: Sentence[] = [
     explanation:
       "Common business phrasing used when arranging formal discussions.",
     difficulty: Difficulty.EASY,
-    domainId: "507f1f77bcf86cd799439001",
+    domain: Domain.BUSINESS,
   },
   {
     _id: "507f1f77bcf86cd799439022",
@@ -21,7 +21,7 @@ export const SENTENCE_PRACTICES: Sentence[] = [
     context: "Strategic planning discussion",
     explanation: "Used in leadership settings to ensure shared direction.",
     difficulty: Difficulty.MEDIUM,
-    domainId: "507f1f77bcf86cd799439001",
+    domain: Domain.BUSINESS,
   },
   {
     _id: "507f1f77bcf86cd799439023",
@@ -29,7 +29,7 @@ export const SENTENCE_PRACTICES: Sentence[] = [
     context: "Project timeline update",
     explanation: "Used to communicate changes in deliverable timelines.",
     difficulty: Difficulty.EASY,
-    domainId: "507f1f77bcf86cd799439001",
+    domain: Domain.BUSINESS,
   },
   {
     _id: "507f1f77bcf86cd799439024",
@@ -37,7 +37,7 @@ export const SENTENCE_PRACTICES: Sentence[] = [
     context: "Team collaboration",
     explanation: "Advanced corporate phrasing for optimizing team output.",
     difficulty: Difficulty.HARD,
-    domainId: "507f1f77bcf86cd799439001",
+    domain: Domain.BUSINESS,
   },
   {
     _id: "507f1f77bcf86cd799439025",
@@ -45,6 +45,6 @@ export const SENTENCE_PRACTICES: Sentence[] = [
     context: "Meeting preparation",
     explanation: "Standard formal statement regarding meeting outlines.",
     difficulty: Difficulty.EASY,
-    domainId: "507f1f77bcf86cd799439001",
+    domain: Domain.BUSINESS,
   },
 ];

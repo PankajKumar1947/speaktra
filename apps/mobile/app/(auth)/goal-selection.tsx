@@ -12,14 +12,14 @@ import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { Button } from "../../components";
 import Theme from "../../constants/theme";
-import { Goal, userGoals, Level } from "@repo/schema";
+import { Goal, userGoals, Level, Domain } from "@repo/schema";
 import { useCompleteOnboarding } from "@repo/query";
 import Toast from "react-native-toast-message";
 
 export default function GoalSelectionScreen() {
   const router = useRouter();
   const { domain, level } = useLocalSearchParams<{
-    domain: string;
+    domain: Domain;
     level: Level;
   }>();
   const [selectedGoals, setSelectedGoals] = useState<Goal[]>([]);

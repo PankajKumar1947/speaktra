@@ -1,4 +1,4 @@
-import { Vocabulary, Difficulty } from "@repo/schema";
+import { Vocabulary, Difficulty, Domain } from "@repo/schema";
 
 /**
  * Dummy vocabulary words for Corporate domain
@@ -13,7 +13,7 @@ export const VOCABULARY_WORDS: Vocabulary[] = [
         "We have a meeting scheduled at 2 PM to discuss the project timeline.",
     },
     difficulty: Difficulty.EASY,
-    domainId: "507f1f77bcf86cd799439001",
+    domain: Domain.BUSINESS,
   },
   {
     _id: "507f1f77bcf86cd799439032",
@@ -24,7 +24,7 @@ export const VOCABULARY_WORDS: Vocabulary[] = [
         "We need to consult all stakeholders before making this decision.",
     },
     difficulty: Difficulty.MEDIUM,
-    domainId: "507f1f77bcf86cd799439001",
+    domain: Domain.BUSINESS,
   },
   {
     _id: "507f1f77bcf86cd799439033",
@@ -35,7 +35,7 @@ export const VOCABULARY_WORDS: Vocabulary[] = [
         "The project deadline is next Friday, so we need to work efficiently.",
     },
     difficulty: Difficulty.EASY,
-    domainId: "507f1f77bcf86cd799439001",
+    domain: Domain.BUSINESS,
   },
   {
     _id: "507f1f77bcf86cd799439034",
@@ -45,7 +45,7 @@ export const VOCABULARY_WORDS: Vocabulary[] = [
       example: "Please review the agenda before tomorrow's board meeting.",
     },
     difficulty: Difficulty.MEDIUM,
-    domainId: "507f1f77bcf86cd799439001",
+    domain: Domain.BUSINESS,
   },
   {
     _id: "507f1f77bcf86cd799439035",
@@ -56,7 +56,7 @@ export const VOCABULARY_WORDS: Vocabulary[] = [
         "Completing the prototype is an important milestone for our team.",
     },
     difficulty: Difficulty.MEDIUM,
-    domainId: "507f1f77bcf86cd799439001",
+    domain: Domain.BUSINESS,
   },
   {
     _id: "507f1f77bcf86cd799439036",
@@ -68,6 +68,6 @@ export const VOCABULARY_WORDS: Vocabulary[] = [
         "The synergy between our departments has led to innovative solutions.",
     },
     difficulty: Difficulty.HARD,
-    domainId: "507f1f77bcf86cd799439001",
+    domain: Domain.BUSINESS,
   },
 ];

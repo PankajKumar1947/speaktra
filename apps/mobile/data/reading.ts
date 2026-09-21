@@ -1,7 +1,7 @@
-import { Article, Difficulty } from "@repo/schema";
+import { Article, Difficulty, Domain } from "@repo/schema";
 
 /**
- * Dummy reading articles for Corporate domain
+ * Dummy reading articles for Business domain
  */
 export const READING_ARTICLES: Article[] = [
   {
@@ -20,7 +20,7 @@ Close with an appropriate sign-off like "Best regards" or "Sincerely," followed 
     keywords: ["professional", "greeting", "concise", "proofread", "courteous"],
     difficulty: Difficulty.EASY,
     minRead: 5,
-    domainId: "507f1f77bcf86cd799439001",
+    domain: Domain.BUSINESS,
   },
   {
     _id: "507f1f77bcf86cd799439012",
@@ -44,7 +44,7 @@ Use visual aids when possible - charts, dashboards, or project boards can make i
     ],
     difficulty: Difficulty.MEDIUM,
     minRead: 7,
-    domainId: "507f1f77bcf86cd799439001",
+    domain: Domain.BUSINESS,
   },
   {
     _id: "507f1f77bcf86cd799439013",
@@ -64,6 +64,6 @@ End with a clear summary and call to action. Leave your audience with a memorabl
     keywords: ["objective", "organize", "delivery", "anticipating", "summary"],
     difficulty: Difficulty.HARD,
     minRead: 10,
-    domainId: "507f1f77bcf86cd799439001",
+    domain: Domain.BUSINESS,
   },
 ];

@@ -13,6 +13,7 @@ import { Card } from "../../../components";
 import Theme from "../../../constants/theme";
 import { AuthContext } from "@/contexts/auth-context";
 import { useMe } from "@repo/query";
+import { DOMAINS } from "@repo/schema";
 import { ActivityIndicator } from "react-native";
 
 type ProfileRoute =
@@ -67,7 +68,7 @@ export default function ProfileScreen() {
   }
 
   const domainName =
-    typeof user.domain === "object" ? user.domain.name : user.domain;
+    DOMAINS.find((d) => d.id === user.domain)?.name || user.domain;
 
   return (
     <ScrollView style={styles.container}>
