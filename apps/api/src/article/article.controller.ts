@@ -34,9 +34,9 @@ export class ArticleController {
     return this.articleService.findAll();
   }
 
-  @Get('domain/:domainId')
-  findByDomain(@Param('domainId') domainId: string) {
-    return this.articleService.findByDomain(domainId);
+  @Get('domain/:domain')
+  findByDomain(@Param('domain') domain: string) {
+    return this.articleService.findByDomain(domain);
   }
 
   @Get('type/:type')
