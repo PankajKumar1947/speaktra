@@ -13,6 +13,7 @@ import { VocabularyModule } from './vocabulary/vocabulary.module';
 import { ZodValidationPipe } from './zod-validation.pipe';
 import { SentenceModule } from './sentence/sentence.module';
 import { ArticleModule } from './article/article.module';
+import { SpeaktraContentModule } from './speaktra-content/speaktra-content.module';
 import { DailyChallengeModule } from './daily-challenge/daily-challenge.module';
 import { BullModule } from '@nestjs/bullmq';
 import IORedis from 'ioredis';
@@ -23,6 +24,7 @@ import IORedis from 'ioredis';
       envFilePath: ['.env', '.env.local'],
       isGlobal: true,
     }),
+    SpeaktraContentModule,
     ...(process.env.ENABLE_BULLMQ === 'true'
       ? [
           BullModule.forRoot({
