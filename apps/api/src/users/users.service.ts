@@ -17,18 +17,17 @@ export class UsersService {
   }
 
   findAll() {
-    return this.userModel.find().select('-password').populate('domain');
+    return this.userModel.find().select('-password');
   }
 
   findOne(id: string) {
-    return this.userModel.findById(id).select('-password').populate('domain');
+    return this.userModel.findById(id).select('-password');
   }
 
   update(id: string, updateUserDto: UpdateUserDto) {
     return this.userModel
       .findByIdAndUpdate(id, updateUserDto, { new: true })
-      .select('-password')
-      .populate('domain');
+      .select('-password');
   }
 
   remove(id: string) {
@@ -47,7 +46,6 @@ export class UsersService {
         },
         { new: true },
       )
-      .select('-password')
-      .populate('domain');
+      .select('-password');
   }
 }
