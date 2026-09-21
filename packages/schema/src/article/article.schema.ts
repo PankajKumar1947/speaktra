@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { DifficultyEnum } from "../common/common.enum";
+import { DomainEnum } from "../domain/domain.schema";
 
 // Full article entity schema
 export const ArticleSchema = z.object({
@@ -20,12 +21,7 @@ export const ArticleSchema = z.object({
     .number()
     .positive({ message: "Reading time must be a positive number" })
     .describe("Estimated reading time in minutes"),
-  domainId: z
-    .string()
-    .regex(/^[0-9a-fA-F]{24}$/, {
-      message: "domainId must be a valid MongoDB ObjectId",
-    })
-    .describe("Reference to the domain this article belongs to"),
+  domain: DomainEnum.describe("Domain this article belongs to"),
   difficulty: DifficultyEnum.describe("Difficulty level of the article"),
   keywords: z
     .array(z.string().min(1, { message: "Keyword cannot be empty" }))

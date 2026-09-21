@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { LevelEnum } from "../common/common.enum";
+import { DomainEnum } from "../domain/domain.schema";
 
 export const DailyChallengeSchema = z.object({
   id: z.string().describe("The unique identifier of the daily challenge"),
@@ -7,12 +8,7 @@ export const DailyChallengeSchema = z.object({
     .number()
     .positive()
     .describe("The sequence number of the daily challenge"),
-  domain: z
-    .string()
-    .regex(/^[0-9a-fA-F]{24}$/, {
-      message: "domain must be a valid MongoDB ObjectId",
-    })
-    .describe("Reference to the domain this daily challenge belongs to"),
+  domain: DomainEnum.describe("The domain this daily challenge belongs to"),
   level: LevelEnum.describe("Proficiency level of the daily challenge"),
   vocabularies: z
     .array(

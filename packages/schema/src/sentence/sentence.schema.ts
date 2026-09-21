@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { DifficultyEnum } from "../common/common.enum";
+import { DomainEnum } from "../domain/domain.schema";
 
 // Sentence schema - array of different ways to express the same sentence (max 3)
 
@@ -27,12 +28,7 @@ export const SentenceSchema = z.object({
     .string()
     .min(1, { message: "Explanation cannot be empty" })
     .describe("Explanation of the sentence meaning and usage"),
-  domainId: z
-    .string()
-    .regex(/^[0-9a-fA-F]{24}$/, {
-      message: "domainId must be a valid MongoDB ObjectId",
-    })
-    .describe("Reference to the domain this sentence belongs to"),
+  domain: DomainEnum.describe("Domain this sentence belongs to"),
   difficulty: DifficultyEnum.describe("Difficulty level of the sentence"),
   createdAt: z
     .date()
