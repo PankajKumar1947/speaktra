@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Difficulty } from '@repo/schema';
-import { HydratedDocument, Types } from 'mongoose';
+import { Difficulty, Domain } from '@repo/schema';
+import { HydratedDocument } from 'mongoose';
 
 export type SentenceDocument = HydratedDocument<Sentence>;
 
@@ -27,8 +27,8 @@ export class Sentence {
   @Prop({ required: true })
   explanation!: string;
 
-  @Prop({ required: true, type: Types.ObjectId, ref: 'Domain' })
-  domainId!: Types.ObjectId;
+  @Prop({ required: true, type: String, enum: Domain })
+  domain!: Domain;
 
   @Prop({ required: true, type: String, enum: Difficulty })
   difficulty!: string;
