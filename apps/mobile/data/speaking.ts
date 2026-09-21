@@ -1,4 +1,4 @@
-import { SpeakingScenario, SpeakingFeedback } from "@repo/schema";
+import { SpeakingScenario, SpeakingFeedback, Difficulty } from "@repo/schema";
 
 /**
  * Dummy speaking scenarios for Corporate domain
@@ -11,7 +11,7 @@ export const SPEAKING_SCENARIOS: SpeakingScenario[] = [
     prompt:
       "Tell me about the last important meeting you attended. What was discussed? Who participated? What decisions were made?",
     domain: "Corporate",
-    difficulty: "Medium",
+    difficulty: Difficulty.MEDIUM,
     suggestedDuration: 120, // 2 minutes
   },
   {
@@ -21,7 +21,7 @@ export const SPEAKING_SCENARIOS: SpeakingScenario[] = [
     prompt:
       "Introduce yourself as if you were meeting a new colleague or client. Include your role, responsibilities, and what you enjoy about your work.",
     domain: "Corporate",
-    difficulty: "Easy",
+    difficulty: Difficulty.EASY,
     suggestedDuration: 90,
   },
   {
@@ -31,7 +31,7 @@ export const SPEAKING_SCENARIOS: SpeakingScenario[] = [
     prompt:
       "Give a brief status update on a project you're working on. Mention progress, challenges, and next steps.",
     domain: "Corporate",
-    difficulty: "Medium",
+    difficulty: Difficulty.MEDIUM,
     suggestedDuration: 120,
   },
   {
@@ -41,7 +41,7 @@ export const SPEAKING_SCENARIOS: SpeakingScenario[] = [
     prompt:
       "Describe how you would handle a situation where a deadline needs to be extended. Explain the situation to your manager.",
     domain: "Corporate",
-    difficulty: "Hard",
+    difficulty: Difficulty.HARD,
     suggestedDuration: 150,
   },
 ];

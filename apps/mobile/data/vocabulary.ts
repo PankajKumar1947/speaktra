@@ -1,66 +1,73 @@
-import { VocabularyWord } from "@repo/schema";
+import { Vocabulary, Difficulty } from "@repo/schema";
 
 /**
  * Dummy vocabulary words for Corporate domain
  */
-export const VOCABULARY_WORDS: VocabularyWord[] = [
+export const VOCABULARY_WORDS: Vocabulary[] = [
   {
-    id: "vocab_1",
+    _id: "507f1f77bcf86cd799439031",
     word: "Meeting",
-    definition: "A gathering of people for discussion or decision-making",
-    example:
-      "We have a meeting scheduled at 2 PM to discuss the project timeline.",
-    domain: "Corporate",
-    difficulty: "Easy",
-    learned: true,
+    noun: {
+      meaning: "A gathering of people for discussion or decision-making",
+      example:
+        "We have a meeting scheduled at 2 PM to discuss the project timeline.",
+    },
+    difficulty: Difficulty.EASY,
+    domainId: "507f1f77bcf86cd799439001",
   },
   {
-    id: "vocab_2",
+    _id: "507f1f77bcf86cd799439032",
     word: "Stakeholder",
-    definition: "A person or group with an interest or concern in a business",
-    example: "We need to consult all stakeholders before making this decision.",
-    domain: "Corporate",
-    difficulty: "Medium",
-    learned: true,
+    noun: {
+      meaning: "A person or group with an interest or concern in a business",
+      example:
+        "We need to consult all stakeholders before making this decision.",
+    },
+    difficulty: Difficulty.MEDIUM,
+    domainId: "507f1f77bcf86cd799439001",
   },
   {
-    id: "vocab_3",
+    _id: "507f1f77bcf86cd799439033",
     word: "Deadline",
-    definition:
-      "The latest time or date by which something should be completed",
-    example:
-      "The project deadline is next Friday, so we need to work efficiently.",
-    domain: "Corporate",
-    difficulty: "Easy",
-    learned: false,
+    noun: {
+      meaning: "The latest time or date by which something should be completed",
+      example:
+        "The project deadline is next Friday, so we need to work efficiently.",
+    },
+    difficulty: Difficulty.EASY,
+    domainId: "507f1f77bcf86cd799439001",
   },
   {
-    id: "vocab_4",
+    _id: "507f1f77bcf86cd799439034",
     word: "Agenda",
-    definition: "A list of items to be discussed at a meeting",
-    example: "Please review the agenda before tomorrow's board meeting.",
-    domain: "Corporate",
-    difficulty: "Medium",
-    learned: false,
+    noun: {
+      meaning: "A list of items to be discussed at a meeting",
+      example: "Please review the agenda before tomorrow's board meeting.",
+    },
+    difficulty: Difficulty.MEDIUM,
+    domainId: "507f1f77bcf86cd799439001",
   },
   {
-    id: "vocab_5",
+    _id: "507f1f77bcf86cd799439035",
     word: "Milestone",
-    definition: "A significant stage or event in a project",
-    example: "Completing the prototype is an important milestone for our team.",
-    domain: "Corporate",
-    difficulty: "Medium",
-    learned: false,
+    noun: {
+      meaning: "A significant stage or event in a project",
+      example:
+        "Completing the prototype is an important milestone for our team.",
+    },
+    difficulty: Difficulty.MEDIUM,
+    domainId: "507f1f77bcf86cd799439001",
   },
   {
-    id: "vocab_6",
+    _id: "507f1f77bcf86cd799439036",
     word: "Synergy",
-    definition:
-      "Combined effort producing a greater result than individual efforts",
-    example:
-      "The synergy between our departments has led to innovative solutions.",
-    domain: "Corporate",
-    difficulty: "Hard",
-    learned: false,
+    noun: {
+      meaning:
+        "Combined effort producing a greater result than individual efforts",
+      example:
+        "The synergy between our departments has led to innovative solutions.",
+    },
+    difficulty: Difficulty.HARD,
+    domainId: "507f1f77bcf86cd799439001",
   },
 ];

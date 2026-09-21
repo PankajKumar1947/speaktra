@@ -6,6 +6,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Card, Button } from "../../../components";
 import Theme from "../../../constants/theme";
 import { SPEAKING_SCENARIOS } from "../../../data/speaking";
+import { Difficulty } from "@repo/schema";
 
 export default function SpeakHomeScreen() {
   const router = useRouter();
@@ -38,9 +39,9 @@ export default function SpeakHomeScreen() {
                   styles.badge,
                   {
                     backgroundColor:
-                      scenario.difficulty === "Easy"
+                      scenario.difficulty === Difficulty.EASY
                         ? Theme.colors.success
-                        : scenario.difficulty === "Medium"
+                        : scenario.difficulty === Difficulty.MEDIUM
                           ? Theme.colors.warning
                           : Theme.colors.error,
                   },

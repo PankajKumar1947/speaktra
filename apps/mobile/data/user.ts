@@ -1,4 +1,4 @@
-import { UserProfile } from "@repo/schema";
+import { UserProfile, Level, Goal } from "@repo/schema";
 
 /**
  * Dummy user data for Pankaj
@@ -9,9 +9,8 @@ export const DUMMY_USER: UserProfile = {
   name: "Pankaj",
   email: "pankaj@example.com",
   domain: "Corporate",
-  level: "Intermediate",
-  goals: ["Fluency", "Pronunciation", "Confidence"],
-  dailyCommitment: "30",
+  level: Level.INTERMEDIATE,
+  goals: [Goal.FLUENCY, Goal.PRONUNCIATION, Goal.CONFIDENCE],
   createdAt: new Date("2026-01-01"),
   onboardingCompleted: true,
 };
