@@ -199,4 +199,19 @@ export class DailyLessonService {
   ): Promise<boolean> {
     return this.dailyLessonRepository.exists(domain, level, sequenceNumber);
   }
+
+  async getDailyVocabularies(dailyLessonId: string) {
+    const lesson = await this.dailyLessonRepository.findById(dailyLessonId);
+    return lesson?.vocabularies ?? [];
+  }
+
+  async getDailySentences(dailyLessonId: string) {
+    const lesson = await this.dailyLessonRepository.findById(dailyLessonId);
+    return lesson?.sentences ?? [];
+  }
+
+  async getDailyArticles(dailyLessonId: string) {
+    const lesson = await this.dailyLessonRepository.findById(dailyLessonId);
+    return lesson?.articles ?? [];
+  }
 }

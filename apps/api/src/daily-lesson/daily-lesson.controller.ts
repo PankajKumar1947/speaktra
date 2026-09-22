@@ -94,4 +94,37 @@ export class DailyLessonController {
   async findById(@Param('id') id: string) {
     return this.dailyLessonService.findById(id);
   }
+
+  @Get(':id/vocabularies')
+  @ApiOperation({ summary: 'Get populated vocabularies for a daily lesson' })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    description: 'Daily lesson document ID',
+  })
+  async getDailyVocabularies(@Param('id') id: string) {
+    return this.dailyLessonService.getDailyVocabularies(id);
+  }
+
+  @Get(':id/sentences')
+  @ApiOperation({ summary: 'Get populated sentences for a daily lesson' })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    description: 'Daily lesson document ID',
+  })
+  async getDailySentences(@Param('id') id: string) {
+    return this.dailyLessonService.getDailySentences(id);
+  }
+
+  @Get(':id/articles')
+  @ApiOperation({ summary: 'Get populated articles for a daily lesson' })
+  @ApiParam({
+    name: 'id',
+    type: String,
+    description: 'Daily lesson document ID',
+  })
+  async getDailyArticles(@Param('id') id: string) {
+    return this.dailyLessonService.getDailyArticles(id);
+  }
 }
