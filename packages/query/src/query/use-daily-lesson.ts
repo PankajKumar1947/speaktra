@@ -34,9 +34,3 @@ export const useDailyLessonArticles = (dailyLessonId: string) => {
     queryFn: () => getDailyLessonArticles(dailyLessonId),
   });
 };
-
-// Backward compatibility aliases during migration
-export const useDailyChallengeForUser = useDailyLessonForUser;
-export const useDailyChallengeVocabularies = useDailyLessonVocabularies;
-export const useDailyChallengeSentences = useDailyLessonSentences;
-export const useDailyChallengeArticles = useDailyLessonArticles;
