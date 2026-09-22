@@ -8,16 +8,16 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { Card } from "../../../components";
 import Theme from "../../../constants/theme";
-import { useDailyChallengeSentences } from "@repo/query";
+import { useDailyLessonSentences } from "@repo/query";
 import { ActivityIndicator } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 
 export default function SentencePracticeScreen() {
-  const dailyChallengeId = useLocalSearchParams<{
-    dailyChallengeId: string;
+  const { dailyLessonId } = useLocalSearchParams<{
+    dailyLessonId: string;
   }>();
-  const { data: sentenceList, isLoading } = useDailyChallengeSentences(
-    dailyChallengeId.dailyChallengeId,
+  const { data: sentenceList, isLoading } = useDailyLessonSentences(
+    dailyLessonId!,
   );
 
   if (isLoading) {

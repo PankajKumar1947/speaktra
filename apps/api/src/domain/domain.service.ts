@@ -1,35 +1,27 @@
 import { Injectable } from '@nestjs/common';
-import { CreateDomainDto } from './dto/create-domain.dto';
-import { UpdateDomainDto } from './dto/update-domain.dto';
-import { InjectModel } from '@nestjs/mongoose';
-import { Domain } from './entities/domain.entity';
-import { Model } from 'mongoose';
+import { Domain, DomainItem } from '@repo/schema';
+import { SpeaktraContentService } from '../speaktra-content/speaktra-content.service';
 
 @Injectable()
 export class DomainService {
-  constructor(
-    @InjectModel(Domain.name) private readonly domainModel: Model<Domain>,
-  ) {}
+  constructor(private readonly speaktraContent: SpeaktraContentService) {}
 
-  create(createDomainDto: CreateDomainDto) {
-    return this.domainModel.create(createDomainDto);
-  }
+  async findAll(): Promise<DomainItem[]> {
+    try {
+      const data =
+        await this.speaktraContent.fetchJson<DomainItem[]>('domains.json');
 
-  findAll() {
-    return this.domainModel.find();
-  }
+      if (Array.isArray(data) && data.length > 0) {
+        return data;
+      }
+    } catch {
+      // Fallback to minimal list from Domain enum
+    }
 
-  findOne(id: string) {
-    return this.domainModel.findById(id).exec();
-  }
-
-  update(id: string, updateDomainDto: UpdateDomainDto) {
-    return this.domainModel.findByIdAndUpdate(id, updateDomainDto, {
-      new: true,
-    });
-  }
-
-  remove(id: string) {
-    return this.domainModel.findByIdAndDelete(id);
+    return Object.values(Domain).map((id) => ({
+      id,
+      name: id.charAt(0).toUpperCase() + id.slice(1),
+      description: `${id} domain`,
+    }));
   }
 }

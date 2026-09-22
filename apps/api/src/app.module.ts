@@ -13,9 +13,9 @@ import { VocabularyModule } from './vocabulary/vocabulary.module';
 import { ZodValidationPipe } from './zod-validation.pipe';
 import { SentenceModule } from './sentence/sentence.module';
 import { ArticleModule } from './article/article.module';
-import { DailyChallengeModule } from './daily-challenge/daily-challenge.module';
-import { BullModule } from '@nestjs/bullmq';
-import IORedis from 'ioredis';
+import { SpeaktraContentModule } from './speaktra-content/speaktra-content.module';
+import { DailyLessonModule } from './daily-lesson/daily-lesson.module';
+import { AIModule } from './ai/ai.module';
 
 @Module({
   imports: [
@@ -23,23 +23,7 @@ import IORedis from 'ioredis';
       envFilePath: ['.env', '.env.local'],
       isGlobal: true,
     }),
-    ...(process.env.ENABLE_BULLMQ === 'true'
-      ? [
-          BullModule.forRoot({
-            connection: new IORedis(process.env.UPSTASH_REDIS_URL!, {
-              maxRetriesPerRequest: null,
-              enableReadyCheck: false,
-              family: 4,
-              keepAlive: 30000,
-              connectTimeout: 10000,
-              retryStrategy: (times) => Math.min(times * 50, 2000),
-              tls: process.env.UPSTASH_REDIS_URL?.startsWith('rediss://')
-                ? {}
-                : undefined,
-            }),
-          }),
-        ]
-      : []),
+    SpeaktraContentModule,
     MongooseModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
@@ -52,7 +36,8 @@ import IORedis from 'ioredis';
     VocabularyModule,
     SentenceModule,
     ArticleModule,
-    DailyChallengeModule,
+    DailyLessonModule,
+    AIModule,
   ],
   controllers: [AppController],
   providers: [

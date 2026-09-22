@@ -2,6 +2,12 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { VersioningType, RequestMethod } from '@nestjs/common';
+import * as express from 'express';
+import { serve } from 'inngest/express';
+import { inngest } from './inngest/client';
+import { createDailyLessonFunction } from './daily-lesson/daily-lesson.inngest';
+import { WordBankService } from './daily-lesson/word-bank.service';
+import { DailyLessonService } from './daily-lesson/daily-lesson.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -10,6 +16,22 @@ async function bootstrap() {
   app.enableCors({
     origin: '*',
   });
+
+  const wordBankService = app.get(WordBankService);
+  const dailyLessonService = app.get(DailyLessonService);
+  const dailyLessonFunction = createDailyLessonFunction(
+    wordBankService,
+    dailyLessonService,
+  );
+
+  app.use(
+    '/api/inngest',
+    express.json(),
+    serve({
+      client: inngest,
+      functions: [dailyLessonFunction],
+    }),
+  );
 
   // versioning
   app.setGlobalPrefix('api', {

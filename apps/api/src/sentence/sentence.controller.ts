@@ -34,9 +34,9 @@ export class SentenceController {
     return this.sentenceService.findAll();
   }
 
-  @Get('domain/:domainId')
-  findByDomain(@Param('domainId') domainId: string) {
-    return this.sentenceService.findByDomain(domainId);
+  @Get('domain/:domain')
+  findByDomain(@Param('domain') domain: string) {
+    return this.sentenceService.findByDomain(domain);
   }
 
   @Get(':id')

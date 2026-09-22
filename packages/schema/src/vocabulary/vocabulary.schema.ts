@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { DifficultyEnum } from "../common/common.enum";
+import { DomainEnum } from "../domain/domain.schema";
 
 // Word form schema - each word form has meaning and example
 const WordFormSchema = z.object({
@@ -23,12 +24,7 @@ export const VocabularySchema = z.object({
   verb: WordFormSchema.optional().describe("Verb form of the word"),
   adjective: WordFormSchema.optional().describe("Adjective form of the word"),
   adverb: WordFormSchema.optional().describe("Adverb form of the word"),
-  domainId: z
-    .string()
-    .regex(/^[0-9a-fA-F]{24}$/, {
-      message: "domainId must be a valid MongoDB ObjectId",
-    })
-    .describe("Reference to the domain this vocabulary belongs to"),
+  domain: DomainEnum.describe("Domain this vocabulary belongs to"),
   difficulty: DifficultyEnum.describe("Difficulty level of the vocabulary"),
   createdAt: z
     .date()

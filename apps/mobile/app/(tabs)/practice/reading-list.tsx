@@ -10,16 +10,16 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { Card } from "../../../components";
 import Theme from "../../../constants/theme";
-import { useDailyChallengeArticles } from "@repo/query";
+import { useDailyLessonArticles } from "@repo/query";
 import { ActivityIndicator } from "react-native";
 
 export default function ReadingListScreen() {
-  const { dailyChallengeId } = useLocalSearchParams<{
-    dailyChallengeId: string;
+  const { dailyLessonId } = useLocalSearchParams<{
+    dailyLessonId: string;
   }>();
   const router = useRouter();
   const { data: articleList, isLoading } =
-    useDailyChallengeArticles(dailyChallengeId);
+    useDailyLessonArticles(dailyLessonId);
 
   if (isLoading) {
     return (

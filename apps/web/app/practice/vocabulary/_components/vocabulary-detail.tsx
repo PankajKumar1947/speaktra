@@ -1,16 +1,16 @@
 "use client";
 
 import { VocabularyList } from "./vocabulary-list";
-import { useDailyChallengeVocabularies } from "@repo/query";
-import { useDailyChallenge } from "@/context/daily-challenge-context";
+import { useDailyLessonVocabularies } from "@repo/query";
+import { useDailyLesson } from "@/context/daily-lesson-context";
 import { ModuleNavigator } from "@/app/practice/_components/module-navigator";
 
 export function VocabularyDetail() {
-  const { dailyChallenge, isLoading: isChallengeLoading } = useDailyChallenge();
+  const { dailyLesson, isLoading: isLessonLoading } = useDailyLesson();
   const { data: vocabularies, isLoading: isVocabLoading } =
-    useDailyChallengeVocabularies(dailyChallenge?._id || "");
+    useDailyLessonVocabularies(dailyLesson?._id || "");
 
-  const isLoading = isChallengeLoading || isVocabLoading;
+  const isLoading = isLessonLoading || isVocabLoading;
 
   return (
     <div className="flex flex-col lg:flex-row gap-8 items-start">

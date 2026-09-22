@@ -4,12 +4,12 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { CircleDot, Circle } from "lucide-react";
-import { Level, userLevels } from "@repo/schema";
+import { Level, Domain, userLevels } from "@repo/schema";
 
 export function LevelSelectionForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const domain = searchParams.get("domain") || "corporate";
+  const domain = searchParams.get("domain") || Domain.TECHNOLOGY;
   const [selectedLevel, setSelectedLevel] = useState<Level | null>(null);
 
   const handleContinue = () => {

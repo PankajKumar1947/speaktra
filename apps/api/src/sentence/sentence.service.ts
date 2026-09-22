@@ -28,8 +28,8 @@ export class SentenceService {
     return this.sentenceModel.findById(id).exec();
   }
 
-  findByDomain(domainId: string) {
-    return this.sentenceModel.find({ domainId }).exec();
+  findByDomain(domain: string) {
+    return this.sentenceModel.find({ domain }).exec();
   }
 
   update(id: string, updateSentenceDto: UpdateSentenceDto) {

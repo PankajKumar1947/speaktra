@@ -7,19 +7,24 @@ import { Button } from "@/components/ui/button";
 import {
   Building2,
   Code,
-  ShoppingCart,
+  GraduationCap,
   Stethoscope,
   Landmark,
-  GraduationCap,
+  Scale,
+  BookOpen,
+  FlaskConical,
 } from "lucide-react";
+import { Domain } from "@repo/schema";
 
 const iconMap: Record<string, React.ElementType> = {
-  corporate: Building2,
-  it: Code,
-  sales: ShoppingCart,
-  healthcare: Stethoscope,
-  finance: Landmark,
-  education: GraduationCap,
+  [Domain.TECHNOLOGY]: Code,
+  [Domain.BUSINESS]: Building2,
+  [Domain.STUDENT]: GraduationCap,
+  [Domain.MEDICAL]: Stethoscope,
+  [Domain.FINANCE]: Landmark,
+  [Domain.LAW]: Scale,
+  [Domain.EDUCATION]: BookOpen,
+  [Domain.SCIENCE]: FlaskConical,
 };
 
 export function DomainSelectionForm() {
@@ -54,12 +59,12 @@ export function DomainSelectionForm() {
       ) : (
         <div className="space-y-3 mb-6">
           {domains?.map((domain) => {
-            const Icon = iconMap[domain._id] || Building2;
-            const isSelected = selectedDomain === domain._id;
+            const Icon = iconMap[domain.id] || Building2;
+            const isSelected = selectedDomain === domain.id;
             return (
               <button
-                key={domain._id}
-                onClick={() => setSelectedDomain(domain._id)}
+                key={domain.id}
+                onClick={() => setSelectedDomain(domain.id)}
                 className={`w-full text-left p-4 rounded-xl border-2 transition-all flex items-center gap-4 ${
                   isSelected
                     ? "border-brand-secondary bg-brand-secondary/10"

@@ -3,7 +3,7 @@ import { CreateVocabularyDto } from './dto/create-vocabulary.dto';
 import { UpdateVocabularyDto } from './dto/update-vocabulary.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Vocabulary } from './entities/vocabulary.entity';
-import mongoose, { Model } from 'mongoose';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class VocabularyService {
@@ -29,8 +29,8 @@ export class VocabularyService {
     return this.vocabularyModel.findById(id).exec();
   }
 
-  findByDomain(domainId: string) {
-    return this.vocabularyModel.find({ domainId }).exec();
+  findByDomain(domain: string) {
+    return this.vocabularyModel.find({ domain }).exec();
   }
 
   update(id: string, updateVocabularyDto: UpdateVocabularyDto) {
@@ -43,17 +43,9 @@ export class VocabularyService {
     return this.vocabularyModel.findByIdAndDelete(id);
   }
 
-  async getLastNVocabularies(
-    count: number,
-    domainId: string | mongoose.Types.ObjectId,
-  ) {
-    const stringId = domainId.toString();
-    const objectId = new mongoose.Types.ObjectId(stringId);
-
+  async getLastNVocabularies(count: number, domain: string) {
     const vocabularies = await this.vocabularyModel
-      .find({
-        $or: [{ domainId: stringId }, { domainId: objectId }],
-      })
+      .find({ domain })
       .sort({ createdAt: -1 })
       .limit(count)
       .select('word');

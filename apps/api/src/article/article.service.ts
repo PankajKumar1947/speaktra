@@ -28,8 +28,8 @@ export class ArticleService {
     return this.articleModel.findById(id).exec();
   }
 
-  findByDomain(domainId: string) {
-    return this.articleModel.find({ domainId }).exec();
+  findByDomain(domain: string) {
+    return this.articleModel.find({ domain }).exec();
   }
 
   findByType(type: string) {

@@ -84,17 +84,17 @@ export default function DomainSelectionScreen() {
       >
         {domains?.map((domain: DomainEntity) => (
           <TouchableOpacity
-            key={domain._id}
+            key={domain.id}
             style={[
               styles.card,
-              selectedDomain === domain._id && styles.cardSelected,
+              selectedDomain === domain.id && styles.cardSelected,
             ]}
-            onPress={() => setSelectedDomain(domain._id)}
+            onPress={() => setSelectedDomain(domain.id)}
           >
             <Text
               style={[
                 styles.cardTitle,
-                selectedDomain === domain._id && styles.cardTitleSelected,
+                selectedDomain === domain.id && styles.cardTitleSelected,
               ]}
             >
               {domain.name}
@@ -103,7 +103,7 @@ export default function DomainSelectionScreen() {
               <Text
                 style={[
                   styles.cardDescription,
-                  selectedDomain === domain._id &&
+                  selectedDomain === domain.id &&
                     styles.cardDescriptionSelected,
                 ]}
               >

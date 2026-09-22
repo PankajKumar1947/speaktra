@@ -1,11 +1,12 @@
 import { z } from "zod";
 import { Level, LevelEnum, Goal, GoalEnum } from "../common";
+import { DomainEnum } from "../domain/domain.schema";
 
 export const UserProfileSchema = z.object({
   id: z.string(),
   name: z.string(),
   email: z.string().email().optional(),
-  domain: z.string(),
+  domain: DomainEnum,
   level: LevelEnum,
   goals: z.array(GoalEnum),
   createdAt: z.date(),

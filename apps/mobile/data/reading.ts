@@ -1,14 +1,14 @@
-import { ReadingArticle } from "@repo/schema";
+import { Article, Difficulty, Domain } from "@repo/schema";
 
 /**
- * Dummy reading articles for Corporate domain
+ * Dummy reading articles for Business domain
  */
-export const READING_ARTICLES: ReadingArticle[] = [
+export const READING_ARTICLES: Article[] = [
   {
-    id: "read_1",
+    _id: "507f1f77bcf86cd799439011",
     title: "Writing Professional Emails",
-    category: "Business Communication",
-    content: `Professional email writing is a crucial skill in the corporate world. A well-written email can make a strong impression and facilitate effective communication.
+    type: "Business Communication",
+    description: `Professional email writing is a crucial skill in the corporate world. A well-written email can make a strong impression and facilitate effective communication.
 
 Start with a clear subject line that summarizes the purpose of your email. Use a professional greeting such as "Dear Mr. Smith" or "Hello Team."
 
@@ -17,22 +17,16 @@ The body of your email should be concise and focused. State your purpose in the 
 Always proofread your emails before sending. Check for spelling, grammar, and tone. Remember to be courteous and professional, even in difficult situations.
 
 Close with an appropriate sign-off like "Best regards" or "Sincerely," followed by your name and contact information.`,
-    keyVocabulary: [
-      "professional",
-      "greeting",
-      "concise",
-      "proofread",
-      "courteous",
-    ],
-    difficulty: "Easy",
-    estimatedMinutes: 5,
-    completed: true,
+    keywords: ["professional", "greeting", "concise", "proofread", "courteous"],
+    difficulty: Difficulty.EASY,
+    minRead: 5,
+    domain: Domain.BUSINESS,
   },
   {
-    id: "read_2",
+    _id: "507f1f77bcf86cd799439012",
     title: "Effective Team Updates",
-    category: "Team Management",
-    content: `Regular team updates are essential for keeping everyone aligned and informed. Whether you're leading a small team or managing a large department, effective updates can improve productivity and morale.
+    type: "Team Management",
+    description: `Regular team updates are essential for keeping everyone aligned and informed. Whether you're leading a small team or managing a large department, effective updates can improve productivity and morale.
 
 Schedule updates at consistent intervals - daily stand-ups, weekly summaries, or monthly reviews work well for different team sizes and project types.
 
@@ -41,22 +35,22 @@ Structure your updates to include: accomplishments since the last update, curren
 Encourage team members to share their progress and concerns. Create a safe space for honest communication. Address issues promptly and acknowledge achievements publicly.
 
 Use visual aids when possible - charts, dashboards, or project boards can make information more accessible and easier to digest.`,
-    keyVocabulary: [
+    keywords: [
       "aligned",
       "productivity",
       "milestones",
       "blockers",
       "achievements",
     ],
-    difficulty: "Medium",
-    estimatedMinutes: 7,
-    completed: false,
+    difficulty: Difficulty.MEDIUM,
+    minRead: 7,
+    domain: Domain.BUSINESS,
   },
   {
-    id: "read_3",
+    _id: "507f1f77bcf86cd799439013",
     title: "Conducting Successful Presentations",
-    category: "Public Speaking",
-    content: `Delivering effective presentations is a valuable professional skill. Whether presenting to colleagues, clients, or executives, preparation and confidence are key.
+    type: "Public Speaking",
+    description: `Delivering effective presentations is a valuable professional skill. Whether presenting to colleagues, clients, or executives, preparation and confidence are key.
 
 Begin with a strong opening that captures attention. State your objective clearly so the audience knows what to expect.
 
@@ -67,15 +61,9 @@ Practice your delivery multiple times. Pay attention to your pace, volume, and b
 Prepare for questions by anticipating what your audience might ask. It's okay to say "I don't know" - offer to follow up with the information later.
 
 End with a clear summary and call to action. Leave your audience with a memorable takeaway.`,
-    keyVocabulary: [
-      "objective",
-      "organize",
-      "delivery",
-      "anticipating",
-      "summary",
-    ],
-    difficulty: "Hard",
-    estimatedMinutes: 10,
-    completed: false,
+    keywords: ["objective", "organize", "delivery", "anticipating", "summary"],
+    difficulty: Difficulty.HARD,
+    minRead: 10,
+    domain: Domain.BUSINESS,
   },
 ];

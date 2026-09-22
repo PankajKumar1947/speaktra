@@ -1,4 +1,4 @@
-import { ProgressStats, SkillProgress } from "@repo/schema";
+import { ProgressStats, SkillProgress, Skill, Trend } from "@repo/schema";
 
 /**
  * Dummy progress statistics
@@ -68,28 +68,28 @@ export const PROGRESS_DATA: ProgressStats = {
  */
 export const SKILL_PROGRESS_DATA: SkillProgress[] = [
   {
-    skill: "Fluency",
+    skill: Skill.FLUENCY,
     currentLevel: 78,
-    trend: "up",
+    trend: Trend.UP,
   },
   {
-    skill: "Pronunciation",
+    skill: Skill.PRONUNCIATION,
     currentLevel: 82,
-    trend: "up",
+    trend: Trend.UP,
   },
   {
-    skill: "Vocabulary",
+    skill: Skill.VOCABULARY,
     currentLevel: 65,
-    trend: "stable",
+    trend: Trend.STABLE,
   },
   {
-    skill: "Grammar",
+    skill: Skill.GRAMMAR,
     currentLevel: 75,
-    trend: "up",
+    trend: Trend.UP,
   },
   {
-    skill: "Confidence",
+    skill: Skill.CONFIDENCE,
     currentLevel: 70,
-    trend: "down",
+    trend: Trend.DOWN,
   },
 ];

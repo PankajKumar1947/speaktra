@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Difficulty } from '@repo/schema';
-import { HydratedDocument, Types } from 'mongoose';
+import { Difficulty, Domain } from '@repo/schema';
+import { HydratedDocument } from 'mongoose';
 
 export type VocabularyDocument = HydratedDocument<Vocabulary>;
 
@@ -33,12 +33,12 @@ export class Vocabulary {
   @Prop({ type: WordFormSchema, required: false })
   adverb?: WordForm;
 
-  @Prop({ required: true, type: Types.ObjectId, ref: 'Domain' })
-  domainId!: Types.ObjectId;
+  @Prop({ required: true, type: String, enum: Domain })
+  domain!: Domain;
 
   @Prop({ required: true, type: String, enum: Difficulty })
   difficulty!: string;
 }
 
 export const VocabularyEntity = SchemaFactory.createForClass(Vocabulary);
-VocabularyEntity.index({ domainId: 1, word: 1 }, { unique: true });
+VocabularyEntity.index({ domain: 1, word: 1 }, { unique: true });

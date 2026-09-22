@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { GoalEnum, LevelEnum } from "../common";
 import { Role, RoleEnum } from "./user.enum";
-import { DomainSchema } from "../domain/domain.schema";
+import { DomainEnum } from "../domain/domain.schema";
 
 // Full user entity schema as it exists in the database
 export const UserSchema = z.object({
@@ -20,9 +20,7 @@ export const UserSchema = z.object({
     .string()
     .min(6, { message: "Password must be at least 6 characters long" })
     .describe("The hashed password of the user"),
-  domain: z
-    .union([z.string(), DomainSchema])
-    .describe("The unique identifier of the professional domain"),
+  domain: DomainEnum.optional().describe("The professional domain of the user"),
   level: LevelEnum.describe("The proficiency level of the user"),
   goals: z
     .array(GoalEnum)
@@ -45,9 +43,7 @@ export const CreateUserSchema = UserSchema.omit({
   createdAt: true,
   updatedAt: true,
 }).extend({
-  domain: z
-    .string()
-    .describe("The unique identifier of the professional domain"),
+  domain: DomainEnum.optional().describe("The professional domain of the user"),
 });
 
 // Schema for updating a user (partial with no system fields)
@@ -55,9 +51,7 @@ export const UpdateUserSchema = CreateUserSchema.partial();
 
 // Schema for completing user onboarding
 export const CompleteOnboardingSchema = z.object({
-  domain: z
-    .string()
-    .describe("The unique identifier of the professional domain"),
+  domain: DomainEnum.describe("The professional domain of the user"),
   level: LevelEnum.describe("The proficiency level of the user"),
   goals: z
     .array(GoalEnum)

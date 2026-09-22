@@ -8,4 +8,4 @@ export * from "./domain";
 export * from "./vocabulary";
 export * from "./sentence";
 export * from "./article";
-export * from "./daily-challenge";
+export * from "./daily-lesson";
