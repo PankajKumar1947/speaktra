@@ -13,7 +13,7 @@ import { PracticeModuleCard } from "./practice-module-card";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { useDailyChallenge } from "@/context/daily-challenge-context";
+import { useDailyLesson } from "@/context/daily-lesson-context";
 import { EmptyState } from "@/components/common/empty-state";
 
 const icons: Record<string, React.ReactNode> = {
@@ -24,7 +24,7 @@ const icons: Record<string, React.ReactNode> = {
 
 export function PracticeHub() {
   const [date, setDate] = useState<Date>(new Date());
-  const { dailyChallenge, isLoading } = useDailyChallenge();
+  const { dailyLesson, isLoading } = useDailyLesson();
 
   const handlePrev = () => setDate((prev) => subDays(prev, 1));
   const handleNext = () => setDate((prev) => addDays(prev, 1));
@@ -36,39 +36,39 @@ export function PracticeHub() {
     {
       id: "vocabulary",
       title: "Vocabulary",
-      description: dailyChallenge
-        ? `${dailyChallenge.vocabularies?.length || 0} words for today`
+      description: dailyLesson
+        ? `${dailyLesson.vocabularies?.length || 0} words for today`
         : "Learn domain-specific words",
       route: "/practice/vocabulary",
       color: "bg-primary",
       iconBg: "bg-sky-100 dark:bg-sky-900/30 text-sky-600 dark:text-sky-400",
       progress: 0,
-      todayCount: dailyChallenge?.vocabularies?.length || 0,
+      todayCount: dailyLesson?.vocabularies?.length || 0,
     },
     {
       id: "sentences",
       title: "Sentence Practice",
-      description: dailyChallenge
-        ? `${dailyChallenge.sentences?.length || 0} sentences for today`
+      description: dailyLesson
+        ? `${dailyLesson.sentences?.length || 0} sentences for today`
         : "Practice corporate sentences",
       route: "/practice/sentences",
       color: "bg-secondary",
       iconBg:
         "bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400",
       progress: 0,
-      todayCount: dailyChallenge?.sentences?.length || 0,
+      todayCount: dailyLesson?.sentences?.length || 0,
     },
     {
       id: "reading",
       title: "Reading",
-      description: dailyChallenge
-        ? `${dailyChallenge.articles?.length || 0} articles for today`
+      description: dailyLesson
+        ? `${dailyLesson.articles?.length || 0} articles for today`
         : "Business articles & topics",
       route: "/practice/reading",
       color: "bg-primary",
       iconBg: "bg-sky-100 dark:bg-sky-900/30 text-sky-600 dark:text-sky-400",
       progress: 0,
-      todayCount: dailyChallenge?.articles?.length || 0,
+      todayCount: dailyLesson?.articles?.length || 0,
     },
   ];
 

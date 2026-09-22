@@ -1,16 +1,16 @@
 "use client";
 
 import { SentenceList } from "./sentence-list";
-import { useDailyChallengeSentences } from "@repo/query";
-import { useDailyChallenge } from "@/context/daily-challenge-context";
+import { useDailyLessonSentences } from "@repo/query";
+import { useDailyLesson } from "@/context/daily-lesson-context";
 import { ModuleNavigator } from "@/app/practice/_components/module-navigator";
 
 export function SentencesDetail() {
-  const { dailyChallenge, isLoading: isChallengeLoading } = useDailyChallenge();
+  const { dailyLesson, isLoading: isLessonLoading } = useDailyLesson();
   const { data: sentences, isLoading: isSentenceLoading } =
-    useDailyChallengeSentences(dailyChallenge?._id || "");
+    useDailyLessonSentences(dailyLesson?._id || "");
 
-  const isLoading = isChallengeLoading || isSentenceLoading;
+  const isLoading = isLessonLoading || isSentenceLoading;
 
   return (
     <div className="flex flex-col lg:flex-row gap-8 items-start">

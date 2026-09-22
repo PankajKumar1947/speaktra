@@ -1,16 +1,16 @@
 "use client";
 
 import { ReadingList } from "./reading-list";
-import { useDailyChallengeArticles } from "@repo/query";
-import { useDailyChallenge } from "@/context/daily-challenge-context";
+import { useDailyLessonArticles } from "@repo/query";
+import { useDailyLesson } from "@/context/daily-lesson-context";
 import { ModuleNavigator } from "@/app/practice/_components/module-navigator";
 
 export function ReadingDetail() {
-  const { dailyChallenge, isLoading: isChallengeLoading } = useDailyChallenge();
+  const { dailyLesson, isLoading: isLessonLoading } = useDailyLesson();
   const { data: articles, isLoading: isArticleLoading } =
-    useDailyChallengeArticles(dailyChallenge?._id || "");
+    useDailyLessonArticles(dailyLesson?._id || "");
 
-  const isLoading = isChallengeLoading || isArticleLoading;
+  const isLoading = isLessonLoading || isArticleLoading;
 
   return (
     <div className="flex flex-col lg:flex-row gap-8 items-start">

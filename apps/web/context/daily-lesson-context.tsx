@@ -1,35 +1,31 @@
 "use client";
 
 import { createContext, useContext, PropsWithChildren } from "react";
-import { useDailyChallengeForUser } from "@repo/query";
-import { DailyChallenge } from "@repo/schema";
+import { useDailyLessonForUser } from "@repo/query";
+import { DailyLesson } from "@repo/schema";
 import { EmptyState } from "@/components/common/empty-state";
 import { Button } from "@/components/ui/button";
 
-type DailyChallengeContextType = {
-  dailyChallenge: DailyChallenge | undefined;
+type DailyLessonContextType = {
+  dailyLesson: DailyLesson | undefined;
   isLoading: boolean;
   refetch: () => void;
 };
 
-const DailyChallengeContext = createContext<
-  DailyChallengeContextType | undefined
->(undefined);
+const DailyLessonContext = createContext<DailyLessonContextType | undefined>(
+  undefined,
+);
 
-export function DailyChallengeProvider({ children }: PropsWithChildren) {
-  const {
-    data: dailyChallenge,
-    isLoading,
-    refetch,
-  } = useDailyChallengeForUser();
+export function DailyLessonProvider({ children }: PropsWithChildren) {
+  const { data: dailyLesson, isLoading, refetch } = useDailyLessonForUser();
 
-  if (!isLoading && !dailyChallenge) {
+  if (!isLoading && !dailyLesson) {
     return (
       <div className="flex min-h-[50vh] flex-col items-center justify-center p-8">
         <div className="bg-card border border-border rounded-2xl p-10 shadow-xl max-w-md w-full text-center flex flex-col items-center">
           <EmptyState
-            title="Daily Challenge Not Found"
-            description="We're sorry, but we couldn't find your daily challenge for today. Please try again later."
+            title="Daily Lesson Not Found"
+            description="We're sorry, but we couldn't find your daily lesson for today. Please try again later."
           />
           <Button
             onClick={() => refetch()}
@@ -43,24 +39,22 @@ export function DailyChallengeProvider({ children }: PropsWithChildren) {
   }
 
   return (
-    <DailyChallengeContext.Provider
+    <DailyLessonContext.Provider
       value={{
-        dailyChallenge,
+        dailyLesson,
         isLoading,
         refetch,
       }}
     >
       {children}
-    </DailyChallengeContext.Provider>
+    </DailyLessonContext.Provider>
   );
 }
 
-export function useDailyChallenge() {
-  const context = useContext(DailyChallengeContext);
+export function useDailyLesson() {
+  const context = useContext(DailyLessonContext);
   if (context === undefined) {
-    throw new Error(
-      "useDailyChallenge must be used within a DailyChallengeProvider",
-    );
+    throw new Error("useDailyLesson must be used within a DailyLessonProvider");
   }
   return context;
 }
