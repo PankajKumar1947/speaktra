@@ -3,7 +3,7 @@ export * from "./mutation/use-auth";
 export * from "./query/use-domain";
 export * from "./mutation/use-users";
 export * from "./query/use-users";
-export * from "./query/use-daily-challenge";
+export * from "./query/use-daily-lesson";
 export * from "./mutation/use-article";
 export * from "./query/use-article";
 export * from "./mutation/use-vocabulary";
