@@ -11,7 +11,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Card } from "../../../components";
 import Theme from "../../../constants/theme";
 
-import { useDailyChallengeForUser } from "@repo/query";
+import { useDailyLessonForUser } from "@repo/query";
 import { ActivityIndicator } from "react-native";
 
 type ModuleRoute =
@@ -21,14 +21,14 @@ type ModuleRoute =
 
 export default function PracticeHubScreen() {
   const router = useRouter();
-  const { data: dailyChallenge, isLoading } = useDailyChallengeForUser();
+  const { data: dailyLesson, isLoading } = useDailyLessonForUser();
 
   const PRACTICE_MODULES = [
     {
       id: "vocabulary",
       title: "Vocabulary",
-      description: dailyChallenge
-        ? `${dailyChallenge.vocabularies?.length || 0} words for today`
+      description: dailyLesson
+        ? `${dailyLesson.vocabularies?.length || 0} words for today`
         : "Learn domain-specific words",
       icon: "book" as const,
       route: "/(tabs)/practice/vocabulary",
@@ -38,8 +38,8 @@ export default function PracticeHubScreen() {
     {
       id: "sentences",
       title: "Sentence Practice",
-      description: dailyChallenge
-        ? `${dailyChallenge.sentences?.length || 0} sentences for today`
+      description: dailyLesson
+        ? `${dailyLesson.sentences?.length || 0} sentences for today`
         : "Practice corporate sentences",
       icon: "chatbubbles" as const,
       route: "/(tabs)/practice/sentences",
@@ -49,8 +49,8 @@ export default function PracticeHubScreen() {
     {
       id: "reading",
       title: "Reading",
-      description: dailyChallenge
-        ? `${dailyChallenge.articles?.length || 0} articles for today`
+      description: dailyLesson
+        ? `${dailyLesson.articles?.length || 0} articles for today`
         : "Business articles & topics",
       icon: "newspaper" as const,
       route: "/(tabs)/practice/reading-list",
@@ -79,7 +79,7 @@ export default function PracticeHubScreen() {
               router.push({
                 pathname: module.route as ModuleRoute,
                 params: {
-                  dailyChallengeId: dailyChallenge?._id,
+                  dailyLessonId: dailyLesson?._id,
                 },
               })
             }

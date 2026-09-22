@@ -9,16 +9,16 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { Card } from "../../../components";
 import Theme from "../../../constants/theme";
-import { useDailyChallengeVocabularies } from "@repo/query";
+import { useDailyLessonVocabularies } from "@repo/query";
 import { ActivityIndicator } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 
 export default function VocabularyScreen() {
-  const { dailyChallengeId } = useLocalSearchParams<{
-    dailyChallengeId: string;
+  const { dailyLessonId } = useLocalSearchParams<{
+    dailyLessonId: string;
   }>();
-  const { data: vocabList, isLoading } = useDailyChallengeVocabularies(
-    dailyChallengeId!,
+  const { data: vocabList, isLoading } = useDailyLessonVocabularies(
+    dailyLessonId!,
   );
 
   if (isLoading) {
