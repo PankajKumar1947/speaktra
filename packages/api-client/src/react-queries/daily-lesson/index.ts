@@ -19,6 +19,3 @@ export const dailyLessonQueries = {
       `/daily-lesson/${dailyLessonId}/articles`,
   },
 };
-
-// Backward compatibility alias during migration
-export const dailyChallengeQueries = dailyLessonQueries;

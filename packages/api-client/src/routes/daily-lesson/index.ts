@@ -33,9 +33,3 @@ export const getDailyLessonArticles = async (
   );
   return response.data;
 };
-
-// Backward compatibility aliases during migration
-export const getDailyChallengeForUser = getDailyLessonForUser;
-export const getDailyChallengeVocabularies = getDailyLessonVocabularies;
-export const getDailyChallengeSentences = getDailyLessonSentences;
-export const getDailyChallengeArticles = getDailyLessonArticles;
