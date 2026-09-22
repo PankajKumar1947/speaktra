@@ -22,11 +22,6 @@ export type DailyLesson = {
 export type CreateDailyLesson = z.infer<typeof CreateDailyLessonSchema>;
 export type UpdateDailyLesson = z.infer<typeof UpdateDailyLessonSchema>;
 
-// Backward compatibility alias during migration
-export type DailyChallenge = DailyLesson;
-export type CreateDailyChallenge = CreateDailyLesson;
-export type UpdateDailyChallenge = UpdateDailyLesson;
-
 export interface WordEntry {
   word: string;
   meaning: string;

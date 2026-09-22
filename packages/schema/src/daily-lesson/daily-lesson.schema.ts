@@ -52,8 +52,3 @@ export const CreateDailyLessonSchema = DailyLessonSchema.omit({
 });
 
 export const UpdateDailyLessonSchema = CreateDailyLessonSchema.partial();
-
-// Backward compatibility alias during migration
-export const DailyChallengeSchema = DailyLessonSchema;
-export const CreateDailyChallengeSchema = CreateDailyLessonSchema;
-export const UpdateDailyChallengeSchema = UpdateDailyLessonSchema;
