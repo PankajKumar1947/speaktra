@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { DailyChallengeService } from './daily-challenge.service';
 import { DailyChallengeController } from './daily-challenge.controller';
 import { AIContentGenerationService } from './ai-content-generation.service';
-import { WordBankService } from './word-bank.service';
+import { WordBankService } from '../daily-lesson/word-bank.service';
 import { VocabularyService } from 'src/vocabulary/vocabulary.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import {
