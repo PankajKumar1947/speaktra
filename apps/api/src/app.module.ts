@@ -16,7 +16,9 @@ import { ArticleModule } from './article/article.module';
 import { SpeaktraContentModule } from './speaktra-content/speaktra-content.module';
 import { DailyChallengeModule } from './daily-challenge/daily-challenge.module';
 import { BullModule } from '@nestjs/bullmq';
+import { DailyLessonModule } from './daily-lesson/daily-lesson.module';
 import IORedis from 'ioredis';
+import { AIModule } from './ai/ai.module';
 
 @Module({
   imports: [
@@ -55,6 +57,8 @@ import IORedis from 'ioredis';
     SentenceModule,
     ArticleModule,
     DailyChallengeModule,
+    DailyLessonModule,
+    AIModule,
   ],
   controllers: [AppController],
   providers: [
