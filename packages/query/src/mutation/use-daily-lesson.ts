@@ -9,6 +9,7 @@ import { CreateDailyLesson, Domain, Level } from "@repo/schema";
 export const useCreateDailyLesson = () => {
   const queryClient = useQueryClient();
   return useMutation({
+    mutationKey: dailyLessonQueries.create.key,
     mutationFn: (data: CreateDailyLesson) => createDailyLesson(data),
     onSuccess: () => {
       void queryClient.invalidateQueries({
@@ -21,6 +22,7 @@ export const useCreateDailyLesson = () => {
 export const useTriggerDailyLessonGeneration = () => {
   const queryClient = useQueryClient();
   return useMutation({
+    mutationKey: dailyLessonQueries.generate.key,
     mutationFn: (data?: {
       domain?: Domain;
       level?: Level;
