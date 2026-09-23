@@ -136,7 +136,7 @@ export const createDailyLessonFunction = (
       });
 
       // 9. Send Notification to user (or dispatch notification event)
-      await step.run('send-notification', async () => {
+      await step.run('send-notification', () => {
         return {
           notified: true,
           message: `Daily lesson day ${sequenceNumber} generated for ${domain} (${level})`,
@@ -150,6 +150,67 @@ export const createDailyLessonFunction = (
         domain,
         level,
         theme,
+      };
+    },
+  );
+
+export const createScheduledDailyLessonFunction = (
+  dailyLessonService: DailyLessonService,
+) =>
+  inngest.createFunction(
+    {
+      id: 'schedule-daily-lessons-at-4am',
+      triggers: [
+        {
+          cron: 'TZ=Asia/Kolkata 0 4 * * *',
+        },
+        {
+          event: 'speaktra/trigger-daily-lesson-scheduler',
+        },
+      ],
+    },
+    async ({ step }) => {
+      // 1. Fetch list of all domains from speaktra-content (or fallback to Domain enum)
+      const domains = await step.run('fetch-domains', async () => {
+        return dailyLessonService.getAllDomains();
+      });
+
+      // 2. For each domain and level, get the latest sequence number and compute next sequence
+      const targets = await step.run('calculate-next-sequences', async () => {
+        const levels = Object.values(Level);
+        const list: GenerateDailyLessonEventPayload[] = [];
+
+        for (const domain of domains) {
+          for (const level of levels) {
+            const latestSeq = await dailyLessonService.getLatestSequenceNumber(
+              domain,
+              level,
+            );
+            list.push({
+              domain,
+              level,
+              sequenceNumber: latestSeq + 1,
+            });
+          }
+        }
+
+        return list;
+      });
+
+      // 3. Dispatch generation events to generate lessons
+      // Each event triggers `generate-daily-lesson`:
+      // fetches vocabs from speaktra-content, generates AI content, and saves the lesson
+      const events = targets.map((target) => ({
+        name: 'speaktra/generate-daily-lesson' as const,
+        data: target,
+      }));
+
+      await step.sendEvent('dispatch-daily-lesson-generations', events);
+
+      return {
+        status: 'success',
+        dispatchedCount: events.length,
+        targets,
       };
     },
   );

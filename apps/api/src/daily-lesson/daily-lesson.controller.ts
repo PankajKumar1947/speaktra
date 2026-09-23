@@ -23,22 +23,12 @@ import { RolesGuard } from 'src/auth/roles.guard';
 import { Roles } from 'src/auth/roles.decorator';
 import type { AuthenticatedRequest } from 'src/auth/auth.guard';
 import { DailyLessonService } from './daily-lesson.service';
-import { CreateDailyLessonDto } from './dto/create-daily-lesson.dto';
 import { TriggerDailyLessonGenerationDto } from './dto/trigger-generation.dto';
 
 @ApiTags('Daily Lesson')
 @Controller('daily-lesson')
 export class DailyLessonController {
   constructor(private readonly dailyLessonService: DailyLessonService) {}
-
-  @Post()
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
-  @ApiBearerAuth('JWT-auth')
-  @ApiOperation({ summary: 'Create or upsert a daily lesson document (Admin)' })
-  async create(@Body() createDailyLessonDto: CreateDailyLessonDto) {
-    return this.dailyLessonService.create(createDailyLessonDto);
-  }
 
   @Post('generate')
   @UseGuards(AuthGuard, RolesGuard)

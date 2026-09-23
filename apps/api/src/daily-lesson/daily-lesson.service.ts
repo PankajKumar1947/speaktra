@@ -5,6 +5,7 @@ import { VocabularyService } from 'src/vocabulary/vocabulary.service';
 import { SentenceService } from 'src/sentence/sentence.service';
 import { ArticleService } from 'src/article/article.service';
 import { UsersService } from 'src/users/users.service';
+import { DomainService } from 'src/domain/domain.service';
 import { CreateVocabularyDto } from 'src/vocabulary/dto/create-vocabulary.dto';
 import { CreateSentenceDto } from 'src/sentence/dto/create-sentence.dto';
 import { CreateArticleDto } from 'src/article/dto/create-article.dto';
@@ -44,7 +45,26 @@ export class DailyLessonService {
     private readonly sentenceService: SentenceService,
     private readonly articleService: ArticleService,
     private readonly usersService: UsersService,
+    private readonly domainService: DomainService,
   ) {}
+
+  async getAllDomains(): Promise<Domain[]> {
+    try {
+      const items = await this.domainService.findAll();
+      if (items?.length) {
+        return items.map((item) => item.id);
+      }
+    } catch (error) {
+      this.logger.warn(
+        `Failed to fetch domains from speaktra-content, using fallback: ${String(error)}`,
+      );
+    }
+    return Object.values(Domain);
+  }
+
+  async getLatestSequenceNumber(domain: Domain, level: Level): Promise<number> {
+    return this.dailyLessonRepository.getLatestSequenceNumber(domain, level);
+  }
 
   async generateVocab(dto: GenerateVocabDto): Promise<CreateVocabularyDto[]> {
     const prompt = buildVocabularyPrompt({
@@ -53,12 +73,10 @@ export class DailyLessonService {
       theme: dto.theme,
       words: dto.words,
     });
-    const result = await this.aiService.completeJson({
+    const result = (await this.aiService.completeJson({
       systemPrompt: prompt,
-    });
-    const vocabularies: AIGeneratedVocab[] = Array.isArray(result)
-      ? result
-      : result.vocabularies || result.vocabulary || result.words || [];
+    })) as { vocabularies: AIGeneratedVocab[] };
+    const vocabularies = result?.vocabularies ?? [];
     return vocabularies.map((v) => ({
       ...v,
       domain: dto.domain,
@@ -81,12 +99,10 @@ export class DailyLessonService {
       vocabularyWords: dto.vocabularyWords,
       count: dto.count,
     });
-    const result = await this.aiService.completeJson({
+    const result = (await this.aiService.completeJson({
       systemPrompt: prompt,
-    });
-    const sentences: AIGeneratedSentence[] = Array.isArray(result)
-      ? result
-      : result.sentences || result.sentence || [];
+    })) as { sentences: AIGeneratedSentence[] };
+    const sentences = result?.sentences ?? [];
     return sentences.map((s) => ({
       ...s,
       domain: dto.domain,
@@ -107,12 +123,10 @@ export class DailyLessonService {
       vocabularyWords: dto.vocabularyWords,
       count: dto.count,
     });
-    const result = await this.aiService.completeJson({
+    const result = (await this.aiService.completeJson({
       systemPrompt: prompt,
-    });
-    const articles: AIGeneratedArticle[] = Array.isArray(result)
-      ? result
-      : result.articles || result.article || [];
+    })) as { articles: AIGeneratedArticle[] };
+    const articles = result?.articles ?? [];
     return articles.map((a) => ({
       ...a,
       domain: dto.domain,
