@@ -45,7 +45,10 @@ export const getDailyLessonArticles = async (
 export const createDailyLesson = async (
   data: CreateDailyLesson,
 ): Promise<DailyLesson> => {
-  const response = await apiClient.post("/daily-lesson", data);
+  const response = await apiClient.post(
+    dailyLessonQueries.create.endpoint,
+    data,
+  );
   return response.data;
 };
 
@@ -54,6 +57,9 @@ export const triggerDailyLessonGeneration = async (data?: {
   level?: Level;
   sequenceNumber?: number;
 }) => {
-  const response = await apiClient.post("/daily-lesson/generate", data);
+  const response = await apiClient.post(
+    dailyLessonQueries.generate.endpoint,
+    data,
+  );
   return response.data;
 };
