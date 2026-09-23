@@ -29,10 +29,14 @@ import {
 } from './dto/generation.dto';
 import { inngest } from '../inngest/client';
 import { TriggerDailyLessonGenerationDto } from './dto/trigger-generation.dto';
-
-export type AIGeneratedVocab = Omit<CreateVocabularyDto, 'domain'>;
-export type AIGeneratedSentence = Omit<CreateSentenceDto, 'domain'>;
-export type AIGeneratedArticle = Omit<CreateArticleDto, 'domain'>;
+import {
+  AIGenerateVocabResponseSchema,
+  AIGenerateSentenceResponseSchema,
+  AIGenerateArticleResponseSchema,
+  AIVocabJsonSchema,
+  AISentenceJsonSchema,
+  AIArticleJsonSchema,
+} from './schemas/ai-response.schema';
 
 @Injectable()
 export class DailyLessonService {
@@ -80,22 +84,24 @@ export class DailyLessonService {
       theme: dto.theme,
       words: dto.words,
     });
-    const result = (await this.aiService.completeJson({
+    const rawResult: unknown = await this.aiService.completeJson({
       systemPrompt: prompt,
-    })) as { vocabularies: AIGeneratedVocab[] };
-    const vocabularies = Array.isArray(result?.vocabularies)
-      ? result.vocabularies
-      : [];
+      jsonSchema: AIVocabJsonSchema,
+    });
+    const parsed = AIGenerateVocabResponseSchema.safeParse(rawResult);
 
-    return vocabularies
-      .filter(
-        (v) => v && typeof v.word === 'string' && v.word.trim().length > 0,
-      )
-      .map((v) => ({
-        ...v,
-        word: v.word.trim(),
-        domain: dto.domain,
-      }));
+    if (!parsed.success) {
+      this.logger.error(
+        `AI vocab generation validation failed for ${dto.domain} (${dto.level}): ${parsed.error.message}`,
+      );
+      return [];
+    }
+
+    return parsed.data.vocabularies.map((v) => ({
+      ...v,
+      word: v.word.trim(),
+      domain: dto.domain,
+    }));
   }
 
   async saveVocabsToDatabase(
@@ -124,21 +130,24 @@ export class DailyLessonService {
       vocabularyWords: dto.vocabularyWords,
       count: dto.count,
     });
-    const result = (await this.aiService.completeJson({
+    const rawResult: unknown = await this.aiService.completeJson({
       systemPrompt: prompt,
-    })) as { sentences: AIGeneratedSentence[] };
-    const sentences = Array.isArray(result?.sentences) ? result.sentences : [];
+      jsonSchema: AISentenceJsonSchema,
+    });
+    const parsed = AIGenerateSentenceResponseSchema.safeParse(rawResult);
 
-    return sentences
-      .filter(
-        (s) =>
-          s && typeof s.sentence === 'string' && s.sentence.trim().length > 0,
-      )
-      .map((s) => ({
-        ...s,
-        sentence: s.sentence.trim(),
-        domain: dto.domain,
-      }));
+    if (!parsed.success) {
+      this.logger.error(
+        `AI sentence generation validation failed for ${dto.domain} (${dto.level}): ${parsed.error.message}`,
+      );
+      return [];
+    }
+
+    return parsed.data.sentences.map((s) => ({
+      ...s,
+      sentence: s.sentence.trim(),
+      domain: dto.domain,
+    }));
   }
 
   async saveSentencesToDatabase(
@@ -158,25 +167,24 @@ export class DailyLessonService {
       vocabularyWords: dto.vocabularyWords,
       count: dto.count,
     });
-    const result = (await this.aiService.completeJson({
+    const rawResult: unknown = await this.aiService.completeJson({
       systemPrompt: prompt,
-    })) as { articles: AIGeneratedArticle[] };
-    const articles = Array.isArray(result?.articles) ? result.articles : [];
+      jsonSchema: AIArticleJsonSchema,
+    });
+    const parsed = AIGenerateArticleResponseSchema.safeParse(rawResult);
 
-    return articles
-      .filter(
-        (a) =>
-          a &&
-          typeof a.title === 'string' &&
-          a.title.trim().length > 0 &&
-          typeof a.description === 'string' &&
-          a.description.trim().length > 0,
-      )
-      .map((a) => ({
-        ...a,
-        title: a.title.trim(),
-        domain: dto.domain,
-      }));
+    if (!parsed.success) {
+      this.logger.error(
+        `AI article generation validation failed for ${dto.domain} (${dto.level}): ${parsed.error.message}`,
+      );
+      return [];
+    }
+
+    return parsed.data.articles.map((a) => ({
+      ...a,
+      title: a.title.trim(),
+      domain: dto.domain,
+    }));
   }
 
   async saveArticlesToDatabase(

@@ -26,7 +26,7 @@ export class AIService {
   }
 
   // Structured JSON completion helper
-  async completeJson(completeJSONDto: CompleteJSONDto) {
+  async completeJson(completeJSONDto: CompleteJSONDto): Promise<unknown> {
     const messages: PromptTemplate[] = [
       {
         role: 'system',
@@ -41,10 +41,22 @@ export class AIService {
       });
     }
 
+    const responseFormat = completeJSONDto.jsonSchema
+      ? {
+          type: 'json_schema' as const,
+          jsonSchema: {
+            name: 'response',
+            schemaDefinition: completeJSONDto.jsonSchema,
+          },
+        }
+      : {
+          type: 'json_object' as const,
+        };
+
     const response = await this.client.chat.complete({
       model: completeJSONDto.model || this.defaultModel,
       messages,
-      responseFormat: { type: 'json_object' },
+      responseFormat,
       temperature: completeJSONDto.temperature || 0.7,
     });
 
@@ -53,6 +65,6 @@ export class AIService {
       throw new Error('Empty response from AI');
     }
 
-    return JSON.parse(content);
+    return JSON.parse(content) as unknown;
   }
 }

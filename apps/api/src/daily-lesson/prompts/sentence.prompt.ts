@@ -38,19 +38,6 @@ Each sentence must:
 
 Rules:
 - Do NOT include domain or id.
-- Do NOT return markdown or explanations outside JSON.
-- Return ONLY valid JSON matching this schema:
-
-{
-  "sentences": [
-    {
-      "sentence": "string",
-      "difficulty": "easy" | "medium" | "hard",
-      "context": "string",
-      "explanation": "string",
-      "otherWays": ["string"]
-    }
-  ]
-}
+- Do NOT return markdown or explanations outside the JSON response.
 `;
 };
