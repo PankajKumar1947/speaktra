@@ -9,6 +9,7 @@ import { VocabularyModule } from 'src/vocabulary/vocabulary.module';
 import { SentenceModule } from 'src/sentence/sentence.module';
 import { ArticleModule } from 'src/article/article.module';
 import { UsersModule } from 'src/users/users.module';
+import { DomainModule } from 'src/domain/domain.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { UsersModule } from 'src/users/users.module';
     SentenceModule,
     ArticleModule,
     UsersModule,
+    DomainModule,
   ],
   controllers: [DailyLessonController],
   providers: [DailyLessonService, DailyLessonRepository, WordBankService],

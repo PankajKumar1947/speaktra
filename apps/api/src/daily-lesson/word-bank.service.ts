@@ -12,6 +12,20 @@ import { SpeaktraContentService } from '../speaktra-content/speaktra-content.ser
 export class WordBankService {
   constructor(private readonly speaktraContent: SpeaktraContentService) {}
 
+  async hasWordBank(
+    domain: Domain | string,
+    level: Level | string,
+  ): Promise<boolean> {
+    try {
+      const data = await this.speaktraContent.fetchJson<WordBank>(
+        `word-banks/${domain}/${level}.json`,
+      );
+      return Boolean(data?.themes?.length && data?.words);
+    } catch {
+      return false;
+    }
+  }
+
   async getWordBank(
     domain: Domain | string,
     level: Level | string,

@@ -5,6 +5,7 @@ import { VocabularyService } from 'src/vocabulary/vocabulary.service';
 import { SentenceService } from 'src/sentence/sentence.service';
 import { ArticleService } from 'src/article/article.service';
 import { UsersService } from 'src/users/users.service';
+import { DomainService } from 'src/domain/domain.service';
 import { CreateVocabularyDto } from 'src/vocabulary/dto/create-vocabulary.dto';
 import { CreateSentenceDto } from 'src/sentence/dto/create-sentence.dto';
 import { CreateArticleDto } from 'src/article/dto/create-article.dto';
@@ -26,10 +27,16 @@ import {
   GenerateArticleDto,
   FindDailyLessonBySequenceDto,
 } from './dto/generation.dto';
-
-export type AIGeneratedVocab = Omit<CreateVocabularyDto, 'domain'>;
-export type AIGeneratedSentence = Omit<CreateSentenceDto, 'domain'>;
-export type AIGeneratedArticle = Omit<CreateArticleDto, 'domain'>;
+import { inngest } from '../inngest/client';
+import { TriggerDailyLessonGenerationDto } from './dto/trigger-generation.dto';
+import {
+  AIGenerateVocabResponseSchema,
+  AIGenerateSentenceResponseSchema,
+  AIGenerateArticleResponseSchema,
+  AIVocabJsonSchema,
+  AISentenceJsonSchema,
+  AIArticleJsonSchema,
+} from './schemas/ai-response.schema';
 
 @Injectable()
 export class DailyLessonService {
@@ -42,23 +49,57 @@ export class DailyLessonService {
     private readonly sentenceService: SentenceService,
     private readonly articleService: ArticleService,
     private readonly usersService: UsersService,
+    private readonly domainService: DomainService,
   ) {}
 
+  async getAllDomains(): Promise<Domain[]> {
+    try {
+      const items = await this.domainService.findAll();
+      if (items?.length) {
+        return items.map((item) => item.id);
+      }
+    } catch (error) {
+      this.logger.warn(
+        `Failed to fetch domains from speaktra-content, using fallback: ${String(error)}`,
+      );
+    }
+    return Object.values(Domain);
+  }
+
+  async getLatestSequenceNumber(domain: Domain, level: Level): Promise<number> {
+    return this.dailyLessonRepository.getLatestSequenceNumber(domain, level);
+  }
+
   async generateVocab(dto: GenerateVocabDto): Promise<CreateVocabularyDto[]> {
+    if (!dto.words || dto.words.length === 0) {
+      this.logger.warn(
+        `No words provided for vocab generation for ${dto.domain} (${dto.level})`,
+      );
+      return [];
+    }
+
     const prompt = buildVocabularyPrompt({
       domainName: dto.domain,
       level: dto.level,
       theme: dto.theme,
       words: dto.words,
     });
-    const result = await this.aiService.completeJson({
+    const rawResult: unknown = await this.aiService.completeJson({
       systemPrompt: prompt,
+      jsonSchema: AIVocabJsonSchema,
     });
-    const vocabularies: AIGeneratedVocab[] = Array.isArray(result)
-      ? result
-      : result.vocabularies || result.vocabulary || result.words || [];
-    return vocabularies.map((v) => ({
+    const parsed = AIGenerateVocabResponseSchema.safeParse(rawResult);
+
+    if (!parsed.success) {
+      this.logger.error(
+        `AI vocab generation validation failed for ${dto.domain} (${dto.level}): ${parsed.error.message}`,
+      );
+      return [];
+    }
+
+    return parsed.data.vocabularies.map((v) => ({
       ...v,
+      word: v.word.trim(),
       domain: dto.domain,
     }));
   }
@@ -66,12 +107,22 @@ export class DailyLessonService {
   async saveVocabsToDatabase(
     vocabularies: CreateVocabularyDto[],
   ): Promise<VocabularyDocument[]> {
+    if (!vocabularies || vocabularies.length === 0) {
+      return [];
+    }
     return this.vocabularyService.createMany(vocabularies);
   }
 
   async generateSentence(
     dto: GenerateSentenceDto,
   ): Promise<CreateSentenceDto[]> {
+    if (!dto.vocabularyWords || dto.vocabularyWords.length === 0) {
+      this.logger.warn(
+        `No vocabulary words provided for sentence generation for ${dto.domain} (${dto.level})`,
+      );
+      return [];
+    }
+
     const prompt = buildSentencePrompt({
       domainName: dto.domain,
       level: dto.level,
@@ -79,14 +130,22 @@ export class DailyLessonService {
       vocabularyWords: dto.vocabularyWords,
       count: dto.count,
     });
-    const result = await this.aiService.completeJson({
+    const rawResult: unknown = await this.aiService.completeJson({
       systemPrompt: prompt,
+      jsonSchema: AISentenceJsonSchema,
     });
-    const sentences: AIGeneratedSentence[] = Array.isArray(result)
-      ? result
-      : result.sentences || result.sentence || [];
-    return sentences.map((s) => ({
+    const parsed = AIGenerateSentenceResponseSchema.safeParse(rawResult);
+
+    if (!parsed.success) {
+      this.logger.error(
+        `AI sentence generation validation failed for ${dto.domain} (${dto.level}): ${parsed.error.message}`,
+      );
+      return [];
+    }
+
+    return parsed.data.sentences.map((s) => ({
       ...s,
+      sentence: s.sentence.trim(),
       domain: dto.domain,
     }));
   }
@@ -94,6 +153,9 @@ export class DailyLessonService {
   async saveSentencesToDatabase(
     sentences: CreateSentenceDto[],
   ): Promise<SentenceDocument[]> {
+    if (!sentences || sentences.length === 0) {
+      return [];
+    }
     return this.sentenceService.createMany(sentences);
   }
 
@@ -105,14 +167,22 @@ export class DailyLessonService {
       vocabularyWords: dto.vocabularyWords,
       count: dto.count,
     });
-    const result = await this.aiService.completeJson({
+    const rawResult: unknown = await this.aiService.completeJson({
       systemPrompt: prompt,
+      jsonSchema: AIArticleJsonSchema,
     });
-    const articles: AIGeneratedArticle[] = Array.isArray(result)
-      ? result
-      : result.articles || result.article || [];
-    return articles.map((a) => ({
+    const parsed = AIGenerateArticleResponseSchema.safeParse(rawResult);
+
+    if (!parsed.success) {
+      this.logger.error(
+        `AI article generation validation failed for ${dto.domain} (${dto.level}): ${parsed.error.message}`,
+      );
+      return [];
+    }
+
+    return parsed.data.articles.map((a) => ({
       ...a,
+      title: a.title.trim(),
       domain: dto.domain,
     }));
   }
@@ -120,12 +190,24 @@ export class DailyLessonService {
   async saveArticlesToDatabase(
     articles: CreateArticleDto[],
   ): Promise<ArticleDocument[]> {
+    if (!articles || articles.length === 0) {
+      return [];
+    }
     return this.articleService.createMany(articles);
   }
 
   async saveDailyLesson(
     dto: CreateDailyLessonDto,
   ): Promise<DailyLessonDocument> {
+    const hasVocabs = Boolean(dto.vocabularies?.length);
+    const hasSentences = Boolean(dto.sentences?.length);
+    const hasArticles = Boolean(dto.articles?.length);
+
+    if (!hasVocabs && !hasSentences && !hasArticles) {
+      throw new Error(
+        `Cannot save daily lesson: no content is present for ${dto.domain}/${dto.level} (day ${dto.sequenceNumber})`,
+      );
+    }
     return this.dailyLessonRepository.upsert(dto);
   }
 
@@ -213,5 +295,62 @@ export class DailyLessonService {
   async getDailyArticles(dailyLessonId: string) {
     const lesson = await this.dailyLessonRepository.findById(dailyLessonId);
     return lesson?.articles ?? [];
+  }
+
+  async create(createDailyLessonDto: CreateDailyLessonDto) {
+    return this.dailyLessonRepository.upsert(createDailyLessonDto);
+  }
+
+  async triggerGeneration(dto?: TriggerDailyLessonGenerationDto) {
+    if (dto?.domain && dto?.level) {
+      const seq =
+        dto.sequenceNumber ??
+        (await this.dailyLessonRepository.getLatestSequenceNumber(
+          dto.domain,
+          dto.level,
+        )) + 1;
+
+      await inngest.send({
+        name: 'speaktra/generate-daily-lesson',
+        data: {
+          domain: dto.domain,
+          level: dto.level,
+          sequenceNumber: seq,
+        },
+      });
+
+      return {
+        message: `Generation triggered for ${dto.domain}/${dto.level} (day ${seq})`,
+        domain: dto.domain,
+        level: dto.level,
+        sequenceNumber: seq,
+      };
+    }
+
+    const domains = Object.values(Domain);
+    const levels = Object.values(Level);
+    const events: Array<{
+      name: 'speaktra/generate-daily-lesson';
+      data: { domain: Domain; level: Level; sequenceNumber: number };
+    }> = [];
+
+    for (const d of domains) {
+      for (const l of levels) {
+        const seq =
+          (await this.dailyLessonRepository.getLatestSequenceNumber(d, l)) + 1;
+        events.push({
+          name: 'speaktra/generate-daily-lesson',
+          data: { domain: d, level: l, sequenceNumber: seq },
+        });
+      }
+    }
+
+    await inngest.send(events);
+
+    return {
+      message: `Triggered generation for ${events.length} domain/level combinations`,
+      count: events.length,
+      events: events.map((e) => e.data),
+    };
   }
 }

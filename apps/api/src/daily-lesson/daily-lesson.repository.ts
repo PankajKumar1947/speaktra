@@ -92,4 +92,13 @@ export class DailyLessonRepository {
     });
     return count > 0;
   }
+
+  async getLatestSequenceNumber(domain: Domain, level: Level): Promise<number> {
+    const latest = await this.dailyLessonModel
+      .findOne({ domain, level })
+      .sort({ sequenceNumber: -1 })
+      .select({ sequenceNumber: 1 })
+      .exec();
+    return latest?.sequenceNumber || 0;
+  }
 }

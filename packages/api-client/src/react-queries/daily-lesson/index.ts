@@ -1,4 +1,12 @@
 export const dailyLessonQueries = {
+  create: {
+    key: ["createDailyLesson"],
+    endpoint: "/daily-lesson",
+  },
+  generate: {
+    key: ["generateDailyLesson"],
+    endpoint: "/daily-lesson/generate",
+  },
   getForUser: {
     key: ["daily-lesson"],
     endpoint: "/daily-lesson/user",

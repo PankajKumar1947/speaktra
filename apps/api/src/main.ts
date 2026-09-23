@@ -5,7 +5,10 @@ import { VersioningType, RequestMethod } from '@nestjs/common';
 import * as express from 'express';
 import { serve } from 'inngest/express';
 import { inngest } from './inngest/client';
-import { createDailyLessonFunction } from './daily-lesson/daily-lesson.inngest';
+import {
+  createDailyLessonFunction,
+  createScheduledDailyLessonFunction,
+} from './daily-lesson/daily-lesson.inngest';
 import { WordBankService } from './daily-lesson/word-bank.service';
 import { DailyLessonService } from './daily-lesson/daily-lesson.service';
 
@@ -23,13 +26,17 @@ async function bootstrap() {
     wordBankService,
     dailyLessonService,
   );
+  const scheduledDailyLessonFunction = createScheduledDailyLessonFunction(
+    wordBankService,
+    dailyLessonService,
+  );
 
   app.use(
     '/api/inngest',
     express.json(),
     serve({
       client: inngest,
-      functions: [dailyLessonFunction],
+      functions: [dailyLessonFunction, scheduledDailyLessonFunction],
     }),
   );
 
@@ -76,4 +83,4 @@ async function bootstrap() {
 
   await app.listen(process.env.PORT ?? 5000);
 }
-bootstrap();
+void bootstrap();

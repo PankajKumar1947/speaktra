@@ -42,20 +42,6 @@ For each article:
 
 Rules:
 - Do NOT include domain or id.
-- Do NOT wrap the entire output in markdown codeblocks.
-- Return ONLY valid JSON matching this schema:
-
-{
-  "articles": [
-    {
-      "title": "string",
-      "type": "string",
-      "difficulty": "easy" | "medium" | "hard",
-      "minRead": number,
-      "keywords": ["string"],
-      "description": "markdown string"
-    }
-  ]
-}
+- Do NOT return markdown or explanations outside the JSON response.
 `;
 };

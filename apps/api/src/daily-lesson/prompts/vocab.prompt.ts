@@ -38,19 +38,6 @@ Each included form MUST strictly follow this structure:
 Rules:
 - You must return exactly ${words.length} vocabulary entries corresponding 1-to-1 with the provided words.
 - All example sentences must feel natural and relevant to the "${domainName}" domain context.
-- Do NOT include domain or extra metadata fields in the objects.
-- Do NOT return markdown or explanations. Return ONLY valid JSON matching this schema:
-
-{
-  "vocabularies": [
-    {
-      "word": "string",
-      "difficulty": "easy" | "medium" | "hard",
-      "noun": { "meaning": "string", "example": "string" },
-      "verb": { "meaning": "string", "example": "string" },
-      "adjective": { "meaning": "string", "example": "string" },
-      "adverb": { "meaning": "string", "example": "string" }
-    }
-  ]
-}
+- Do NOT include domain or extra metadata fields.
+- Do NOT return markdown or explanations outside the JSON response.
 `;

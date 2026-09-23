@@ -1,6 +1,8 @@
 import {
   Controller,
   Get,
+  Post,
+  Body,
   Param,
   Query,
   Req,
@@ -15,15 +17,30 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
-import { Domain, Level } from '@repo/schema';
+import { Domain, Level, Role } from '@repo/schema';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { RolesGuard } from 'src/auth/roles.guard';
+import { Roles } from 'src/auth/roles.decorator';
 import type { AuthenticatedRequest } from 'src/auth/auth.guard';
 import { DailyLessonService } from './daily-lesson.service';
+import { TriggerDailyLessonGenerationDto } from './dto/trigger-generation.dto';
 
 @ApiTags('Daily Lesson')
 @Controller('daily-lesson')
 export class DailyLessonController {
   constructor(private readonly dailyLessonService: DailyLessonService) {}
+
+  @Post('generate')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({
+    summary:
+      'Trigger AI generation for daily lesson(s) by domain/level or all domains (Admin)',
+  })
+  async generate(@Body() dto?: TriggerDailyLessonGenerationDto) {
+    return this.dailyLessonService.triggerGeneration(dto);
+  }
 
   @Get('user')
   @UseGuards(AuthGuard)
