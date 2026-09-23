@@ -26,6 +26,8 @@ import {
   GenerateArticleDto,
   FindDailyLessonBySequenceDto,
 } from './dto/generation.dto';
+import { inngest } from '../inngest/client';
+import { TriggerDailyLessonGenerationDto } from './dto/trigger-generation.dto';
 
 export type AIGeneratedVocab = Omit<CreateVocabularyDto, 'domain'>;
 export type AIGeneratedSentence = Omit<CreateSentenceDto, 'domain'>;
@@ -213,5 +215,62 @@ export class DailyLessonService {
   async getDailyArticles(dailyLessonId: string) {
     const lesson = await this.dailyLessonRepository.findById(dailyLessonId);
     return lesson?.articles ?? [];
+  }
+
+  async create(createDailyLessonDto: CreateDailyLessonDto) {
+    return this.dailyLessonRepository.upsert(createDailyLessonDto);
+  }
+
+  async triggerGeneration(dto?: TriggerDailyLessonGenerationDto) {
+    if (dto?.domain && dto?.level) {
+      const seq =
+        dto.sequenceNumber ??
+        (await this.dailyLessonRepository.getLatestSequenceNumber(
+          dto.domain,
+          dto.level,
+        )) + 1;
+
+      await inngest.send({
+        name: 'speaktra/generate-daily-lesson',
+        data: {
+          domain: dto.domain,
+          level: dto.level,
+          sequenceNumber: seq,
+        },
+      });
+
+      return {
+        message: `Generation triggered for ${dto.domain}/${dto.level} (day ${seq})`,
+        domain: dto.domain,
+        level: dto.level,
+        sequenceNumber: seq,
+      };
+    }
+
+    const domains = Object.values(Domain);
+    const levels = Object.values(Level);
+    const events: Array<{
+      name: 'speaktra/generate-daily-lesson';
+      data: { domain: Domain; level: Level; sequenceNumber: number };
+    }> = [];
+
+    for (const d of domains) {
+      for (const l of levels) {
+        const seq =
+          (await this.dailyLessonRepository.getLatestSequenceNumber(d, l)) + 1;
+        events.push({
+          name: 'speaktra/generate-daily-lesson',
+          data: { domain: d, level: l, sequenceNumber: seq },
+        });
+      }
+    }
+
+    await inngest.send(events);
+
+    return {
+      message: `Triggered generation for ${events.length} domain/level combinations`,
+      count: events.length,
+      events: events.map((e) => e.data),
+    };
   }
 }
