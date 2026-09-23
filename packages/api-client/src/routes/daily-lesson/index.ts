@@ -1,5 +1,13 @@
 import { dailyLessonQueries } from "../../react-queries/daily-lesson";
-import { DailyLesson, Article, Sentence, Vocabulary } from "@repo/schema";
+import {
+  DailyLesson,
+  CreateDailyLesson,
+  Article,
+  Sentence,
+  Vocabulary,
+  Domain,
+  Level,
+} from "@repo/schema";
 import { apiClient } from "../../services/axios";
 
 export const getDailyLessonForUser = async (): Promise<DailyLesson> => {
@@ -31,5 +39,21 @@ export const getDailyLessonArticles = async (
   const response = await apiClient.get(
     dailyLessonQueries.getArticles.endpoint(dailyLessonId),
   );
+  return response.data;
+};
+
+export const createDailyLesson = async (
+  data: CreateDailyLesson,
+): Promise<DailyLesson> => {
+  const response = await apiClient.post("/daily-lesson", data);
+  return response.data;
+};
+
+export const triggerDailyLessonGeneration = async (data?: {
+  domain?: Domain;
+  level?: Level;
+  sequenceNumber?: number;
+}) => {
+  const response = await apiClient.post("/daily-lesson/generate", data);
   return response.data;
 };
