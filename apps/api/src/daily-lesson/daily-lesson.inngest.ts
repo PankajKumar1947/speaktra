@@ -48,12 +48,29 @@ export const createDailyLessonFunction = (
       }
 
       // 1. Get Words from Word Bank
-      const { theme, words } = await step.run(
+      const wordSelection = await step.run(
         'get-words-from-word-bank',
         async () => {
-          return wordBankService.getDailyWords(domain, level, sequenceNumber);
+          try {
+            return await wordBankService.getDailyWords(
+              domain,
+              level,
+              sequenceNumber,
+            );
+          } catch {
+            return null;
+          }
         },
       );
+
+      if (!wordSelection || !wordSelection.words?.length) {
+        return {
+          status: 'skipped',
+          message: `No word bank content found for ${domain}/${level} (day ${sequenceNumber}). Skipped.`,
+        };
+      }
+
+      const { theme, words } = wordSelection;
 
       // 2. Generate Vocabs
       const generatedVocabs = await step.run('generate-vocabs', async () => {
@@ -65,10 +82,13 @@ export const createDailyLessonFunction = (
         });
       });
 
-      // 3. Save Vocabs to database
+      // 3. Save Vocabs to database (only if data is present)
       const savedVocabs = await step.run(
         'save-vocabs-to-database',
         async () => {
+          if (!generatedVocabs?.length) {
+            return [];
+          }
           return dailyLessonService.saveVocabsToDatabase(generatedVocabs);
         },
       );
@@ -88,10 +108,13 @@ export const createDailyLessonFunction = (
         },
       );
 
-      // 5. Save Sentence to database
+      // 5. Save Sentence to database (only if data is present)
       const savedSentences = await step.run(
         'save-sentences-to-database',
         async () => {
+          if (!generatedSentences?.length) {
+            return [];
+          }
           return dailyLessonService.saveSentencesToDatabase(generatedSentences);
         },
       );
@@ -110,20 +133,30 @@ export const createDailyLessonFunction = (
         },
       );
 
-      // 7. Save Articles to database
+      // 7. Save Articles to database (only if data is present)
       const savedArticles = await step.run(
         'save-articles-to-database',
         async () => {
+          if (!generatedArticles?.length) {
+            return [];
+          }
           return dailyLessonService.saveArticlesToDatabase(generatedArticles);
         },
       );
 
-      // 8. Save Daily Lesson to database
-      const savedLesson = await step.run('save-daily-lesson', async () => {
-        const vocabIds = savedVocabs.map((v) => v._id);
-        const sentenceIds = savedSentences.map((s) => s._id);
-        const articleIds = savedArticles.map((a) => a._id);
+      // 8. Save Daily Lesson to database (only if content is present)
+      const vocabIds = (savedVocabs || []).map((v) => v._id);
+      const sentenceIds = (savedSentences || []).map((s) => s._id);
+      const articleIds = (savedArticles || []).map((a) => a._id);
 
+      if (!vocabIds.length && !sentenceIds.length && !articleIds.length) {
+        return {
+          status: 'skipped',
+          message: `No content was generated for ${domain}/${level} (day ${sequenceNumber}). Skipped.`,
+        };
+      }
+
+      const savedLesson = await step.run('save-daily-lesson', async () => {
         return dailyLessonService.saveDailyLesson({
           sequenceNumber,
           domain,
@@ -155,6 +188,7 @@ export const createDailyLessonFunction = (
   );
 
 export const createScheduledDailyLessonFunction = (
+  wordBankService: WordBankService,
   dailyLessonService: DailyLessonService,
 ) =>
   inngest.createFunction(
@@ -175,13 +209,19 @@ export const createScheduledDailyLessonFunction = (
         return dailyLessonService.getAllDomains();
       });
 
-      // 2. For each domain and level, get the latest sequence number and compute next sequence
+      // 2. For each domain and level, verify that content exists in speaktra-content
+      // Only add to target list if word bank content is present
       const targets = await step.run('calculate-next-sequences', async () => {
         const levels = Object.values(Level);
         const list: GenerateDailyLessonEventPayload[] = [];
 
         for (const domain of domains) {
           for (const level of levels) {
+            const hasContent = await wordBankService.hasWordBank(domain, level);
+            if (!hasContent) {
+              continue;
+            }
+
             const latestSeq = await dailyLessonService.getLatestSequenceNumber(
               domain,
               level,
@@ -198,14 +238,14 @@ export const createScheduledDailyLessonFunction = (
       });
 
       // 3. Dispatch generation events to generate lessons
-      // Each event triggers `generate-daily-lesson`:
-      // fetches vocabs from speaktra-content, generates AI content, and saves the lesson
       const events = targets.map((target) => ({
         name: 'speaktra/generate-daily-lesson' as const,
         data: target,
       }));
 
-      await step.sendEvent('dispatch-daily-lesson-generations', events);
+      if (events.length > 0) {
+        await step.sendEvent('dispatch-daily-lesson-generations', events);
+      }
 
       return {
         status: 'success',

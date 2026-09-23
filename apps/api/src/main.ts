@@ -26,8 +26,10 @@ async function bootstrap() {
     wordBankService,
     dailyLessonService,
   );
-  const scheduledDailyLessonFunction =
-    createScheduledDailyLessonFunction(dailyLessonService);
+  const scheduledDailyLessonFunction = createScheduledDailyLessonFunction(
+    wordBankService,
+    dailyLessonService,
+  );
 
   app.use(
     '/api/inngest',

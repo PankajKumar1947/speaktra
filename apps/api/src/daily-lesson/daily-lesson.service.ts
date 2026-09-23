@@ -67,6 +67,13 @@ export class DailyLessonService {
   }
 
   async generateVocab(dto: GenerateVocabDto): Promise<CreateVocabularyDto[]> {
+    if (!dto.words || dto.words.length === 0) {
+      this.logger.warn(
+        `No words provided for vocab generation for ${dto.domain} (${dto.level})`,
+      );
+      return [];
+    }
+
     const prompt = buildVocabularyPrompt({
       domainName: dto.domain,
       level: dto.level,
@@ -76,22 +83,40 @@ export class DailyLessonService {
     const result = (await this.aiService.completeJson({
       systemPrompt: prompt,
     })) as { vocabularies: AIGeneratedVocab[] };
-    const vocabularies = result?.vocabularies ?? [];
-    return vocabularies.map((v) => ({
-      ...v,
-      domain: dto.domain,
-    }));
+    const vocabularies = Array.isArray(result?.vocabularies)
+      ? result.vocabularies
+      : [];
+
+    return vocabularies
+      .filter(
+        (v) => v && typeof v.word === 'string' && v.word.trim().length > 0,
+      )
+      .map((v) => ({
+        ...v,
+        word: v.word.trim(),
+        domain: dto.domain,
+      }));
   }
 
   async saveVocabsToDatabase(
     vocabularies: CreateVocabularyDto[],
   ): Promise<VocabularyDocument[]> {
+    if (!vocabularies || vocabularies.length === 0) {
+      return [];
+    }
     return this.vocabularyService.createMany(vocabularies);
   }
 
   async generateSentence(
     dto: GenerateSentenceDto,
   ): Promise<CreateSentenceDto[]> {
+    if (!dto.vocabularyWords || dto.vocabularyWords.length === 0) {
+      this.logger.warn(
+        `No vocabulary words provided for sentence generation for ${dto.domain} (${dto.level})`,
+      );
+      return [];
+    }
+
     const prompt = buildSentencePrompt({
       domainName: dto.domain,
       level: dto.level,
@@ -102,16 +127,26 @@ export class DailyLessonService {
     const result = (await this.aiService.completeJson({
       systemPrompt: prompt,
     })) as { sentences: AIGeneratedSentence[] };
-    const sentences = result?.sentences ?? [];
-    return sentences.map((s) => ({
-      ...s,
-      domain: dto.domain,
-    }));
+    const sentences = Array.isArray(result?.sentences) ? result.sentences : [];
+
+    return sentences
+      .filter(
+        (s) =>
+          s && typeof s.sentence === 'string' && s.sentence.trim().length > 0,
+      )
+      .map((s) => ({
+        ...s,
+        sentence: s.sentence.trim(),
+        domain: dto.domain,
+      }));
   }
 
   async saveSentencesToDatabase(
     sentences: CreateSentenceDto[],
   ): Promise<SentenceDocument[]> {
+    if (!sentences || sentences.length === 0) {
+      return [];
+    }
     return this.sentenceService.createMany(sentences);
   }
 
@@ -126,22 +161,45 @@ export class DailyLessonService {
     const result = (await this.aiService.completeJson({
       systemPrompt: prompt,
     })) as { articles: AIGeneratedArticle[] };
-    const articles = result?.articles ?? [];
-    return articles.map((a) => ({
-      ...a,
-      domain: dto.domain,
-    }));
+    const articles = Array.isArray(result?.articles) ? result.articles : [];
+
+    return articles
+      .filter(
+        (a) =>
+          a &&
+          typeof a.title === 'string' &&
+          a.title.trim().length > 0 &&
+          typeof a.description === 'string' &&
+          a.description.trim().length > 0,
+      )
+      .map((a) => ({
+        ...a,
+        title: a.title.trim(),
+        domain: dto.domain,
+      }));
   }
 
   async saveArticlesToDatabase(
     articles: CreateArticleDto[],
   ): Promise<ArticleDocument[]> {
+    if (!articles || articles.length === 0) {
+      return [];
+    }
     return this.articleService.createMany(articles);
   }
 
   async saveDailyLesson(
     dto: CreateDailyLessonDto,
   ): Promise<DailyLessonDocument> {
+    const hasVocabs = Boolean(dto.vocabularies?.length);
+    const hasSentences = Boolean(dto.sentences?.length);
+    const hasArticles = Boolean(dto.articles?.length);
+
+    if (!hasVocabs && !hasSentences && !hasArticles) {
+      throw new Error(
+        `Cannot save daily lesson: no content is present for ${dto.domain}/${dto.level} (day ${dto.sequenceNumber})`,
+      );
+    }
     return this.dailyLessonRepository.upsert(dto);
   }
 
