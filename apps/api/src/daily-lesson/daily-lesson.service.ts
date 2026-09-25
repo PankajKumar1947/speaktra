@@ -1,4 +1,10 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { Domain, Level } from '@repo/schema';
 import { AIService } from '../ai/ai.service';
 import { VocabularyService } from 'src/vocabulary/vocabulary.service';
@@ -240,17 +246,79 @@ export class DailyLessonService {
     return lesson;
   }
 
-  async getDailyLessonForUser(userId: string) {
+  private toDayNumber(date: Date): number {
+    return Math.floor(
+      Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) /
+        (1000 * 60 * 60 * 24),
+    );
+  }
+
+  private getSequenceForDate(date: Date, createdAt: Date): number {
+    return this.toDayNumber(date) - this.toDayNumber(createdAt) + 1;
+  }
+
+  private parseDateOnly(value: string): Date | null {
+    const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+    if (!match) {
+      return null;
+    }
+
+    const [, year, month, day] = match;
+    const parsed = new Date(Number(year), Number(month) - 1, Number(day));
+
+    if (
+      parsed.getFullYear() !== Number(year) ||
+      parsed.getMonth() !== Number(month) - 1 ||
+      parsed.getDate() !== Number(day)
+    ) {
+      return null;
+    }
+
+    return parsed;
+  }
+
+  async getCurrentSequenceForUser(userId: string): Promise<number> {
+    const user = await this.usersService.findOne(userId);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return this.getSequenceForDate(new Date(), new Date(user.createdAt));
+  }
+
+  async getDailyLessonForUser(userId: string, date?: string) {
     const user = await this.usersService.findOne(userId);
     if (!user || !user.domain || !user.level) {
       throw new NotFoundException('User not found or onboarding not completed');
     }
 
-    const sequenceNumber =
-      Math.floor(
-        (Date.now() - new Date(user.createdAt).getTime()) /
-          (1000 * 60 * 60 * 24),
-      ) + 1;
+    const createdAt = new Date(user.createdAt);
+    const currentSequenceNumber = this.getSequenceForDate(
+      new Date(),
+      createdAt,
+    );
+    let sequenceNumber = currentSequenceNumber;
+
+    if (date) {
+      const parsedDate = this.parseDateOnly(date);
+      if (!parsedDate) {
+        throw new BadRequestException('Invalid date, expected YYYY-MM-DD');
+      }
+
+      sequenceNumber = this.getSequenceForDate(parsedDate, createdAt);
+
+      if (sequenceNumber > currentSequenceNumber) {
+        throw new ForbiddenException(
+          'Future daily lessons are not available yet',
+        );
+      }
+    }
+
+    if (sequenceNumber < 1) {
+      throw new NotFoundException(
+        'No daily lesson exists before this account was created',
+      );
+    }
 
     this.logger.log(
       `Fetching daily lesson for user ${user.name} (${user.domain}/${user.level}, day ${sequenceNumber})`,
