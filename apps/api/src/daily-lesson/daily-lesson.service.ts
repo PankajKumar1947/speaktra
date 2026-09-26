@@ -103,11 +103,23 @@ export class DailyLessonService {
       return [];
     }
 
-    return parsed.data.vocabularies.map((v) => ({
-      ...v,
-      word: v.word.trim(),
-      domain: dto.domain,
-    }));
+    // Difficulty is authoritative from the word bank — never trust the AI's
+    // value. Drop any off-list (hallucinated) words to keep delivery deterministic.
+    const difficultyByWord = new Map(
+      dto.words.map((w) => [w.word.trim().toLowerCase(), w.difficulty]),
+    );
+
+    return parsed.data.vocabularies.flatMap((v) => {
+      const word = v.word.trim();
+      const difficulty = difficultyByWord.get(word.toLowerCase());
+      if (!difficulty) {
+        this.logger.warn(
+          `AI returned off-list word "${word}" for ${dto.domain} (${dto.level}, theme "${dto.theme ?? 'n/a'}"); dropping it`,
+        );
+        return [];
+      }
+      return [{ ...v, word, difficulty, domain: dto.domain }];
+    });
   }
 
   async saveVocabsToDatabase(
