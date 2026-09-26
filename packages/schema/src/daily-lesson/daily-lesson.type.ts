@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Level } from "../common";
+import { Difficulty, Level } from "../common";
 import { Domain } from "../domain";
 import {
   CreateDailyLessonSchema,
@@ -27,12 +27,19 @@ export interface WordEntry {
   meaning: string;
 }
 
-export interface WordBank {
+export interface SelectedWord extends WordEntry {
+  difficulty: Difficulty;
+}
+
+export interface DomainThemes {
   themes: string[];
+}
+
+export interface DifficultyBank {
   words: Record<string, WordEntry[]>;
 }
 
 export interface DailyWordSelection {
   theme: string;
-  words: WordEntry[];
+  words: SelectedWord[];
 }
