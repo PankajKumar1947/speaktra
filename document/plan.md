@@ -1,284 +1,256 @@
-# Daily Challenge — Word Bank Refactor Plan
+# Daily Lesson — Word Bank Plan
 
 ## Overview
 
-Replace the dynamic AI-based vocabulary selection with a **curated JSON word bank** approach.  
-Domain is no longer a DB entity — it becomes a **typed enum** shared across the monorepo via `@repo/schema`.  
-The AI's role shrinks to **enrichment only** (meaning, examples, difficulty) — word selection is deterministic and controlled.
+Word banks live in the **`speaktra-content`** repo (served via CDN, fetched by `SpeaktraContentService.fetchJson()`), **not** in `apps/api`.
+
+Each domain stores **one file per difficulty** (`easy` / `medium` / `hard`) plus a `themes.json` holding the theme order. `Level` is a **mix ratio** applied at selection time:
+
+- beginner: **2 easy + 2 medium + 1 hard**
+- intermediate: **1 easy + 2 medium + 2 hard**
+- advanced: **0 easy + 2 medium + 3 hard**
+
+The AI's role is **enrichment only** (forms, examples). Difficulty always comes from the filename a word was loaded from.
 
 ---
 
 ## Goals
 
-- Unique, non-repeating vocabulary per domain × level combination
-- Thematic cohesion — each daily challenge's 5 words come from the same theme
-- Deterministic delivery — given a `sequenceNumber`, the words are always predictable
-- No DB overhead for domain management
-- Append-only word bank — safe to extend without breaking history
+- Single source of truth per word (one bucket per difficulty)
+- Single source of truth for theme order (`themes.json` per domain)
+- Thematic cohesion — each day's 5 words come from the same theme
+- Deterministic delivery — given `(domain, level, sequenceNumber)`, words are predictable
+- Append-only — safe to extend without breaking history
+- Small files, focused diffs — ~30–80 KB per file, parallel generation per difficulty
 
 ---
 
-## Architecture
+## Architecture (speaktra-content repo)
 
 ```
-packages/schema/
-  src/common/common.enum.ts     ← ADD: Domain enum here (alongside Level, Difficulty)
-
-apps/api/src/daily-challenge/
+speaktra-content/
   word-banks/
     medical/
-      beginner.json             ← { themes: [...], words: { theme: [{word, meaning}] } }
-      intermediate.json
-      advanced.json
+      themes.json     ← { themes: [...] } — single source of truth for order
+      easy.json       ← { words: { theme: [{word, meaning}] } }
+      medium.json     ← { words: {...} }
+      hard.json       ← { words: {...} }
     technology/
-      beginner.json
-      ...
+      themes.json
+      easy.json
+      medium.json
+      hard.json
     business/
       ...
-  word-bank.service.ts          ← NEW: loads, caches, slices window
-  scripts/
-    generate-word-bank.ts       ← ONE-TIME: generates word bank JSONs via Mistral
 ```
+
+Four files per `Domain` enum value: `word-banks/{domain}/themes.json` + `word-banks/{domain}/{difficulty}.json`.
+
+API fetch paths (themes once + only the difficulty files the level mix needs):
+
+```
+word-banks/${domain}/themes.json
+word-banks/${domain}/easy.json
+word-banks/${domain}/medium.json
+word-banks/${domain}/hard.json
+```
+
+Fetch count per generation: themes (1, cached) + beginner 3 / intermediate 3 / advanced 2 difficulty files. `WordBankService` caches per `domain` (themes) and per `domain/difficulty` (banks).
 
 ---
 
 ## Word Bank JSON Structure
 
-Each file is a **theme-keyed object** with an ordered `themes` array and a `words` map.  
-Themes rotate **weekly** (7 days per theme).  
-New words are always **appended** to a theme's array — never inserted mid-array.
+Theme order lives in exactly one place — `word-banks/{domain}/themes.json`. Each difficulty file holds only a `words` map keyed by those themes. New words are always **appended** to a theme's array — never inserted mid-array. New themes are appended to `themes.json` **and** added as keys in all three difficulty files.
+
+`word-banks/medical/themes.json`:
+
+```json
+{ "themes": ["anatomy", "pharmacology", "diagnostics"] }
+```
+
+`word-banks/medical/easy.json`:
 
 ```json
 {
-  "themes": ["anatomy", "pharmacology", "diagnostics", "procedures", "symptoms"],
   "words": {
     "anatomy": [
-      { "word": "suture",    "meaning": "a stitch used to close a wound" },
-      { "word": "femur",     "meaning": "the longest bone in the human body" },
-      { "word": "cortex",    "meaning": "the outer layer of an organ or structure" },
-      { "word": "ligament",  "meaning": "fibrous tissue connecting bones" },
-      { "word": "tendon",    "meaning": "cord connecting muscle to bone" }
-      // ... 70+ total words per theme
+      { "word": "fever", "meaning": "abnormally high body temperature" },
+      { "word": "wound", "meaning": "an injury to the skin or tissue" }
     ],
-    "pharmacology": [ ... ],
-    "diagnostics":  [ ... ]
+    "pharmacology": [ ... ]
   }
 }
 ```
 
+`word-banks/medical/medium.json` / `hard.json`: same shape, e.g. `medium/anatomy` holds `suture`, `ligament`; `hard/anatomy` holds `idiopathic`, `thrombocytopenia`.
+
 **Rules:**
 
-- Each theme must have **minimum 35 words** (7 days × 5 words = 1 full weekly cycle)
-- Ideal is **70–105 words** per theme → 2–3 full rotations before any word repeats
-- Theme order in the `themes` array is the rotation order — fixed, never shuffled
-- To add words: append to the theme's array. Safe — no index shift.
+- `themes.json` order = rotation order — fixed, never shuffled, never reordered. Append new themes at the end **and** add matching keys to all three difficulty files.
+- Difficulty is implicit from the filename, attached by the API as `difficulty` on selection.
+- No duplicate `word` (case-insensitive) within a difficulty file, across the three difficulty files, or across themes within a domain.
+- Each entry is `{ word: string, meaning: string }`.
+- To add words: append to the end of the theme's array in the relevant difficulty file. Safe — no index shift.
+- File size guide: ~1,000 entries ≈ 65–120 KB minified (~150–200 KB pretty-printed). Per-file sizes stay well under that (see minimums below).
 
 ---
 
-## Weekly Theme Rotation Logic
+## Level Mix
+
+```ts
+export const LEVEL_MIX = {
+  beginner: { easy: 2, medium: 2, hard: 1 },
+  intermediate: { easy: 1, medium: 2, hard: 2 },
+  advanced: { easy: 0, medium: 2, hard: 3 },
+} as const;
+```
+
+Total is always 5 words/day. All 5 come from the **same theme** (looked up in each difficulty file by the slug from `themes.json`).
+
+---
+
+## Word Counts Per Theme (minimums)
+
+One theme is served for a full 7-day block. Weekly take per bucket = 7 days × max daily take across levels:
+
+| File (`{domain}/`) | Daily take (beginner / intermediate / advanced) | Per-week max | Min (repeat-free week) | Standard |
+| ------------------ | ----------------------------------------------- | ------------ | ---------------------- | -------- |
+| `easy.json`        | 2 / 1 / 0                                       | 14           | **14**                 | 35       |
+| `medium.json`      | 2 / 2 / 2                                       | 14           | **14**                 | 35       |
+| `hard.json`        | 1 / 2 / 3                                       | 21           | **21**                 | 35       |
+
+Content standard is **35 words per theme per file**. Below the minimum, words repeat within the same week. Windows shift forward each full rotation (see selection logic), so every word is eventually served — oversized buckets are waste, not variety.
+
+---
+
+## Selection Logic (API `WordBankService`)
 
 ```ts
 const DAYS_PER_THEME = 7;
-const WORDS_PER_DAY = 5;
 
-// Which week are we on? (0-based)
-const weekIndex = Math.floor((sequenceNumber - 1) / DAYS_PER_THEME);
+const LEVEL_OFFSET = { beginner: 0, intermediate: 13, advanced: 29 };
+// offsets desync tracks sharing the same pool so
+// beginner-day-1 and advanced-day-1 don't serve identical medium/hard words
 
-// Which theme? Loops back when all themes exhausted
-const themeIndex = weekIndex % wordBank.themes.length;
-const currentTheme = wordBank.themes[themeIndex];
-
-// Which day within the current week? (0–6)
-const dayWithinWeek = (sequenceNumber - 1) % DAYS_PER_THEME;
-
-// Slice 5 words for today, looping within theme if it runs short
-const themeWords = wordBank.words[currentTheme];
-const wordStart = (dayWithinWeek * WORDS_PER_DAY) % themeWords.length;
-const words = themeWords.slice(wordStart, wordStart + WORDS_PER_DAY);
-```
-
-**How it flows:**
-
-| Sequence # | Week                  | Theme (Medical example) | Words used        |
-| ---------- | --------------------- | ----------------------- | ----------------- |
-| 1–7        | Week 1                | anatomy                 | words[0–34]       |
-| 8–14       | Week 2                | pharmacology            | words[0–34]       |
-| 15–21      | Week 3                | diagnostics             | words[0–34]       |
-| ...        | ...                   | ...                     | ...               |
-| N          | After all themes done | loops → anatomy again   | words[0–34] again |
-
-- No extra DB state — `sequenceNumber` (already on `DailyChallenge`) drives everything
-- Theme exhaustion = automatic loop via `% themes.length`
-- Word exhaustion within a theme = automatic loop via `% themeWords.length`
-- At 10 themes × 7 days = **70 days** before the same theme is seen again
-
----
-
-## Domain Enum (replaces Domain DB collection)
-
-### Location: `packages/schema/src/common/common.enum.ts`
-
-```ts
-// ADD to existing common.enum.ts
-export enum Domain {
-  MEDICAL = "medical",
-  TECHNOLOGY = "technology",
-  BUSINESS = "business",
-  LAW = "law",
-  EDUCATION = "education",
-  FINANCE = "finance",
-  SCIENCE = "science",
-  // add more as needed
+function sliceBucket(
+  bucket: WordEntry[],
+  need: number,
+  dayWithinWeek: number,
+  levelOffset: number,
+  cycleShift: number,
+): WordEntry[] {
+  if (need === 0) return [];
+  const start =
+    (cycleShift + dayWithinWeek * need + levelOffset) % bucket.length;
+  let out = bucket.slice(start, start + need);
+  if (out.length < need) out = out.concat(bucket.slice(0, need - out.length)); // wrap
+  return out;
 }
 
-export const DomainEnum = z.nativeEnum(Domain); // for zod validation
+// per day:
+// 1. Load themes.json (cached per domain) + only the difficulty files in LEVEL_MIX[level].
+// 2. Resolve theme + slices:
+const weekIndex = Math.floor((sequenceNumber - 1) / DAYS_PER_THEME);
+const currentTheme = themes[weekIndex % themes.length]!;
+const cycleIndex = Math.floor(weekIndex / themes.length); // full rotations completed
+const dayWithinWeek = (sequenceNumber - 1) % DAYS_PER_THEME;
+const mix = LEVEL_MIX[level];
+// per bucket: cycleShift = (cycleIndex * mix[bucket] * DAYS_PER_THEME) % bucket.length
+// shifts each revisit window forward one week's worth → full coverage over rotations,
+// appended words get picked up, no word is dead weight.
+
+const offset = LEVEL_OFFSET[level];
+const words = [
+  ...sliceBucket(
+    easyBank.words[currentTheme] ?? [],
+    mix.easy,
+    dayWithinWeek,
+    offset,
+    cycleShiftFor("easy"),
+  ).map((w) => ({ ...w, difficulty: "easy" })),
+  ...sliceBucket(
+    mediumBank.words[currentTheme] ?? [],
+    mix.medium,
+    dayWithinWeek,
+    offset,
+    cycleShiftFor("medium"),
+  ).map((w) => ({ ...w, difficulty: "medium" })),
+  ...sliceBucket(
+    hardBank.words[currentTheme] ?? [],
+    mix.hard,
+    dayWithinWeek,
+    offset,
+    cycleShiftFor("hard"),
+  ).map((w) => ({ ...w, difficulty: "hard" })),
+];
+// words.length === 5, all same theme
 ```
 
-- Same pattern as existing `Level`, `Difficulty`, `Goal` enums
-- Shared across API and mobile via `@repo/schema`
-- Word bank folder name = `Domain` enum value (e.g., `Domain.MEDICAL` → `word-banks/medical/`)
+- No extra DB state — `sequenceNumber` (already on `DailyLesson`) drives everything.
+- Theme exhaustion loops via `% themes.length`; bucket exhaustion wraps within the bucket.
+- Returned words carry preset `difficulty` from the source filename — the vocab prompt keeps it as-is and `generateVocab` forces it on save.
+- Missing theme key or empty bucket in any required file → throw (content bug, fail generation loudly).
 
----
-
-## Changes Required
-
-### 1. `packages/schema` — Add Domain enum
-
-#### [MODIFY] `common.enum.ts`
-
-- Add `Domain` enum
-- Add `DomainEnum` zod schema
-- Remove dependency on dynamic domain DB schema
-
-#### [DELETE] `packages/schema/src/domain/` _(entire folder)_
-
-- `domain.schema.ts` — no longer needed
-- `domain.type.ts` — no longer needed
-- `domain/index.ts` — no longer needed
-
-#### [MODIFY] `packages/schema/src/index.ts`
-
-- Remove `export * from "./domain"`
-
----
-
-### 2. `apps/api` — Remove Domain module
-
-#### [DELETE] `apps/api/src/domain/` _(entire module folder)_
-
-- `domain.service.ts`
-- `domain.controller.ts`
-- `domain.module.ts`
-- `domain/entities/domain.entity.ts`
-- `domain/dto/`
-
-#### [MODIFY] `apps/api/src/app.module.ts`
-
-- Remove `DomainModule` import
-
----
-
-### 3. `apps/api` — Update User entity
-
-#### [MODIFY] `apps/api/src/users/entities/user.entity.ts`
-
-- Change `domain` field: `ObjectId ref: 'Domain'` → `String enum: Domain`
+### Schema types (`@repo/schema`)
 
 ```ts
-// Before
-@Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Domain', required: false })
-domain?: string;
-
-// After
-@Prop({ required: false, type: String, enum: Domain })
-domain?: Domain;
-```
-
----
-
-### 4. `apps/api` — Update DailyChallenge entity
-
-#### [MODIFY] `apps/api/src/daily-challenge/entities/daily-challenge.entity.ts`
-
-- Change `domain` field: `ObjectId ref: 'Domain'` → `String enum: Domain`
-
-```ts
-// Before
-@Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'Domain' })
-domain!: mongoose.Types.ObjectId;
-
-// After
-@Prop({ required: true, type: String, enum: Domain })
-domain!: Domain;
-```
-
----
-
-### 5. `apps/api` — Daily Challenge module refactor
-
-#### [MODIFY] `daily-challenge.module.ts`
-
-- Remove `DomainService`, `DomainEntity` from imports/providers
-- Add `WordBankService` as provider
-
-#### [NEW] `word-bank.service.ts`
-
-Core responsibilities:
-
-- Load word bank JSON at startup, cache in memory (`Map<string, WordBankFile>`)
-- Expose `getWordsForDay(domain: Domain, level: Level, sequenceNumber: number): WordBankEntry[]`
-- Also expose `getCurrentTheme(domain, level, sequenceNumber): string` for the API response
-- Weekly rotation logic lives here
-
-```ts
-interface WordBankEntry {
+interface WordEntry {
   word: string;
   meaning: string;
 }
 
-interface WordBankFile {
-  themes: string[];
-  words: Record<string, WordBankEntry[]>;
+interface SelectedWord extends WordEntry {
+  difficulty: Difficulty; // from source filename, forced on save
+}
+
+interface DomainThemes {
+  themes: string[]; // word-banks/{domain}/themes.json — single source of truth
+}
+
+interface DifficultyBank {
+  words: Record<string, WordEntry[]>; // word-banks/{domain}/{difficulty}.json
+}
+
+interface DailyWordSelection {
+  theme: string;
+  words: SelectedWord[]; // length 5, all same theme
 }
 ```
 
-#### [MODIFY] `daily-challenge.service.ts`
+---
 
-- Replace `domainService.findAll()` loop with `Object.values(Domain)`
-- Replace `vocabularyService.getLastNVocabularies()` + AI word generation  
-  with `wordBankService.getWordsForDay(domain, level, sequenceNumber)`
-- AI call now receives: `word + meaning` → enriches with `difficulty`, `noun/verb/adj/adv forms`, `examples`
-- Include `currentTheme` in the daily challenge response
+## API Implementation
 
-#### [MODIFY] `ai-content-generation.service.ts`
+### `apps/api/src/daily-lesson/word-bank.service.ts`
 
-- `generateVocabularies()` signature changes:
-  - **Input**: `{ words: WordBankEntry[], domain, level }` (no more forbidden list)
-  - **Output**: same enriched vocabulary structure
-- Prompt becomes enrichment-focused, not open-ended generation
+- `getDomainThemes(domain)` — fetch `word-banks/${domain}/themes.json`, cache per `domain`.
+- `getDifficultyBank(domain, difficulty)` — fetch words-only `word-banks/${domain}/${difficulty}.json`, cache per `domain/difficulty`.
+- `hasWordBank(domain, level)` — verify themes file + every theme non-empty in each mix-required bank.
+- `getDailyWords(domain, level, sequenceNumber)` — load themes + mix-required banks in parallel, implement mix + offset + cycle-shift logic from above.
 
-#### [MODIFY] `ai-prompts/vocabulary.prompt.ts`
+### `apps/api/src/daily-lesson/prompts/vocab.prompt.ts`
 
-- Rewrite prompt: "Given these words and their base meanings, enrich each with difficulty, and at least one form (noun/verb/adjective/adverb) with meaning and example"
+- Input `SelectedWord[]` carries preset `difficulty`. Prompt lists it and instructs: **"Keep the given difficulty as-is. Do NOT reassign."**
+
+### Generation pipeline (`daily-lesson.inngest.ts` / service)
+
+- `getDailyWords` → `generateVocab` (bank difficulty forced on save, off-list words dropped) → sentences → articles → save lesson with `currentTheme`.
 
 ---
 
-### 6. One-time Word Bank Generation Script
+## Word Bank Generation Script (for speaktra-content)
 
-#### [NEW] `scripts/generate-word-bank.ts`
+### `scripts/generate-word-bank.ts` (run manually, commit output to speaktra-content)
 
-- For each `Domain × Level` combination, call Mistral to generate the word bank JSON
-- Output: writes to `word-banks/{domain}/{level}.json`
-- Run once manually → review output → commit to repo
-- Each theme must have **at least 70 words** (2 full weekly rotations)
+- For each `Domain` in `[medical, technology, business]` (initial set), for each `Difficulty` in `[easy, medium, hard]`:
+  1. Generate ordered `themes` array once per domain → write `word-banks/{domain}/themes.json`.
+  2. Generate per-theme word arrays meeting the minimums above → `word-banks/{domain}/{difficulty}.json` (words-only).
+  3. Validate: every difficulty file's `words` keys match `themes.json` exactly; no cross-file or cross-theme duplicates (case-insensitive); all meanings present and domain-specific; files parse against `DomainThemes` / `DifficultyBank` schemas.
+- Output: `word-banks/{domain}/themes.json` + three words files per domain.
+- Uses Mistral (one job per difficulty, retryable independently); human review before commit.
 
-**Domains to generate for (initial set):**
-
-- `medical` × `[beginner, intermediate, advanced]`
-- `technology` × `[beginner, intermediate, advanced]`
-- `business` × `[beginner, intermediate, advanced]`
-
-**Themes per domain (example — Medical, in rotation order):**
+**Themes per domain (example — medical, in rotation order):**
 
 | Order | Theme            | Description                      |
 | ----- | ---------------- | -------------------------------- |
@@ -293,65 +265,39 @@ interface WordBankFile {
 | 9     | `pathology`      | Disease and disorders            |
 | 10    | `rehabilitation` | Recovery and therapy             |
 
-With 10 themes: same theme repeats every **70 days**. At 70 words/theme: same word repeats every **70 days**.
+Difficulty calibration: `easy` = high-frequency / concrete, `medium` = professional working vocabulary, `hard` = low-frequency jargon / abstract.
 
 ---
 
-### 7. DB Migration (existing data)
+## Versioning
 
-> [!WARNING]
-> Existing `User.domain` and `DailyChallenge.domain` fields are MongoDB ObjectIds referencing the `Domain` collection.
-> After this change they will be plain strings (Domain enum values).
-> A one-time migration script is needed.
-
-#### [NEW] `scripts/migrate-domain-objectid-to-enum.ts`
-
-- For each user: lookup `domain` ObjectId → find domain name → map to `Domain` enum value → update user
-- For each daily challenge: same lookup and update
-- Drop `Domain` collection after migration
-
----
-
-## Word Bank Versioning (Future-proof)
-
-When extending a theme's word list:
-
-- **Always append** new words to the end of a theme's array — never insert mid-array
-- New words will naturally be consumed when the rotation cycles back to that theme
-- For major restructuring of themes: create `beginner.v2.json` and track active version per domain/level
+- Append-only within each theme array and within `themes.json`. Cycle-shifted windows pick new words up on the next rotation — no index shift.
+- Never reorder or delete existing entries in place. Restructuring themes means publishing a new versioned set of files.
 
 ---
 
 ## Verification Plan
 
-### After Schema Changes
+### Content validation (speaktra-content CI)
 
-- `@repo/schema` builds without errors: `yarn build` in `packages/schema`
-- `Domain` enum importable in API and mobile: `import { Domain } from '@repo/schema'`
+- `themes.json` validates against `DomainThemes` (non-empty); each difficulty file validates against `DifficultyBank` with `words` keys matching `themes.json` exactly, minimums met.
+- No duplicates: lint script checks case-insensitive `word` uniqueness per domain across all three files.
+- Spot-check: 7 consecutive days of each level share one theme; day 8 changes theme.
 
-### After API Changes
+### API checks
 
-- API compiles: `yarn build` in `apps/api`
-- `WordBankService` unit test: verify window returns correct 5 words for given `sequenceNumber`
-- `WordBankService` unit test: verify theme rotates correctly every 7 days
-- `POST /daily-challenge/generate` still works end-to-end
-- `GET /daily-challenge/:id` returns populated vocabularies, sentences, articles + `currentTheme`
-
-### Manual Checks
-
-- Run word bank generation script → verify JSON files look correct
-- Generate 7 consecutive daily challenges → verify all 7 days share the same theme
-- Generate day 8 → verify theme changes
-- Verify no duplicate words appear within a week's challenges
+- `WordBankService` unit test: `(medical, beginner, seq=1)` loads 3 files, returns 2 easy + 2 medium + 1 hard, all with `difficulty` set, same theme.
+- Unit test: `(medical, intermediate, seq=1)` loads 3 files, returns 1/2/2; `(medical, advanced, seq=1)` returns 0/2/3.
+- Unit test: missing theme key in a difficulty file throws with file name.
+- Unit test: beginner-day-1 vs advanced-day-1 medium/hard words differ (offset works).
+- Unit test: wrap-around when `dayWithinWeek * need` exceeds bucket length.
+- End-to-end: trigger generation for `medical × [beginner, intermediate, advanced]` × 8 days → correct themes, no duplicates within a week, vocab `difficulty` matches source file.
 
 ---
 
 ## Open Questions
 
-1. **Which domains to launch with?** Suggested: `medical`, `technology`, `business` — confirm?
-2. **Themes per domain** — should these be defined in code (config file) or only in the JSON `themes` array?
-3. **Mobile onboarding** — currently fetches domain list from `GET /domain`. After this change, where does the domain list + display labels come from?
-   - Static config in mobile (hardcoded from `Domain` enum)
-   - New `GET /domain/list` endpoint that returns `Domain` enum values with display labels
-4. **Expose theme to user?** e.g. _"This week's theme: Anatomy 🫀 — Day 3 of 7"_ — include `currentTheme` + `dayInWeek` in the daily challenge response?
-5. **Migration timing** — should migration run before or alongside deployment of this change?
+1. Launch domains: `medical`, `technology`, `business` — confirmed.
+2. Beginner mix `2-2-1` is challenging (60% non-easy) — keep, or soften week 1 to `3-1-1`? Currently keeping `2-2-1` on the assumption users are professionals, not true English beginners.
+3. Mobile onboarding domain list — out of scope for content repo; API exposes `Domain` enum values with display labels.
+4. Expose theme to user? e.g. _"This week's theme: Anatomy — Day 3 of 7"_ — include `currentTheme` + `dayInWeek` in daily lesson response (recommended yes).
