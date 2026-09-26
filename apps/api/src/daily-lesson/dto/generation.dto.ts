@@ -1,10 +1,10 @@
-import { Domain, Level, WordEntry } from '@repo/schema';
+import { Domain, Level, SelectedWord } from '@repo/schema';
 
 export class GenerateVocabDto {
   domain!: Domain;
   level!: Level;
   theme?: string;
-  words!: WordEntry[];
+  words!: SelectedWord[];
 }
 
 export class GenerateSentenceDto {
