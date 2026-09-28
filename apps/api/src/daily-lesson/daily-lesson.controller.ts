@@ -8,6 +8,8 @@ import {
   Req,
   UseGuards,
   UnauthorizedException,
+  ForbiddenException,
+  NotFoundException,
   ParseIntPipe,
 } from '@nestjs/common';
 import {
@@ -48,15 +50,28 @@ export class DailyLessonController {
   @ApiOperation({
     summary: 'Get daily lesson for the currently authenticated user',
   })
-  async getDailyLessonForUser(@Req() req: AuthenticatedRequest) {
+  @ApiQuery({
+    name: 'date',
+    required: false,
+    type: String,
+    example: '2026-01-31',
+    description:
+      'Optional day to fetch (YYYY-MM-DD). Defaults to the current day. Past days are allowed; future days are rejected.',
+  })
+  async getDailyLessonForUser(
+    @Req() req: AuthenticatedRequest,
+    @Query('date') date?: string,
+  ) {
     const userId = req.user?.sub;
     if (!userId) {
       throw new UnauthorizedException('User not authenticated');
     }
-    return this.dailyLessonService.getDailyLessonForUser(userId);
+    return this.dailyLessonService.getDailyLessonForUser(userId, date);
   }
 
   @Get('sequence')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT-auth')
   @ApiOperation({
     summary: 'Get daily lesson by domain, level, and sequence number',
   })
@@ -64,10 +79,29 @@ export class DailyLessonController {
   @ApiQuery({ name: 'level', enum: Level })
   @ApiQuery({ name: 'sequenceNumber', type: Number, example: 1 })
   async findBySequence(
+    @Req() req: AuthenticatedRequest,
     @Query('domain') domain: Domain,
     @Query('level') level: Level,
     @Query('sequenceNumber', ParseIntPipe) sequenceNumber: number,
   ) {
+    const userId = req.user?.sub;
+    if (!userId) {
+      throw new UnauthorizedException('User not authenticated');
+    }
+
+    if (sequenceNumber < 1) {
+      throw new NotFoundException('Daily lesson sequence must be at least 1');
+    }
+
+    const currentSequenceNumber =
+      await this.dailyLessonService.getCurrentSequenceForUser(userId);
+
+    if (sequenceNumber > currentSequenceNumber) {
+      throw new ForbiddenException(
+        'Future daily lessons are not available yet',
+      );
+    }
+
     return this.dailyLessonService.findBySequence(
       domain,
       level,
@@ -76,6 +110,9 @@ export class DailyLessonController {
   }
 
   @Get()
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  @ApiBearerAuth('JWT-auth')
   @ApiOperation({
     summary: 'List daily lessons with optional filter and pagination (Admin)',
   })
@@ -100,6 +137,9 @@ export class DailyLessonController {
   }
 
   @Get(':id')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  @ApiBearerAuth('JWT-auth')
   @ApiOperation({
     summary: 'Get daily lesson by ID with populated data (Admin)',
   })
@@ -113,6 +153,8 @@ export class DailyLessonController {
   }
 
   @Get(':id/vocabularies')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Get populated vocabularies for a daily lesson' })
   @ApiParam({
     name: 'id',
@@ -124,6 +166,8 @@ export class DailyLessonController {
   }
 
   @Get(':id/sentences')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Get populated sentences for a daily lesson' })
   @ApiParam({
     name: 'id',
@@ -135,6 +179,8 @@ export class DailyLessonController {
   }
 
   @Get(':id/articles')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('JWT-auth')
   @ApiOperation({ summary: 'Get populated articles for a daily lesson' })
   @ApiParam({
     name: 'id',

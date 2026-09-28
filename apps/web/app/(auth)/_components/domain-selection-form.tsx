@@ -11,7 +11,6 @@ import {
   Stethoscope,
   Landmark,
   Scale,
-  BookOpen,
   FlaskConical,
 } from "lucide-react";
 import { Domain } from "@repo/schema";
@@ -19,11 +18,10 @@ import { Domain } from "@repo/schema";
 const iconMap: Record<string, React.ElementType> = {
   [Domain.TECHNOLOGY]: Code,
   [Domain.BUSINESS]: Building2,
-  [Domain.STUDENT]: GraduationCap,
+  [Domain.ACADEMICS]: GraduationCap,
   [Domain.MEDICAL]: Stethoscope,
   [Domain.FINANCE]: Landmark,
   [Domain.LAW]: Scale,
-  [Domain.EDUCATION]: BookOpen,
   [Domain.SCIENCE]: FlaskConical,
 };
 

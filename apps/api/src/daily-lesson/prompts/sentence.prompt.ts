@@ -1,3 +1,5 @@
+import { humanizeTheme } from './theme.util';
+
 export interface BuildSentencePromptParams {
   domainName: string;
   level: string;
@@ -13,6 +15,7 @@ export const buildSentencePrompt = ({
   vocabularyWords = [],
   count = 5,
 }: BuildSentencePromptParams) => {
+  const themeLabel = humanizeTheme(theme);
   const vocabInstruction =
     vocabularyWords.length > 0
       ? `Naturally integrate and reinforce these target words where appropriate: [${vocabularyWords.join(', ')}].`
@@ -21,7 +24,7 @@ export const buildSentencePrompt = ({
   return `
 You are an expert language and communication tutor.
 
-Generate exactly ${count} professional, authentic practice sentences for the domain "${domainName}"${theme ? ` (Theme: "${theme}")` : ''} at the "${level}" proficiency level.
+Generate exactly ${count} professional, authentic practice sentences for the domain "${domainName}"${themeLabel ? ` (Theme: "${themeLabel}")` : ''} at the "${level}" proficiency level.
 ${vocabInstruction}
 
 Difficulty distribution:

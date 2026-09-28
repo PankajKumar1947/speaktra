@@ -10,8 +10,12 @@ import {
 } from "@repo/schema";
 import { apiClient } from "../../services/axios";
 
-export const getDailyLessonForUser = async (): Promise<DailyLesson> => {
-  const response = await apiClient.get(dailyLessonQueries.getForUser.endpoint);
+export const getDailyLessonForUser = async (
+  date?: string,
+): Promise<DailyLesson> => {
+  const response = await apiClient.get(dailyLessonQueries.getForUser.endpoint, {
+    params: date ? { date } : undefined,
+  });
   return response.data;
 };
 

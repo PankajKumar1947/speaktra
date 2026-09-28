@@ -57,16 +57,26 @@ export const createDailyLessonFunction = (
               level,
               sequenceNumber,
             );
-          } catch {
-            return null;
+          } catch (error) {
+            return {
+              error: error instanceof Error ? error.message : String(error),
+            };
           }
         },
       );
 
-      if (!wordSelection || !wordSelection.words?.length) {
+      if (
+        !wordSelection ||
+        'error' in wordSelection ||
+        !wordSelection.words?.length
+      ) {
+        const reason =
+          wordSelection && 'error' in wordSelection
+            ? ` Reason: ${wordSelection.error}`
+            : '';
         return {
           status: 'skipped',
-          message: `No word bank content found for ${domain}/${level} (day ${sequenceNumber}). Skipped.`,
+          message: `No word bank content found for ${domain}/${level} (day ${sequenceNumber}).${reason} Skipped.`,
         };
       }
 

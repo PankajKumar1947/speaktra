@@ -1,15 +1,30 @@
 "use client";
 
-import { createContext, useContext, PropsWithChildren } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  PropsWithChildren,
+  Dispatch,
+  SetStateAction,
+} from "react";
+import { format, isSameDay, startOfDay } from "date-fns";
 import { useDailyLessonForUser } from "@repo/query";
 import { DailyLesson } from "@repo/schema";
 import { EmptyState } from "@/components/common/empty-state";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/context/auth-context";
 
 type DailyLessonContextType = {
   dailyLesson: DailyLesson | undefined;
   isLoading: boolean;
+  isError: boolean;
   refetch: () => void;
+  selectedDate: Date;
+  setSelectedDate: Dispatch<SetStateAction<Date>>;
+  isToday: boolean;
+  joinedAt: Date | undefined;
+  isBeforeSignup: boolean;
 };
 
 const DailyLessonContext = createContext<DailyLessonContextType | undefined>(
@@ -17,9 +32,25 @@ const DailyLessonContext = createContext<DailyLessonContextType | undefined>(
 );
 
 export function DailyLessonProvider({ children }: PropsWithChildren) {
-  const { data: dailyLesson, isLoading, refetch } = useDailyLessonForUser();
+  const { user } = useAuth();
+  const [selectedDate, setSelectedDate] = useState<Date>(() => new Date());
+  const isToday = isSameDay(selectedDate, new Date());
 
-  if (!isLoading && !dailyLesson) {
+  const joinedAt = user?.createdAt ? new Date(user.createdAt) : undefined;
+  const isBeforeSignup = joinedAt
+    ? startOfDay(selectedDate) < startOfDay(joinedAt)
+    : false;
+
+  const dateParam = isToday ? undefined : format(selectedDate, "yyyy-MM-dd");
+
+  const {
+    data: dailyLesson,
+    isLoading,
+    isError,
+    refetch,
+  } = useDailyLessonForUser(dateParam, { enabled: !isBeforeSignup });
+
+  if (!isLoading && !dailyLesson && isToday) {
     return (
       <div className="flex min-h-[50vh] flex-col items-center justify-center p-8">
         <div className="bg-card border border-border rounded-2xl p-10 shadow-xl max-w-md w-full text-center flex flex-col items-center">
@@ -43,7 +74,13 @@ export function DailyLessonProvider({ children }: PropsWithChildren) {
       value={{
         dailyLesson,
         isLoading,
+        isError,
         refetch,
+        selectedDate,
+        setSelectedDate,
+        isToday,
+        joinedAt,
+        isBeforeSignup,
       }}
     >
       {children}

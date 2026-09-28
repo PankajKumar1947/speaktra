@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { addDays, subDays, isSameDay } from "date-fns";
+import { addDays, subDays, isAfter, startOfDay, format } from "date-fns";
 import {
   BookOpen,
   MessageCircle,
@@ -23,21 +22,44 @@ const icons: Record<string, React.ReactNode> = {
 };
 
 export function PracticeHub() {
-  const [date, setDate] = useState<Date>(new Date());
-  const { dailyLesson, isLoading } = useDailyLesson();
+  const {
+    dailyLesson,
+    isLoading,
+    isError,
+    selectedDate,
+    setSelectedDate,
+    isToday,
+    joinedAt,
+    isBeforeSignup,
+  } = useDailyLesson();
 
-  const handlePrev = () => setDate((prev) => subDays(prev, 1));
-  const handleNext = () => setDate((prev) => addDays(prev, 1));
-  const handleToday = () => setDate(new Date());
+  const today = startOfDay(new Date());
+  const canGoNext = isAfter(today, startOfDay(selectedDate));
+  const canGoPrev =
+    !joinedAt || isAfter(startOfDay(selectedDate), startOfDay(joinedAt));
+  const dateLabel = format(selectedDate, "MMM d, yyyy");
+  const joinedLabel = joinedAt ? format(joinedAt, "MMM d, yyyy") : undefined;
 
-  const isTodaySelected = isSameDay(date, new Date());
+  const handlePrev = () => {
+    if (canGoPrev) {
+      setSelectedDate((prev) => subDays(prev, 1));
+    }
+  };
+  const handleNext = () => {
+    if (canGoNext) {
+      setSelectedDate((prev) => addDays(prev, 1));
+    }
+  };
+  const handleToday = () => setSelectedDate(new Date());
+
+  const lessonSuffix = isToday ? " for today" : "";
 
   const PRACTICE_MODULES = [
     {
       id: "vocabulary",
       title: "Vocabulary",
       description: dailyLesson
-        ? `${dailyLesson.vocabularies?.length || 0} words for today`
+        ? `${dailyLesson.vocabularies?.length || 0} words${lessonSuffix}`
         : "Learn domain-specific words",
       route: "/practice/vocabulary",
       color: "bg-primary",
@@ -49,7 +71,7 @@ export function PracticeHub() {
       id: "sentences",
       title: "Sentence Practice",
       description: dailyLesson
-        ? `${dailyLesson.sentences?.length || 0} sentences for today`
+        ? `${dailyLesson.sentences?.length || 0} sentences${lessonSuffix}`
         : "Practice corporate sentences",
       route: "/practice/sentences",
       color: "bg-secondary",
@@ -62,7 +84,7 @@ export function PracticeHub() {
       id: "reading",
       title: "Reading",
       description: dailyLesson
-        ? `${dailyLesson.articles?.length || 0} articles for today`
+        ? `${dailyLesson.articles?.length || 0} articles${lessonSuffix}`
         : "Business articles & topics",
       route: "/practice/reading",
       color: "bg-primary",
@@ -73,12 +95,12 @@ export function PracticeHub() {
   ];
 
   const renderModuleContent = () => {
-    if (!isTodaySelected) {
+    if (isBeforeSignup) {
       return (
-        <div className="bg-card border border-border rounded-2xl p-10 animate-in fade-in zoom-in-95 duration-500 mt-8">
+        <div className="bg-card border border-border rounded-2xl p-10 animate-in fade-in zoom-in-95 duration-500">
           <EmptyState
-            title="History Not Available"
-            description="We're currently only displaying the daily challenge for today. Historical data and archives are coming soon!"
+            title="You Hadn't Joined Yet"
+            description={`Your Speaktra journey started on ${joinedLabel}. Pick a date on or after that to revisit your daily lessons.`}
           />
         </div>
       );
@@ -97,6 +119,21 @@ export function PracticeHub() {
       );
     }
 
+    if (!dailyLesson) {
+      return (
+        <div className="bg-card border border-border rounded-2xl p-10 animate-in fade-in zoom-in-95 duration-500">
+          <EmptyState
+            title={isError ? "Lesson Unavailable" : "No Lesson For This Date"}
+            description={
+              isError
+                ? `We couldn't load a lesson for ${dateLabel}. It may not have been generated yet.`
+                : `There's no lesson available for ${dateLabel}.`
+            }
+          />
+        </div>
+      );
+    }
+
     return (
       <div className="grid gap-4">
         {PRACTICE_MODULES.map((module) => (
@@ -109,7 +146,7 @@ export function PracticeHub() {
             route={module.route}
             color={module.color}
             progress={module.progress}
-            itemCount={`${module.todayCount} today`}
+            itemCount={isToday ? `${module.todayCount} today` : dateLabel}
           />
         ))}
       </div>
@@ -134,6 +171,23 @@ export function PracticeHub() {
             </p>
           </div>
 
+          {!isToday && (
+            <div className="flex items-center justify-between gap-4 rounded-xl border border-border bg-muted/40 px-4 py-3">
+              <p className="text-sm text-muted-foreground">
+                Viewing lesson for{" "}
+                <span className="font-medium text-foreground">{dateLabel}</span>
+              </p>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleToday}
+                className="h-8 shrink-0 text-muted-foreground hover:text-foreground"
+              >
+                Back to today
+              </Button>
+            </div>
+          )}
+
           {renderModuleContent()}
         </div>
 
@@ -146,7 +200,8 @@ export function PracticeHub() {
                 variant="ghost"
                 size="sm"
                 onClick={handlePrev}
-                className="h-8 flex-1 text-muted-foreground hover:text-foreground"
+                disabled={!canGoPrev}
+                className="h-8 flex-1 text-muted-foreground hover:text-foreground disabled:opacity-40"
               >
                 <ChevronLeft className="size-4 mr-1" />
                 Prev
@@ -157,7 +212,7 @@ export function PracticeHub() {
                 onClick={handleToday}
                 className={cn(
                   "h-8 flex-1 font-semibold transition-all",
-                  isSameDay(date, new Date()) &&
+                  isToday &&
                     "bg-brand-secondary text-white hover:bg-brand-secondary/90",
                 )}
               >
@@ -167,7 +222,8 @@ export function PracticeHub() {
                 variant="ghost"
                 size="sm"
                 onClick={handleNext}
-                className="h-8 flex-1 text-muted-foreground hover:text-foreground"
+                disabled={!canGoNext}
+                className="h-8 flex-1 text-muted-foreground hover:text-foreground disabled:opacity-40"
               >
                 Next
                 <ChevronRight className="size-4 ml-1" />
@@ -179,8 +235,9 @@ export function PracticeHub() {
           <div className="bg-card border border-border rounded-2xl p-4 shadow-xl shadow-brand-secondary/5 animate-in fade-in slide-in-from-right-4 delay-150 duration-500">
             <Calendar
               mode="single"
-              selected={date}
-              onSelect={(d) => d && setDate(d)}
+              selected={selectedDate}
+              onSelect={(d) => d && setSelectedDate(d)}
+              disabled={{ after: new Date() }}
               className="rounded-md border-0"
               classNames={{
                 selected:

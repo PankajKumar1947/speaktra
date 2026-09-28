@@ -31,9 +31,10 @@ async function bootstrap() {
     dailyLessonService,
   );
 
+  app.use(express.json());
+
   app.use(
     '/api/inngest',
-    express.json(),
     serve({
       client: inngest,
       functions: [dailyLessonFunction, scheduledDailyLessonFunction],

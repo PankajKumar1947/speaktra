@@ -1,3 +1,5 @@
+import { humanizeTheme } from './theme.util';
+
 export interface BuildArticlePromptParams {
   domainName: string;
   level: string;
@@ -13,6 +15,7 @@ export const buildArticlePrompt = ({
   vocabularyWords = [],
   count = 3,
 }: BuildArticlePromptParams) => {
+  const themeLabel = humanizeTheme(theme);
   const vocabInstruction =
     vocabularyWords.length > 0
       ? `Naturally integrate some of these target words: [${vocabularyWords.join(', ')}].`
@@ -21,7 +24,7 @@ export const buildArticlePrompt = ({
   return `
 You are an expert professional writer and communication coach.
 
-Generate exactly ${count} professional workplace/academic communication templates (emails, updates, memos, or proposals) for the domain "${domainName}"${theme ? ` (Theme: "${theme}")` : ''} at the "${level}" proficiency level.
+Generate exactly ${count} professional workplace/academic communication templates (emails, updates, memos, or proposals) for the domain "${domainName}"${themeLabel ? ` (Theme: "${themeLabel}")` : ''} at the "${level}" proficiency level.
 ${vocabInstruction}
 
 Difficulty distribution:

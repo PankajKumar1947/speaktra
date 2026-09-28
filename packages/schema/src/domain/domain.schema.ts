@@ -3,11 +3,10 @@ import { z } from "zod";
 export enum Domain {
   TECHNOLOGY = "technology",
   BUSINESS = "business",
+  ACADEMICS = "academics",
   MEDICAL = "medical",
-  STUDENT = "student",
   FINANCE = "finance",
   LAW = "law",
-  EDUCATION = "education",
   SCIENCE = "science",
 }
 
