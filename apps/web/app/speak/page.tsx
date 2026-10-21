@@ -3,7 +3,8 @@ import { Footer } from "@/components/landing/footer";
 import { ProtectedRoute } from "@/components/common/protected-route";
 import { Mic } from "lucide-react";
 import { Metadata } from "next";
-import SpeechToText from "./_components/speech-to-text";
+// TODO: Re-enable once the conversational AI tutor is ready.
+// import SpeechToText from "./_components/speech-to-text";
 
 export const metadata: Metadata = {
   title: "Speak - Speaktra",
@@ -37,9 +38,14 @@ export default function SpeakPage() {
                     AI Tutor
                   </span>
                 </h1>
+                <p className="text-muted-foreground max-w-md mx-auto">
+                  We&apos;re putting the finishing touches on our AI tutor. This
+                  feature is coming soon &mdash; check back shortly!
+                </p>
               </div>
 
-              <SpeechToText />
+              {/* Speech-to-text is temporarily disabled until the feature is ready. */}
+              {/* <SpeechToText /> */}
             </div>
           </div>
         </main>
