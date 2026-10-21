@@ -13,6 +13,7 @@ const navLinks = [
   { label: "Practice", href: "/practice" },
   { label: "Speak", href: "/speak" },
   { label: "Download", href: "/download" },
+  { label: "Contact", href: "/contact" },
 ];
 
 export function Navbar() {
@@ -45,7 +46,7 @@ export function Navbar() {
             </div>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-10">
+          <nav className="hidden lg:flex items-center gap-8">
             {navLinks.map((link) => {
               const isActive =
                 pathname === link.href ||
@@ -66,7 +67,7 @@ export function Navbar() {
             })}
           </nav>
 
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden lg:flex items-center gap-3">
             <ThemeToggle />
             {isLoggedIn ? (
               <>
@@ -105,7 +106,7 @@ export function Navbar() {
           </div>
 
           <button
-            className="md:hidden p-2 text-foreground-muted"
+            className="lg:hidden p-2 text-foreground-muted"
             onClick={() => setIsOpen(!isOpen)}
           >
             <svg
@@ -134,7 +135,7 @@ export function Navbar() {
         </div>
 
         {isOpen && (
-          <div className="md:hidden bg-card border-t border-border">
+          <div className="lg:hidden bg-card border-t border-border">
             <nav className="py-4 flex flex-col gap-3">
               {navLinks.map((link) => {
                 const isActive =

@@ -12,13 +12,13 @@ const footerLinks = {
   ],
   company: [
     { label: "About Us", href: "#about" },
-    { label: "Contact", href: "#contact" },
+    { label: "Contact", href: "/contact" },
     { label: "Careers", href: "#careers" },
     { label: "Blog", href: "#blog" },
   ],
   support: [
-    { label: "Help Center", href: "#help" },
-    { label: "FAQs", href: "#faqs" },
+    { label: "Help Center", href: "/contact" },
+    { label: "FAQs", href: "/contact#faqs" },
     { label: "Community", href: "#community" },
   ],
   legal: [
