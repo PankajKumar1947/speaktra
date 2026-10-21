@@ -19,3 +19,5 @@ export * from "./react-queries/vocabulary";
 export * from "./routes/vocabulary";
 export * from "./react-queries/sentence";
 export * from "./routes/sentence";
+export * from "./react-queries/contact";
+export * from "./routes/contact";
