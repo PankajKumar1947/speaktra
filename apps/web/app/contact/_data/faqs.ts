@@ -27,7 +27,7 @@ export const faqs: Faq[] = [
   {
     question: "Which domains can I practice for?",
     answer:
-      "You can choose from domains such as technology, business, finance, healthcare, marketing, and more during signup. Your vocabulary, sentences, and lessons are then tailored to the situations you actually face at work.",
+      "You can choose from technology, business, finance, medical, law, science, and academics during signup. Your vocabulary, sentences, and lessons are then tailored to the situations you actually face at work.",
   },
   {
     question: "How does pronunciation feedback work?",

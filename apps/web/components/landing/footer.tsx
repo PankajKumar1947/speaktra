@@ -11,7 +11,7 @@ const footerLinks = {
     { label: "Testimonials", href: "#testimonials" },
   ],
   company: [
-    { label: "About Us", href: "#about" },
+    { label: "About Us", href: "/about" },
     { label: "Contact", href: "/contact" },
   ],
   support: [
