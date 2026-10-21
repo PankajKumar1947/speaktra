@@ -13,18 +13,11 @@ const footerLinks = {
   company: [
     { label: "About Us", href: "#about" },
     { label: "Contact", href: "/contact" },
-    { label: "Careers", href: "#careers" },
-    { label: "Blog", href: "#blog" },
   ],
   support: [
     { label: "Help Center", href: "/contact" },
     { label: "FAQs", href: "/contact#faqs" },
     { label: "Community", href: "#community" },
-  ],
-  legal: [
-    { label: "Privacy Policy", href: "#privacy" },
-    { label: "Terms of Service", href: "#terms" },
-    { label: "Cookie Policy", href: "#cookies" },
   ],
 };
 
@@ -148,17 +141,6 @@ export function Footer() {
                 <span>
                   © {new Date().getFullYear()} Speaktra. All rights reserved.
                 </span>
-                <div className="flex gap-6">
-                  {footerLinks.legal.map((link, i) => (
-                    <Link
-                      key={i}
-                      href={link.href}
-                      className="hover:text-brand-secondary transition-colors duration-200 cursor-pointer"
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
-                </div>
               </div>
 
               <div className="flex items-center gap-2 text-muted-foreground text-sm">
