@@ -1,12 +1,38 @@
 import { Navbar } from "@/components/landing/navbar";
 import { Footer } from "@/components/landing/footer";
-import { Smartphone, Download, CheckCircle2 } from "lucide-react";
+import { Smartphone, CheckCircle2 } from "lucide-react";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Download App - Speaktra",
   description: "Download the Speaktra mobile app for iOS and Android.",
 };
+
+function AppleIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
+    </svg>
+  );
+}
+
+function PlayStoreIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M3 20.5V3.5c0-.59.34-1.11.84-1.35L13.69 12 3.84 21.85A1.5 1.5 0 0 1 3 20.5m13.81-5.38L6.05 21.34 14.54 12.85zm3.35-4.31c.34.27.59.69.59 1.19s-.22.9-.57 1.18l-2.29 1.32-2.5-2.5 2.5-2.5zM6.05 2.66l10.76 6.22-2.27 2.27z" />
+    </svg>
+  );
+}
 
 export default function DownloadPage() {
   return (
@@ -52,24 +78,14 @@ export default function DownloadPage() {
             </ul>
 
             <div className="flex flex-col sm:flex-row items-center gap-4 pt-6 justify-center lg:justify-start">
-              <button className="flex items-center justify-center gap-3 bg-foreground text-background px-6 py-4 rounded-xl font-semibold hover:scale-105 transition-transform w-full sm:w-auto shadow-xl">
-                <Download className="size-5" />
-                <div className="text-left flex flex-col">
-                  <span className="text-[10px] uppercase opacity-80 mb-1">
-                    Download on the
-                  </span>
-                  <span className="text-base">App Store</span>
-                </div>
+              <button className="flex items-center justify-center gap-3 bg-foreground text-background px-7 py-4 rounded-xl font-semibold hover:scale-105 transition-transform w-full sm:w-auto shadow-xl">
+                <AppleIcon className="size-6" />
+                <span className="text-base">App Store</span>
               </button>
 
-              <button className="flex items-center justify-center gap-3 bg-foreground text-background px-6 py-4 rounded-xl font-semibold hover:scale-105 transition-transform w-full sm:w-auto shadow-xl">
-                <Download className="size-5" />
-                <div className="text-left flex flex-col">
-                  <span className="text-[10px] uppercase opacity-80 mb-1">
-                    Get it on
-                  </span>
-                  <span className="text-base">Google Play</span>
-                </div>
+              <button className="flex items-center justify-center gap-3 bg-foreground text-background px-7 py-4 rounded-xl font-semibold hover:scale-105 transition-transform w-full sm:w-auto shadow-xl">
+                <PlayStoreIcon className="size-6" />
+                <span className="text-base">Google Play</span>
               </button>
             </div>
           </div>
@@ -98,7 +114,7 @@ export default function DownloadPage() {
 
                 <div className="h-32 rounded-2xl bg-gradient-to-r from-orange-400/90 to-brand-secondary/90 mb-6 shadow-inner p-4 flex flex-col justify-end">
                   <span className="text-white/80 text-[10px] font-bold uppercase tracking-wider mb-1">
-                    Today's Focus
+                    Today&apos;s Focus
                   </span>
                   <span className="text-white text-xl font-bold">
                     Daily Challenge
