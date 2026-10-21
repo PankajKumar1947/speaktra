@@ -57,7 +57,7 @@ export function ModuleNavigator() {
         </div>
         <div>
           <p className="text-sm font-bold leading-none">Dashboard</p>
-          <p className="text-[10px] text-muted-foreground mt-1 line-clamp-1">
+          <p className="text-xs text-muted-foreground mt-1 line-clamp-1">
             Back to practice overview
           </p>
         </div>
@@ -90,7 +90,7 @@ export function ModuleNavigator() {
             </div>
             <div>
               <p className="text-sm font-bold leading-none">{module.name}</p>
-              <p className="text-[10px] text-muted-foreground mt-1 line-clamp-1">
+              <p className="text-xs text-muted-foreground mt-1 line-clamp-1">
                 {module.description}
               </p>
             </div>

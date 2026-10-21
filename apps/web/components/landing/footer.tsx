@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Mail } from "lucide-react";
 import React from "react";
+import { Logo } from "@/components/common/logo";
 
 const footerLinks = {
   product: [
@@ -10,20 +11,13 @@ const footerLinks = {
     { label: "Testimonials", href: "#testimonials" },
   ],
   company: [
-    { label: "About Us", href: "#about" },
-    { label: "Contact", href: "#contact" },
-    { label: "Careers", href: "#careers" },
-    { label: "Blog", href: "#blog" },
+    { label: "About Us", href: "/about" },
+    { label: "Contact", href: "/contact" },
   ],
   support: [
-    { label: "Help Center", href: "#help" },
-    { label: "FAQs", href: "#faqs" },
+    { label: "Help Center", href: "/contact" },
+    { label: "FAQs", href: "/contact#faqs" },
     { label: "Community", href: "#community" },
-  ],
-  legal: [
-    { label: "Privacy Policy", href: "#privacy" },
-    { label: "Terms of Service", href: "#terms" },
-    { label: "Cookie Policy", href: "#cookies" },
   ],
 };
 
@@ -65,11 +59,7 @@ export function Footer() {
             <div className="lg:col-span-2">
               <Link href="/" className="flex items-center gap-3 mb-6 group">
                 <div className="relative h-12 transition-transform group-hover:scale-105">
-                  <img
-                    src="/logo-text.png"
-                    alt="Speaktra"
-                    className="h-full w-auto object-contain"
-                  />
+                  <Logo className="h-full object-contain" />
                 </div>
               </Link>
               <p className="text-muted-foreground mb-6 max-w-sm">
@@ -151,17 +141,6 @@ export function Footer() {
                 <span>
                   © {new Date().getFullYear()} Speaktra. All rights reserved.
                 </span>
-                <div className="flex gap-6">
-                  {footerLinks.legal.map((link, i) => (
-                    <Link
-                      key={i}
-                      href={link.href}
-                      className="hover:text-brand-secondary transition-colors duration-200 cursor-pointer"
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
-                </div>
               </div>
 
               <div className="flex items-center gap-2 text-muted-foreground text-sm">

@@ -11,4 +11,5 @@ export * from "./mutation/use-vocabulary";
 export * from "./query/use-vocabulary";
 export * from "./mutation/use-sentence";
 export * from "./query/use-sentence";
+export * from "./mutation/use-contact";
 export * from "./provider";

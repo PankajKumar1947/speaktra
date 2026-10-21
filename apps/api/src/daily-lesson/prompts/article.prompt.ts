@@ -40,11 +40,12 @@ For each article:
 - "keywords": Array of relevant key vocabulary words used in the text
 - "description": Well-structured Markdown content containing:
   1. **Scenario**: 1-2 sentences setting the real-world context.
-  2. **Template**: The actual draft with standard greeting, clear body, and sign-off.
+  2. **Template**: The actual draft with standard greeting, clear body, and sign-off. Write the draft as normal Markdown (paragraphs, lists, emphasis) — do NOT wrap the whole template in a code fence. Only wrap genuine code samples in a fenced block that includes a language tag.
   3. **Key Phrases**: 2-3 highlighted professional expressions from the text.
 
 Rules:
 - Do NOT include domain or id.
+- Keep Markdown code fences balanced. Never nest a fence inside another fence with the same number of backticks; if a fenced block must contain another fenced block, use four backticks for the outer fence.
 - Do NOT return markdown or explanations outside the JSON response.
 `;
 };

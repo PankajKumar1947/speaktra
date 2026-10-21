@@ -16,6 +16,7 @@ import { ArticleModule } from './article/article.module';
 import { SpeaktraContentModule } from './speaktra-content/speaktra-content.module';
 import { DailyLessonModule } from './daily-lesson/daily-lesson.module';
 import { AIModule } from './ai/ai.module';
+import { ContactModule } from './contact/contact.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { AIModule } from './ai/ai.module';
     ArticleModule,
     DailyLessonModule,
     AIModule,
+    ContactModule,
   ],
   controllers: [AppController],
   providers: [

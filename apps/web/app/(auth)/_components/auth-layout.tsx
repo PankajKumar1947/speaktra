@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { Mic, MessageSquare, TrendingUp, Sparkles } from "lucide-react";
+import { Logo } from "@/components/common/logo";
 
 interface AuthLayoutProps {
   children: ReactNode;
@@ -67,11 +68,7 @@ export function AuthCard({
           </div>
           <div className="relative z-10">
             <div className="relative h-20 w-auto drop-shadow-lg -ml-4">
-              <img
-                src="/logo-text.png"
-                alt="Speaktra"
-                className="h-full w-auto"
-              />
+              <Logo variant="on-dark" className="h-full" />
             </div>
             <h1 className="text-2xl font-bold text-white mb-4">
               Master Professional English
@@ -118,7 +115,7 @@ export function AuthLayout({ children, stepLabel }: AuthLayoutProps) {
   return (
     <div className="min-h-screen bg-gradient-to-b from-surface-alt to-background flex flex-col items-center justify-center p-4 sm:p-8">
       <div className="lg:hidden mb-6">
-        <img src="/logo-text.png" alt="Speaktra" className="h-14 w-auto" />
+        <Logo className="h-14" />
       </div>
       <AuthCard stepLabel={stepLabel}>{children}</AuthCard>
     </div>
@@ -128,7 +125,7 @@ export function AuthLayout({ children, stepLabel }: AuthLayoutProps) {
 export function BrandLogo() {
   return (
     <div className="relative h-16 w-auto mb-8">
-      <img src="/logo-text.png" alt="Speaktra" className="h-full w-auto" />
+      <Logo className="h-full" />
     </div>
   );
 }

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { Logo } from "@/components/common/logo";
 import { useAuth } from "@/context/auth-context";
 
 const navLinks = [
@@ -12,6 +13,7 @@ const navLinks = [
   { label: "Practice", href: "/practice" },
   { label: "Speak", href: "/speak" },
   { label: "Download", href: "/download" },
+  { label: "Contact", href: "/contact" },
 ];
 
 export function Navbar() {
@@ -40,15 +42,11 @@ export function Navbar() {
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="flex items-center gap-3 group">
             <div className="relative h-10 transition-transform group-hover:scale-105">
-              <img
-                src="/logo-text.png"
-                alt="Speaktra"
-                className="h-full w-auto object-contain"
-              />
+              <Logo className="h-full object-contain" />
             </div>
           </Link>
 
-          <nav className="hidden md:flex items-center gap-10">
+          <nav className="hidden lg:flex items-center gap-8">
             {navLinks.map((link) => {
               const isActive =
                 pathname === link.href ||
@@ -69,7 +67,7 @@ export function Navbar() {
             })}
           </nav>
 
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden lg:flex items-center gap-3">
             <ThemeToggle />
             {isLoggedIn ? (
               <>
@@ -108,7 +106,7 @@ export function Navbar() {
           </div>
 
           <button
-            className="md:hidden p-2 text-foreground-muted"
+            className="lg:hidden p-2 text-foreground-muted"
             onClick={() => setIsOpen(!isOpen)}
           >
             <svg
@@ -137,7 +135,7 @@ export function Navbar() {
         </div>
 
         {isOpen && (
-          <div className="md:hidden bg-card border-t border-border">
+          <div className="lg:hidden bg-card border-t border-border">
             <nav className="py-4 flex flex-col gap-3">
               {navLinks.map((link) => {
                 const isActive =

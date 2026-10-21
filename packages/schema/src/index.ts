@@ -9,3 +9,4 @@ export * from "./vocabulary";
 export * from "./sentence";
 export * from "./article";
 export * from "./daily-lesson";
+export * from "./contact";
