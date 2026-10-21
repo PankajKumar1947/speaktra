@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Mail } from "lucide-react";
 import React from "react";
+import { Logo } from "@/components/common/logo";
 
 const footerLinks = {
   product: [
@@ -65,11 +66,7 @@ export function Footer() {
             <div className="lg:col-span-2">
               <Link href="/" className="flex items-center gap-3 mb-6 group">
                 <div className="relative h-12 transition-transform group-hover:scale-105">
-                  <img
-                    src="/logo-text.png"
-                    alt="Speaktra"
-                    className="h-full w-auto object-contain"
-                  />
+                  <Logo className="h-full object-contain" />
                 </div>
               </Link>
               <p className="text-muted-foreground mb-6 max-w-sm">

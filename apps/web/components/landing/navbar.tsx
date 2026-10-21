@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { Logo } from "@/components/common/logo";
 import { useAuth } from "@/context/auth-context";
 
 const navLinks = [
@@ -40,11 +41,7 @@ export function Navbar() {
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="flex items-center gap-3 group">
             <div className="relative h-10 transition-transform group-hover:scale-105">
-              <img
-                src="/logo-text.png"
-                alt="Speaktra"
-                className="h-full w-auto object-contain"
-              />
+              <Logo className="h-full object-contain" />
             </div>
           </Link>
 

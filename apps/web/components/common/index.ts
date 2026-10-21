@@ -3,3 +3,4 @@ export { DifficultyBadge } from "./difficulty-badge";
 export { LoadingState } from "./loading-state";
 export { EmptyState } from "./empty-state";
 export { ProtectedRoute } from "./protected-route";
+export { Logo } from "./logo";
