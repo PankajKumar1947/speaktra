@@ -154,23 +154,24 @@ export function PracticeHub() {
   };
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-8">
+      {/* Header */}
+      <div className="space-y-2">
+        <h2 className="text-2xl sm:text-3xl font-bold text-foreground">
+          Practice{" "}
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-secondary to-orange-400">
+            Modules
+          </span>
+        </h2>
+        <p className="text-sm text-muted-foreground max-w-2xl">
+          Master professional speaking with specialized modules designed to
+          build your confidence in corporate settings.
+        </p>
+      </div>
+
       <div className="flex flex-col lg:flex-row gap-8 items-start">
         {/* Main Content: Modules */}
-        <div className="flex-1 space-y-8">
-          <div className="space-y-2">
-            <h2 className="text-2xl sm:text-3xl font-bold text-foreground">
-              Practice{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-secondary to-orange-400">
-                Modules
-              </span>
-            </h2>
-            <p className="text-sm text-muted-foreground max-w-2xl">
-              Master professional speaking with specialized modules designed to
-              build your confidence in corporate settings.
-            </p>
-          </div>
-
+        <div className="flex-1 min-w-0 space-y-8">
           {!isToday && (
             <div className="flex items-center justify-between gap-4 rounded-xl border border-border bg-muted/40 px-4 py-3">
               <p className="text-sm text-muted-foreground">
@@ -192,9 +193,9 @@ export function PracticeHub() {
         </div>
 
         {/* Sidebar: Navigation & Calendar */}
-        <div className="w-full lg:w-fit sticky top-24 space-y-4">
-          {/* Date Navigation Card */}
-          <div className="bg-card border border-border rounded-2xl p-3 shadow-xl shadow-brand-secondary/5 animate-in fade-in slide-in-from-right-4 duration-500">
+        <div className="w-full lg:w-fit sticky top-24">
+          <div className="bg-card border border-border rounded-2xl p-4 shadow-xl shadow-brand-secondary/5 animate-in fade-in slide-in-from-right-4 duration-500">
+            {/* Date Navigation */}
             <div className="flex items-center gap-1 p-1 bg-muted/50 border rounded-xl shadow-sm backdrop-blur-sm w-full justify-between">
               <Button
                 variant="ghost"
@@ -229,23 +230,23 @@ export function PracticeHub() {
                 <ChevronRight className="size-4 ml-1" />
               </Button>
             </div>
-          </div>
 
-          {/* Calendar Card */}
-          <div className="bg-card border border-border rounded-2xl p-4 shadow-xl shadow-brand-secondary/5 animate-in fade-in slide-in-from-right-4 delay-150 duration-500">
-            <Calendar
-              mode="single"
-              selected={selectedDate}
-              onSelect={(d) => d && setSelectedDate(d)}
-              disabled={{ after: new Date() }}
-              className="rounded-md border-0"
-              classNames={{
-                selected:
-                  "rounded-full border-2 border-brand-secondary text-brand-secondary bg-brand-secondary/10 hover:bg-brand-secondary/20 font-bold",
-                today:
-                  "rounded-full bg-brand-secondary/20 text-brand-secondary font-bold",
-              }}
-            />
+            {/* Calendar */}
+            <div className="mt-4">
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={(d) => d && setSelectedDate(d)}
+                disabled={{ after: new Date() }}
+                className="rounded-md border-0"
+                classNames={{
+                  selected:
+                    "rounded-full border-2 border-brand-secondary text-brand-secondary bg-brand-secondary/10 hover:bg-brand-secondary/20 font-bold",
+                  today:
+                    "rounded-full bg-brand-secondary/20 text-brand-secondary font-bold",
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>
