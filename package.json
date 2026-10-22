@@ -27,6 +27,9 @@
     "apps/*",
     "packages/*"
   ],
+  "resolutions": {
+    "@babel/helper-compilation-targets": "7.28.6"
+  },
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx}": [
       "eslint --max-warnings=0",
